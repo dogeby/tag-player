@@ -2,6 +2,7 @@ package com.dogeby.tagplayer.ui.permission
 
 import android.Manifest
 import android.content.Intent
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.DrawableRes
@@ -183,7 +184,8 @@ fun PermissionScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "light", showBackground = true)
+@Preview(name = "night", showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun PermissionElementPreview() {
     TagPlayerTheme {
@@ -195,7 +197,8 @@ fun PermissionElementPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "light", showBackground = true)
+@Preview(name = "night", showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun PermissionAlertDialogPreview() {
     TagPlayerTheme {

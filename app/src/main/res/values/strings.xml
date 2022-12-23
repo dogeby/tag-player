@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">TagPlayer</string>
+    <string name="app_name">택플</string>
+    <string name="ok">확인</string>
+    <string name="cancel">닫기</string>
+
+    <string name="permission_guide_app_access_permission">앱 접근 권한 안내</string>
+    <string name="permission_app_permission_request_description">택플을 사용하기 위해서는 다음과 같은 권한들이 필요합니다.</string>
+    <string name="permission_read_media_video">기기의 사진과 동영상 접근 권한</string>
+    <string name="permission_read_media_video_description">장치 내 동영상을 읽기 위한 권한입니다.</string>
+    <string name="permission_dialog_require_description">택플을 사용하기 위해서는 권한 허용이 필요합니다.</string>
+    <string name="permission_dialog_method_description">[앱 설정] > [권한]에서 권한을 활성화해주세요.</string>
+    <string name="permission_dialog_app_setting">앱 설정</string>
 </resources>

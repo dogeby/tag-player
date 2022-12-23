@@ -79,6 +79,9 @@ dependencies {
 
     //splash screen compat library
     implementation 'androidx.core:core-splashscreen:1.0.0'
+
+    //accompanist jetpack compose permission
+    implementation "com.google.accompanist:accompanist-permissions:$accompanist_version"
 }
 
 kapt {

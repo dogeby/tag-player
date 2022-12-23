@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.dogeby.tagplayer.ui.permission.PermissionScreen
 
 @Composable
 fun TagPlayerNavHost(
@@ -16,10 +17,17 @@ fun TagPlayerNavHost(
     NavHost(
         navController = navController,
         modifier = modifier,
-        startDestination = startDestination
+        startDestination = startDestination,
     ) {
         composable(PermissionRoute) {
-            // TODO: PermissionScreen 구현
+            PermissionScreen(
+                modifier = modifier,
+                onNavigateToDestination = {
+                    navController.navigate(HomeRoute) {
+                        popUpTo(PermissionRoute) { inclusive = true }
+                    }
+                },
+            )
         }
         composable(HomeRoute) {
             // TODO: HomeScreen 구현

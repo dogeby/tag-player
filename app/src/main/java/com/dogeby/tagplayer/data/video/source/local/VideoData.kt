@@ -4,6 +4,6 @@ data class VideoData(
     val id: Long,
     val name: String,
     val duration: Int,
-    val parentDirectory: String,
+    val parentFolder: String,
     val size: Int,
 )

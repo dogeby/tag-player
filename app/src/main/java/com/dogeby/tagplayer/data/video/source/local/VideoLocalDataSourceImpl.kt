@@ -68,7 +68,7 @@ class VideoLocalDataSourceImpl @Inject constructor(
                             id = cursor.getLong(idColumn),
                             name = cursor.getString(nameColumn),
                             duration = cursor.getInt(durationColumn),
-                            parentDirectory = pathToParentDirectory(cursor.getString(pathColumn)),
+                            parentFolder = formatPathToParentFolder(cursor.getString(pathColumn)),
                             size = cursor.getInt(sizeColumn),
                         ),
                     )
@@ -78,7 +78,7 @@ class VideoLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    private fun pathToParentDirectory(path: String): String {
+    private fun formatPathToParentFolder(path: String): String {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             path.dropLast(1)
         } else {

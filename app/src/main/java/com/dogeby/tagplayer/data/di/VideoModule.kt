@@ -1,6 +1,8 @@
 package com.dogeby.tagplayer.data.di
 
 import android.content.Context
+import com.dogeby.tagplayer.data.video.source.VideoRepository
+import com.dogeby.tagplayer.data.video.source.VideoRepositoryImpl
 import com.dogeby.tagplayer.data.video.source.local.VideoLocalDataSource
 import com.dogeby.tagplayer.data.video.source.local.VideoLocalDataSourceImpl
 import dagger.Module
@@ -18,4 +20,9 @@ object VideoModule {
     @Provides
     fun provideVideoLocalDataSource(@ApplicationContext context: Context): VideoLocalDataSource =
         VideoLocalDataSourceImpl(context.contentResolver)
+
+    @Singleton
+    @Provides
+    fun provideVideoRepository(videoRepositoryImpl: VideoRepositoryImpl): VideoRepository =
+        videoRepositoryImpl
 }

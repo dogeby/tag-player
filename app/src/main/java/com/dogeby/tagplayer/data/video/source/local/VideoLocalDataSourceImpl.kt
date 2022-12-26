@@ -6,8 +6,6 @@ import android.provider.MediaStore
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
 @Singleton
@@ -15,10 +13,7 @@ class VideoLocalDataSourceImpl @Inject constructor(
     private val contextResolver: ContentResolver,
 ) : VideoLocalDataSource {
 
-    private val _videoDataList = MutableStateFlow<List<VideoData>>(emptyList())
-    override val videoDataList: StateFlow<List<VideoData>> = _videoDataList
-
-    override suspend fun updateVideoDataList() = runCatching {
+    override suspend fun getVideoDataList() = runCatching {
         val tmpVideoDataList = mutableListOf<VideoData>()
 
         withContext(Dispatchers.IO) {
@@ -74,7 +69,7 @@ class VideoLocalDataSourceImpl @Inject constructor(
                     )
                 }
             }
-            _videoDataList.value = tmpVideoDataList
+            tmpVideoDataList
         }
     }
 

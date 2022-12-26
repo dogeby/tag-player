@@ -4,7 +4,6 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
@@ -31,10 +30,8 @@ class VideoLocalDataSourceTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun getVideoDataList_afterUpdateVideoDataList() = runTest {
-        videoLocalDataSource.updateVideoDataList()
+        val videoDataList = videoLocalDataSource.getVideoDataList()
 
-        val videoDataList = videoLocalDataSource.videoDataList.first()
-
-        Assert.assertNotEquals(0, videoDataList.size)
+        Assert.assertNotEquals(0, videoDataList.getOrDefault(emptyList()).size)
     }
 }

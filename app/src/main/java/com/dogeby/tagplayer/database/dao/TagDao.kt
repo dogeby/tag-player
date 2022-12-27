@@ -18,7 +18,7 @@ interface TagDao {
     suspend fun updateTags(entities: List<TagEntity>): Int
 
     @Query(value = "DELETE FROM tags")
-    suspend fun deleteTags()
+    suspend fun deleteTags(): Int
 
     @Query(
         value = """

@@ -18,11 +18,11 @@ object VideoModule {
 
     @Singleton
     @Provides
-    fun provideVideoLocalDataSource(@ApplicationContext context: Context): VideoLocalDataSource =
+    fun providesVideoLocalDataSource(@ApplicationContext context: Context): VideoLocalDataSource =
         VideoLocalDataSourceImpl(context.contentResolver)
 
     @Singleton
     @Provides
-    fun provideVideoRepository(videoRepositoryImpl: VideoRepositoryImpl): VideoRepository =
+    fun providesVideoRepository(videoRepositoryImpl: VideoRepositoryImpl): VideoRepository =
         videoRepositoryImpl
 }

@@ -1,8 +1,9 @@
 package com.dogeby.tagplayer.data.video.source.local
 
-import android.content.ContentResolver
+import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -10,8 +11,10 @@ import kotlinx.coroutines.withContext
 
 @Singleton
 class VideoLocalDataSourceImpl @Inject constructor(
-    private val contextResolver: ContentResolver,
+    @ApplicationContext appContext: Context,
 ) : VideoLocalDataSource {
+
+    private val contextResolver = appContext.contentResolver
 
     override suspend fun getVideoDataList() = runCatching {
         val tmpVideoDataList = mutableListOf<VideoData>()

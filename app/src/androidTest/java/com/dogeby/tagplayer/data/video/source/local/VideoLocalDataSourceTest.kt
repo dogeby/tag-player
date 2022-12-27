@@ -26,6 +26,7 @@ class VideoLocalDataSourceTest {
 
     /**
      * 테스트를 진행 할려면 에뮬레이터에 동영상 파일 1개 이상이 있어야한다.
+     * 엡의 동영상 접근 권한이 허용되어 있어야한다.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test

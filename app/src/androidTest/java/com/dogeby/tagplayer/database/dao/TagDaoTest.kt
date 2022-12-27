@@ -14,6 +14,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltAndroidTest
 class TagDaoTest {
 
@@ -33,7 +34,6 @@ class TagDaoTest {
         runBlocking { tagDao.deleteTags() }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun insertTagsAndGetTagsOrderByName() = runTest {
         val tagEntities = List(5) { TagEntity(name = it.toString()) }.reversed()
@@ -44,38 +44,45 @@ class TagDaoTest {
         Assert.assertEquals(tagEntities[0].name, tags.last().name)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun insertTags_duplicateName() = runTest {
         val tagEntities = List(5) { TagEntity(name = it.toString()) }
-
         tagDao.insertTags(tagEntities)
+
         val result = tagDao.insertTags(listOf(TagEntity(name = tagEntities.first().name)))
 
         Assert.assertEquals(-1, result[0])
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun updateTagsAndGetTags() = runTest {
         val tagEntities = List(5) { TagEntity(name = it.toString()) }
-
         val ids = tagDao.insertTags(tagEntities)
         val updateEntity = TagEntity(ids.first(), "-1")
+
         tagDao.updateTags(listOf(updateEntity))
         val tags = tagDao.getTagEntities().first()
 
         Assert.assertEquals(updateEntity.name, tags.find { it.id == ids.first() }?.name)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun updateTags_duplicateName() = runTest {
         val tagEntities = List(5) { TagEntity(name = it.toString()) }
-
         val ids = tagDao.insertTags(tagEntities)
+
         val result = tagDao.updateTags(listOf(TagEntity(ids.last(), tagEntities.first().name)))
 
         Assert.assertEquals(0, result)
+    }
+
+    @Test
+    fun deleteTags() = runTest {
+        val tagEntities = List(5) { TagEntity(name = it.toString()) }
+        val ids = tagDao.insertTags(tagEntities)
+
+        val result = tagDao.deleteTags(ids)
+
+        Assert.assertEquals(ids.size, result)
     }
 }

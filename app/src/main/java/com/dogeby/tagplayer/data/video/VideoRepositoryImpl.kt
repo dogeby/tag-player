@@ -1,4 +1,4 @@
-package com.dogeby.tagplayer.data.video.source
+package com.dogeby.tagplayer.data.video
 
 import com.dogeby.tagplayer.data.video.source.local.VideoLocalDataSource
 import com.dogeby.tagplayer.data.video.source.local.toVideo

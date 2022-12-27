@@ -1,28 +1,24 @@
 package com.dogeby.tagplayer.data.di
 
-import android.content.Context
-import com.dogeby.tagplayer.data.video.source.VideoRepository
-import com.dogeby.tagplayer.data.video.source.VideoRepositoryImpl
+import com.dogeby.tagplayer.data.video.VideoRepository
+import com.dogeby.tagplayer.data.video.VideoRepositoryImpl
 import com.dogeby.tagplayer.data.video.source.local.VideoLocalDataSource
 import com.dogeby.tagplayer.data.video.source.local.VideoLocalDataSourceImpl
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object VideoModule {
+abstract class VideoModule {
 
     @Singleton
-    @Provides
-    fun provideVideoLocalDataSource(@ApplicationContext context: Context): VideoLocalDataSource =
-        VideoLocalDataSourceImpl(context.contentResolver)
+    @Binds
+    abstract fun bindsVideoLocalDataSource(videoLocalDataSourceImpl: VideoLocalDataSourceImpl): VideoLocalDataSource
 
     @Singleton
-    @Provides
-    fun provideVideoRepository(videoRepositoryImpl: VideoRepositoryImpl): VideoRepository =
-        videoRepositoryImpl
+    @Binds
+    abstract fun bindsVideoRepository(videoRepositoryImpl: VideoRepositoryImpl): VideoRepository
 }

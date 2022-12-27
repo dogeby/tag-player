@@ -1,4 +1,4 @@
-package com.dogeby.tagplayer.data.video.source
+package com.dogeby.tagplayer.data.video
 
 import kotlinx.coroutines.flow.Flow
 

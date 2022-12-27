@@ -1,8 +1,8 @@
 package com.dogeby.tagplayer.data.di
 
 import android.content.Context
-import com.dogeby.tagplayer.data.video.source.VideoRepository
-import com.dogeby.tagplayer.data.video.source.VideoRepositoryImpl
+import com.dogeby.tagplayer.data.video.VideoRepository
+import com.dogeby.tagplayer.data.video.VideoRepositoryImpl
 import com.dogeby.tagplayer.data.video.source.local.VideoLocalDataSource
 import com.dogeby.tagplayer.data.video.source.local.VideoLocalDataSourceImpl
 import dagger.Module

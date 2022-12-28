@@ -4,29 +4,45 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.dogeby.tagplayer.database.model.VideoEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface VideoDao {
+abstract class VideoDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertVideos(entities: List<VideoEntity>): List<Long>
+    abstract suspend fun insertVideos(entities: List<VideoEntity>): List<Long>
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun updateVideos(entities: List<VideoEntity>): Int
+    abstract suspend fun updateVideos(entities: List<VideoEntity>): Int
+
+    @Transaction
+    open suspend fun cacheVideos(entities: List<VideoEntity>) {
+        deleteVideosNotInIds(entities.map { it.id })
+        updateVideos(entities)
+        insertVideos(entities)
+    }
 
     @Query(value = "DELETE FROM videos")
-    suspend fun deleteVideos(): Int
+    abstract suspend fun deleteVideos(): Int
 
     @Query(
         value = """
             DELETE FROM videos
-            WHERE id in (:ids)
+            WHERE id IN (:ids)
         """,
     )
-    suspend fun deleteVideos(ids: List<Long>): Int
+    abstract suspend fun deleteVideos(ids: List<Long>): Int
+
+    @Query(
+        value = """
+            DELETE FROM videos
+            WHERE id NOT IN (:ids)
+        """
+    )
+    abstract suspend fun deleteVideosNotInIds(ids: List<Long>)
 
     @Query(
         value = """
@@ -34,5 +50,5 @@ interface VideoDao {
             ORDER BY name
         """,
     )
-    fun getVideoEntities(): Flow<List<VideoEntity>>
+    abstract fun getVideoEntities(): Flow<List<VideoEntity>>
 }

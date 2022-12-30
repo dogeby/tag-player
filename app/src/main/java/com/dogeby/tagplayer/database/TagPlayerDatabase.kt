@@ -5,9 +5,10 @@ import androidx.room.RoomDatabase
 import com.dogeby.tagplayer.database.dao.TagDao
 import com.dogeby.tagplayer.database.dao.VideoDao
 import com.dogeby.tagplayer.database.model.TagEntity
+import com.dogeby.tagplayer.database.model.TagVideoCrossRef
 import com.dogeby.tagplayer.database.model.VideoEntity
 
-@Database(entities = [TagEntity::class, VideoEntity::class], version = 1)
+@Database(entities = [TagEntity::class, VideoEntity::class, TagVideoCrossRef::class], version = 1)
 abstract class TagPlayerDatabase : RoomDatabase() {
 
     abstract fun tagDao(): TagDao

@@ -7,9 +7,13 @@ import androidx.room.Relation
 data class VideoEntityWithTagEntities(
     @Embedded val videoEntity: VideoEntity,
     @Relation(
-        parentColumn = "video_id",
-        entityColumn = "tag_id",
-        associateBy = Junction(TagVideoCrossRef::class),
+        parentColumn = "id",
+        entityColumn = "id",
+        associateBy = Junction(
+            TagVideoCrossRef::class,
+            parentColumn = "video_id",
+            entityColumn = "tag_id"
+        ),
     )
     val tagEntities: List<TagEntity>,
 )

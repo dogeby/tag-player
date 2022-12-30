@@ -9,18 +9,27 @@ import com.dogeby.tagplayer.database.model.TagEntityWithVideoEntities
 import com.dogeby.tagplayer.database.model.TagVideoCrossRef
 import com.dogeby.tagplayer.database.model.VideoEntityWithTagEntities
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 @Dao
-interface TagVideoCrossRefDao {
+abstract class TagVideoCrossRefDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertTagVideoCrossRefs(tagVideoCrossRefs: List<TagVideoCrossRef>): List<Long>
+    abstract suspend fun insertTagVideoCrossRefs(tagVideoCrossRefs: List<TagVideoCrossRef>): List<Long>
 
     @Query(value = "DELETE FROM tag_video_cross_refs")
-    suspend fun deleteTagVideoCrossRefs(): Int
+    abstract suspend fun deleteTagVideoCrossRefs(): Int
 
     @Query(value = "SELECT * FROM tag_video_cross_refs")
-    fun getTagVideoCrossRefs(): Flow<List<TagVideoCrossRef>>
+    abstract fun getTagVideoCrossRefs(): Flow<List<TagVideoCrossRef>>
+
+    @Query(
+        value = """
+            SELECT DISTINCT video_id FROM tag_video_cross_refs
+            WHERE tag_id IN (:tagIds)
+        """
+    )
+    abstract fun getVideoIdsFilteredByTag(tagIds: List<Long>): Flow<List<Long>>
 
     @Transaction
     @Query(
@@ -29,7 +38,7 @@ interface TagVideoCrossRefDao {
         ORDER BY name
     """
     )
-    fun getTagsWithVideos(): Flow<List<TagEntityWithVideoEntities>>
+    abstract fun getTagsWithVideos(): Flow<List<TagEntityWithVideoEntities>>
 
     @Transaction
     @Query(
@@ -39,7 +48,7 @@ interface TagVideoCrossRefDao {
         ORDER BY name
     """
     )
-    fun getTagsWithVideos(ids: List<Long>): Flow<List<TagEntityWithVideoEntities>>
+    abstract fun getTagsWithVideos(ids: List<Long>): Flow<List<TagEntityWithVideoEntities>>
 
     @Transaction
     @Query(
@@ -48,7 +57,7 @@ interface TagVideoCrossRefDao {
         ORDER BY name
     """
     )
-    fun getVideosWithTags(): Flow<List<VideoEntityWithTagEntities>>
+    abstract fun getVideosWithTags(): Flow<List<VideoEntityWithTagEntities>>
 
     @Transaction
     @Query(
@@ -58,5 +67,10 @@ interface TagVideoCrossRefDao {
         ORDER BY name
     """
     )
-    fun getVideosWithTags(ids: List<Long>): Flow<List<VideoEntityWithTagEntities>>
+    abstract fun getVideosWithTags(ids: List<Long>): Flow<List<VideoEntityWithTagEntities>>
+
+    open suspend fun getVideosWithTagsFilteredByTag(ids: List<Long>): Flow<List<VideoEntityWithTagEntities>> {
+        val videoIds = getVideoIdsFilteredByTag(ids).first()
+        return getVideosWithTags(videoIds)
+    }
 }

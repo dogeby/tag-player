@@ -52,7 +52,8 @@ class TagVideoCrossRefDaoTest {
         val tagIds = tagDao.insertTags(tagEntities)
         val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
         val videoIds = videoDao.insertVideos(videoEntities)
-        val tagVideoCrossRefs = List(videoIds.size) { TagVideoCrossRef(tagIds.first(), videoIds[it]) }
+        val tagVideoCrossRefs =
+            List(videoIds.size) { TagVideoCrossRef(tagIds.first(), videoIds[it]) }
 
         tagVideoCrossRefDao.insertTagVideoCrossRefs(tagVideoCrossRefs)
         val tagsWithVideos = tagVideoCrossRefDao.getTagsWithVideos(listOf(tagIds.first())).first()
@@ -69,12 +70,41 @@ class TagVideoCrossRefDaoTest {
         val tagIds = tagDao.insertTags(tagEntities)
         val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
         val videoIds = videoDao.insertVideos(videoEntities)
-        val tagVideoCrossRefs = List(videoIds.size) { TagVideoCrossRef(tagIds.first(), videoIds[it]) }
+        val tagVideoCrossRefs =
+            List(videoIds.size) { TagVideoCrossRef(tagIds.first(), videoIds[it]) }
         tagVideoCrossRefDao.insertTagVideoCrossRefs(tagVideoCrossRefs)
 
         tagDao.deleteTags(listOf(tagIds.first()))
         val tagVideoCrossRefsInDb = tagVideoCrossRefDao.getTagVideoCrossRefs().first()
 
         Assert.assertEquals(0, tagVideoCrossRefsInDb.size)
+    }
+
+    @Test
+    fun getVideosWithTagsFilteredByTag() = runTest {
+        val tagEntities = List(5) { TagEntity(name = it.toString()) }
+        val tagIds = tagDao.insertTags(tagEntities)
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
+        val videoIds = videoDao.insertVideos(videoEntities)
+        tagVideoCrossRefDao.insertTagVideoCrossRefs(
+            List(videoIds.size) {
+                TagVideoCrossRef(
+                    tagIds.first(),
+                    videoIds[it],
+                )
+            },
+        )
+        tagVideoCrossRefDao.insertTagVideoCrossRefs(
+            List(videoIds.size / 2) {
+                TagVideoCrossRef(
+                    tagIds.last(),
+                    videoIds[it],
+                )
+            },
+        )
+
+        val videosWithTagsInDb = tagVideoCrossRefDao.getVideosWithTagsFilteredByTag(listOf(tagIds.last())).first()
+
+        Assert.assertEquals(videoIds.size / 2, videosWithTagsInDb.size)
     }
 }

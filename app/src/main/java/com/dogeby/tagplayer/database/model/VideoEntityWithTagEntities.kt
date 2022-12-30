@@ -3,6 +3,7 @@ package com.dogeby.tagplayer.database.model
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import com.dogeby.tagplayer.data.video.VideoWithTags
 
 data class VideoEntityWithTagEntities(
     @Embedded val videoEntity: VideoEntity,
@@ -16,4 +17,9 @@ data class VideoEntityWithTagEntities(
         ),
     )
     val tagEntities: List<TagEntity>,
+)
+
+fun VideoEntityWithTagEntities.toVideoWithTags() = VideoWithTags(
+    video = videoEntity.toVideo(),
+    tags = tagEntities.map { it.toTag() }
 )

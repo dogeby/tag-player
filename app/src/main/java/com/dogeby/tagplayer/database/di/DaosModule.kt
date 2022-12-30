@@ -2,6 +2,7 @@ package com.dogeby.tagplayer.database.di
 
 import com.dogeby.tagplayer.database.TagPlayerDatabase
 import com.dogeby.tagplayer.database.dao.TagDao
+import com.dogeby.tagplayer.database.dao.TagVideoCrossRefDao
 import com.dogeby.tagplayer.database.dao.VideoDao
 import dagger.Module
 import dagger.Provides
@@ -24,4 +25,10 @@ object DaosModule {
     fun providesVideoDao(
         database: TagPlayerDatabase,
     ): VideoDao = database.videoDao()
+
+    @Provides
+    @Singleton
+    fun providesTagVideoCrossRefDao(
+        database: TagPlayerDatabase,
+    ): TagVideoCrossRefDao = database.tagVideoCrossRefDao()
 }

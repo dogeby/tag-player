@@ -23,7 +23,7 @@ interface TagDao {
     @Query(
         value = """
             DELETE FROM tags
-            WHERE id in (:ids)
+            WHERE id IN (:ids)
         """,
     )
     suspend fun deleteTags(ids: List<Long>): Int

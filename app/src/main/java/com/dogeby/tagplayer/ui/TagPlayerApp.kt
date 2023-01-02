@@ -8,9 +8,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.dogeby.tagplayer.ui.navigation.HomeRoute
 import com.dogeby.tagplayer.ui.navigation.PermissionRoute
 import com.dogeby.tagplayer.ui.navigation.TagPlayerNavHost
+import com.dogeby.tagplayer.ui.navigation.VideoListRoute
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -34,7 +34,7 @@ fun TagPlayerApp() {
                 modifier = Modifier
                     .padding(contentPadding)
                     .fillMaxSize(),
-                startDestination = if (permissionState.status.isGranted) HomeRoute else PermissionRoute,
+                startDestination = if (permissionState.status.isGranted) VideoListRoute else PermissionRoute,
             )
         }
     }

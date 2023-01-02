@@ -11,7 +11,7 @@ class GetVideoItemsUseCase @Inject constructor(
     private val formatDurationUseCase: FormatDurationUseCase,
 ) {
 
-    suspend operator fun invoke(tagIdsToFilter: List<Long>): Flow<List<VideoItem>> {
+    operator fun invoke(tagIdsToFilter: List<Long>): Flow<List<VideoItem>> {
         return videoRepository.getVideosWithTagsFilteredByTag(tagIdsToFilter).mapToVideoItems()
     }
 

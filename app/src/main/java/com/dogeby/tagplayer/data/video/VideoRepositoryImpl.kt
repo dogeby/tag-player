@@ -32,7 +32,7 @@ class VideoRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getVideosWithTagsFilteredByTag(tagIds: List<Long>): Flow<List<VideoWithTags>> {
+    override fun getVideosWithTagsFilteredByTag(tagIds: List<Long>): Flow<List<VideoWithTags>> {
         return tagVideoCrossRefDao.getVideosWithTagsFilteredByTag(tagIds).map { videoEntityWithTagEntities ->
             videoEntityWithTagEntities.map { it.toVideoWithTags() }
         }

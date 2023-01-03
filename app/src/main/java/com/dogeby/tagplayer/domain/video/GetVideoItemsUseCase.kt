@@ -12,7 +12,9 @@ class GetVideoItemsUseCase @Inject constructor(
 ) {
 
     operator fun invoke(tagIdsToFilter: List<Long>): Flow<List<VideoItem>> {
-        return videoRepository.getVideosWithTagsFilteredByTag(tagIdsToFilter).mapToVideoItems()
+        val videosWithTags = if (tagIdsToFilter.isEmpty()) videoRepository.videosWithTags
+        else videoRepository.getVideosWithTagsFilteredByTag(tagIdsToFilter)
+        return videosWithTags.mapToVideoItems()
     }
 
     private fun Flow<List<VideoWithTags>>.mapToVideoItems(): Flow<List<VideoItem>> =

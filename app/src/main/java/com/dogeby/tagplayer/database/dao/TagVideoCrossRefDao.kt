@@ -8,8 +8,9 @@ import androidx.room.Transaction
 import com.dogeby.tagplayer.database.model.TagEntityWithVideoEntities
 import com.dogeby.tagplayer.database.model.TagVideoCrossRef
 import com.dogeby.tagplayer.database.model.VideoEntityWithTagEntities
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 
 @Dao
 abstract class TagVideoCrossRefDao {
@@ -69,8 +70,10 @@ abstract class TagVideoCrossRefDao {
     )
     abstract fun getVideosWithTags(ids: List<Long>): Flow<List<VideoEntityWithTagEntities>>
 
-    open suspend fun getVideosWithTagsFilteredByTag(ids: List<Long>): Flow<List<VideoEntityWithTagEntities>> {
-        val videoIds = getVideoIdsFilteredByTag(ids).first()
-        return getVideosWithTags(videoIds)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    open fun getVideosWithTagsFilteredByTag(ids: List<Long>): Flow<List<VideoEntityWithTagEntities>> {
+        return getVideoIdsFilteredByTag(ids).flatMapLatest { videoIds ->
+            getVideosWithTags(videoIds)
+        }
     }
 }

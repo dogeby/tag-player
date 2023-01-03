@@ -23,14 +23,14 @@ fun TagPlayerNavHost(
             PermissionScreen(
                 modifier = modifier,
                 onNavigateToDestination = {
-                    navController.navigate(HomeRoute) {
+                    navController.navigate(VideoListRoute) {
                         popUpTo(PermissionRoute) { inclusive = true }
                     }
                 },
             )
         }
-        composable(HomeRoute) {
-            // TODO: HomeScreen 구현
+        composable(VideoListRoute) {
+            // TODO: VideoListScreen 구현
         }
     }
 }

@@ -30,4 +30,8 @@ class TagRepositoryImpl @Inject constructor(
     override suspend fun deleteAllTags(): Result<Int> = runCatching {
         tagDao.deleteTags()
     }
+
+    override fun getTags(ids: List<Long>): Flow<List<Tag>> {
+        return tagDao.getTagEntities(ids).map { tagEntities -> tagEntities.map { it.toTag() } }
+    }
 }

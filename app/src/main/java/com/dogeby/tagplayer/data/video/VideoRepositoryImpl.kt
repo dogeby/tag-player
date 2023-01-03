@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 
 @Singleton
 class VideoRepositoryImpl @Inject constructor(
-    private val videoRemoteDataSource: VideoLocalDataSource,
+    private val videoLocalDataSource: VideoLocalDataSource,
     private val videoDao: VideoDao,
     private val tagVideoCrossRefDao: TagVideoCrossRefDao,
 ) : VideoRepository {
@@ -27,7 +27,7 @@ class VideoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateVideos(): Result<Unit> = runCatching {
-        videoRemoteDataSource.getVideoDataList().onSuccess { videoDataList ->
+        videoLocalDataSource.getVideoDataList().onSuccess { videoDataList ->
             videoDao.cacheVideos(videoDataList.map { it.toVideoEntity() })
         }
     }

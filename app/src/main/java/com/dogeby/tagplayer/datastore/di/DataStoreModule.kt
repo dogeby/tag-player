@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.dogeby.tagplayer.VideoListPreferences
-import com.dogeby.tagplayer.datastore.VideoListPreferencesSerializer
+import com.dogeby.tagplayer.datastore.videolist.VideoListPreferencesSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

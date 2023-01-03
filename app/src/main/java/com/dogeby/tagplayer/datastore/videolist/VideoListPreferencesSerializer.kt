@@ -1,4 +1,4 @@
-package com.dogeby.tagplayer.datastore
+package com.dogeby.tagplayer.datastore.videolist
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer

@@ -20,7 +20,7 @@ class VideoListPreferencesDataSourceImpl @Inject constructor(
             )
         }
 
-    override suspend fun setFilteredTagIds(tagIds: Set<Long>) {
+    override suspend fun setFilteredTagIds(tagIds: List<Long>) {
         videoListSettingPreferences.updateData {
             it.copy {
                 filteredTagIds.clear()

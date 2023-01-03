@@ -35,4 +35,13 @@ interface TagDao {
     """,
     )
     fun getTagEntities(): Flow<List<TagEntity>>
+
+    @Query(
+        value = """
+            SELECT * FROM tags
+            WHERE id IN (:ids)
+            ORDER BY name
+        """
+    )
+    fun getTagEntities(ids: List<Long>): Flow<List<TagEntity>>
 }

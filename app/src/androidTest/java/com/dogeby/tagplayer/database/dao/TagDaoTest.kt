@@ -85,4 +85,14 @@ class TagDaoTest {
 
         Assert.assertEquals(ids.size, result)
     }
+
+    @Test
+    fun insertTagsAndGetTagsWhereInIds() = runTest {
+        val tagEntities = List(5) { TagEntity(name = it.toString()) }
+
+        val id = tagDao.insertTags(tagEntities).first()
+        val tag = tagDao.getTagEntities(listOf(id)).first().first()
+
+        Assert.assertEquals(tagEntities.first().copy(id = id), tag)
+    }
 }

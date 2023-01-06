@@ -4,6 +4,7 @@ import com.dogeby.tagplayer.database.model.VideoEntity
 
 data class Video(
     val id: Long,
+    val uri: String,
     val name: String,
     val duration: Int,
     val parentDirectory: String,

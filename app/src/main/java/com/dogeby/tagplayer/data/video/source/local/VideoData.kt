@@ -11,8 +11,9 @@ data class VideoData(
     val size: Int,
 )
 
-fun VideoData.toVideo() = Video(
+fun VideoData.toVideo(uri: String) = Video(
     id = id,
+    uri = uri,
     name = name,
     duration = duration,
     parentDirectory = parentFolder,

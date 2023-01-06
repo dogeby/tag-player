@@ -13,9 +13,10 @@ data class VideoEntity(
     @ColumnInfo(name = "parent_directory") val parentDirectory: String,
 )
 
-fun VideoEntity.toVideo() =
+fun VideoEntity.toVideo(uri: String) =
     Video(
         id = id,
+        uri = uri,
         name = name,
         duration = duration,
         parentDirectory = parentDirectory,

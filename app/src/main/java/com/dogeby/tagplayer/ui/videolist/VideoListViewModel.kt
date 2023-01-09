@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.data.tag.Tag
 import com.dogeby.tagplayer.domain.preferences.GetFilteredTagUseCase
 import com.dogeby.tagplayer.domain.video.GetVideoItemsUseCase
+import com.dogeby.tagplayer.domain.video.UpdateVideoUseCase
 import com.dogeby.tagplayer.domain.video.VideoItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -13,11 +14,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class VideoListViewModel @Inject constructor(
     getFilteredTagUseCase: GetFilteredTagUseCase,
     getVideoItemsUseCase: GetVideoItemsUseCase,
+    updateVideoUseCase: UpdateVideoUseCase,
 ) : ViewModel() {
 
     val filteredTagsUiState: StateFlow<FilteredTagsUiState> = getFilteredTagUseCase()
@@ -37,4 +40,10 @@ class VideoListViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = VideoListUiState.Loading,
         )
+
+    init {
+        viewModelScope.launch {
+            updateVideoUseCase()
+        }
+    }
 }

@@ -3,6 +3,7 @@ package com.dogeby.tagplayer.database.dao
 import com.dogeby.tagplayer.database.model.TagEntity
 import com.dogeby.tagplayer.database.model.TagVideoCrossRef
 import com.dogeby.tagplayer.database.model.VideoEntity
+import com.dogeby.tagplayer.database.model.VideoEntityWithTagEntities
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import javax.inject.Inject
@@ -78,6 +79,33 @@ class TagVideoCrossRefDaoTest {
         val tagVideoCrossRefsInDb = tagVideoCrossRefDao.getTagVideoCrossRefs().first()
 
         Assert.assertEquals(0, tagVideoCrossRefsInDb.size)
+    }
+
+    @Test
+    fun getVideosWithTagsFilteredNotByTag() = runTest {
+        val tagEntities = List(5) { TagEntity(name = it.toString()) }
+        val tagIds = tagDao.insertTags(tagEntities)
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
+        val videoIds = videoDao.insertVideos(videoEntities)
+
+        val tagVideoCrossRefs = List(videoIds.size / 2) {
+            TagVideoCrossRef(
+                tagIds[it],
+                videoIds[it],
+            )
+        }
+        tagVideoCrossRefDao.insertTagVideoCrossRefs(tagVideoCrossRefs)
+        val videoWithTags = List(videoIds.size) { index ->
+            if (index < tagVideoCrossRefs.size) {
+                VideoEntityWithTagEntities(videoEntities[index].copy(id = videoIds[index]), listOf(tagEntities[index].copy(id = tagIds[index])))
+            } else {
+                VideoEntityWithTagEntities(videoEntities[index].copy(id = videoIds[index]), emptyList())
+            }
+        }
+
+        val videosWithTagsInDb = tagVideoCrossRefDao.getVideosWithTagsFilteredNotByTag().first()
+
+        Assert.assertEquals(videoWithTags, videosWithTagsInDb)
     }
 
     @Test

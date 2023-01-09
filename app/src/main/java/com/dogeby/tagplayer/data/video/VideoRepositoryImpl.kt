@@ -22,7 +22,7 @@ class VideoRepositoryImpl @Inject constructor(
         videoEntities.map { it.toVideo(it.id.toUri()) }
     }
 
-    override val videosWithTags: Flow<List<VideoWithTags>> = tagVideoCrossRefDao.getVideosWithTags().map { videoEntityWithTagEntities ->
+    override val videosWithTags: Flow<List<VideoWithTags>> = tagVideoCrossRefDao.getVideosWithTagsFilteredNotByTag().map { videoEntityWithTagEntities ->
         videoEntityWithTagEntities.map { it.toVideoWithTags(it.videoEntity.id.toUri()) }
     }
 

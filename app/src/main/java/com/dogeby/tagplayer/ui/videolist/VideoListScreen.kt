@@ -31,11 +31,12 @@ fun VideoListSetting(
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val filteredTags = if (filteredTagsUiState is FilteredTagsUiState.Success) {
-        filteredTagsUiState.filteredTagNames.joinToString(prefix = ": ")
-    } else {
-        ""
-    }
+    val filteredTags =
+        if (filteredTagsUiState is FilteredTagsUiState.Success && filteredTagsUiState.filteredTagNames.isNotEmpty()) {
+            filteredTagsUiState.filteredTagNames.joinToString(prefix = ": ")
+        } else {
+            ""
+        }
     Row(modifier = modifier) {
         SettingAssistChip(
             text = "${stringResource(id = R.string.videolist_filter)}$filteredTags",

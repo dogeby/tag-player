@@ -66,23 +66,13 @@ class VideoLocalDataSourceImpl @Inject constructor(
                             id = cursor.getLong(idColumn),
                             name = cursor.getString(nameColumn),
                             duration = cursor.getInt(durationColumn),
-                            parentFolder = formatPathToParentFolder(cursor.getString(pathColumn)),
+                            path = cursor.getString(pathColumn),
                             size = cursor.getInt(sizeColumn),
                         ),
                     )
                 }
             }
             tmpVideoDataList
-        }
-    }
-
-    private fun formatPathToParentFolder(path: String): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            path.dropLast(1)
-        } else {
-            path.split('/').run {
-                if (lastIndex <= 0) "" else get(lastIndex - 1)
-            }
         }
     }
 }

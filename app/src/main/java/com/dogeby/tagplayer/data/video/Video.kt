@@ -7,7 +7,7 @@ data class Video(
     val uri: String,
     val name: String,
     val duration: Int,
-    val parentDirectory: String,
+    val path: String,
 )
 
 fun Video.toVideoEntity() =
@@ -15,5 +15,5 @@ fun Video.toVideoEntity() =
         id = id,
         name = name,
         duration = duration,
-        parentDirectory = parentDirectory
+        path = path
     )

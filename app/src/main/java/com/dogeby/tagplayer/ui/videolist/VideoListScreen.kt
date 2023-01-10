@@ -1,18 +1,27 @@
 package com.dogeby.tagplayer.ui.videolist
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
@@ -36,7 +45,7 @@ fun VideoListSetting(
                     painter = painterResource(id = R.drawable.ic_filter_list),
                     contentDescription = null,
                 )
-            }
+            },
         )
     }
 }
@@ -55,6 +64,65 @@ fun SettingAssistChip(
         modifier = modifier.widthIn(max = dimensionResource(id = R.dimen.videolist_setting_assist_chip_max_width)),
         leadingIcon = leadingIcon,
     )
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun VideoThumbnail(
+    uri: String,
+    width: Int,
+    height: Int,
+    duration: String,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        shape = MaterialTheme.shapes.small,
+        modifier = modifier,
+    ) {
+        Box {
+            GlideImage(
+                model = uri,
+                contentDescription = null,
+                modifier = modifier,
+                contentScale = ContentScale.Crop
+            ) {
+                it
+                    .override(width, height)
+                    .placeholder(R.drawable.loading_animation)
+                    .error(R.drawable.ic_broken_image)
+                    .fallback(R.drawable.ic_broken_image)
+            }
+
+            VideoDuration(
+                duration = duration,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(
+                        end = dimensionResource(id = R.dimen.videolist_video_thumbnail_end_bottom_padding),
+                        bottom = dimensionResource(id = R.dimen.videolist_video_thumbnail_end_bottom_padding),
+                    ),
+            )
+        }
+    }
+}
+
+@Composable
+fun VideoDuration(
+    duration: String,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        color = Color.Black,
+        shape = MaterialTheme.shapes.small,
+        modifier = modifier,
+    ) {
+        Text(
+            text = duration,
+            color = Color.White,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.videolist_video_duration_horizontal_padding)),
+        )
+    }
 }
 
 @Preview(showBackground = true, heightDp = 640, widthDp = 360)

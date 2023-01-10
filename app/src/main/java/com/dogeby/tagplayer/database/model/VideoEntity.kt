@@ -1,6 +1,5 @@
 package com.dogeby.tagplayer.database.model
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.dogeby.tagplayer.data.video.Video
@@ -10,13 +9,14 @@ data class VideoEntity(
     @PrimaryKey val id: Long,
     val name: String,
     val duration: Int,
-    @ColumnInfo(name = "parent_directory") val parentDirectory: String,
+    val path: String,
 )
 
-fun VideoEntity.toVideo() =
+fun VideoEntity.toVideo(uri: String) =
     Video(
         id = id,
+        uri = uri,
         name = name,
         duration = duration,
-        parentDirectory = parentDirectory,
+        path = path,
     )

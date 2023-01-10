@@ -1,6 +1,7 @@
 package com.dogeby.tagplayer.data.video.source.local
 
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -15,19 +16,18 @@ class VideoLocalDataSourceImpl @Inject constructor(
 ) : VideoLocalDataSource {
 
     private val contextResolver = appContext.contentResolver
+    override val contentUri: String
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+        } else {
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        }.toString()
 
     override suspend fun getVideoDataList() = runCatching {
         val tmpVideoDataList = mutableListOf<VideoData>()
 
         withContext(Dispatchers.IO) {
-            val collection =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    MediaStore.Video.Media.getContentUri(
-                        MediaStore.VOLUME_EXTERNAL,
-                    )
-                } else {
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                }
+            val collection = Uri.parse(contentUri)
 
             val projection = arrayOf(
                 MediaStore.Video.Media._ID,
@@ -66,23 +66,13 @@ class VideoLocalDataSourceImpl @Inject constructor(
                             id = cursor.getLong(idColumn),
                             name = cursor.getString(nameColumn),
                             duration = cursor.getInt(durationColumn),
-                            parentFolder = formatPathToParentFolder(cursor.getString(pathColumn)),
+                            path = cursor.getString(pathColumn),
                             size = cursor.getInt(sizeColumn),
                         ),
                     )
                 }
             }
             tmpVideoDataList
-        }
-    }
-
-    private fun formatPathToParentFolder(path: String): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            path.dropLast(1)
-        } else {
-            path.split('/').run {
-                if (lastIndex <= 0) "" else get(lastIndex - 1)
-            }
         }
     }
 }

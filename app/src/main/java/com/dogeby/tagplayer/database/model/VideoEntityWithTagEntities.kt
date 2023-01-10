@@ -19,7 +19,7 @@ data class VideoEntityWithTagEntities(
     val tagEntities: List<TagEntity>,
 )
 
-fun VideoEntityWithTagEntities.toVideoWithTags() = VideoWithTags(
-    video = videoEntity.toVideo(),
+fun VideoEntityWithTagEntities.toVideoWithTags(uri: String) = VideoWithTags(
+    video = videoEntity.toVideo(uri),
     tags = tagEntities.map { it.toTag() }
 )

@@ -19,11 +19,11 @@ class VideoRepositoryImpl @Inject constructor(
 ) : VideoRepository {
 
     override val videos: Flow<List<Video>> = videoDao.getVideoEntities().map { videoEntities ->
-        videoEntities.map { it.toVideo() }
+        videoEntities.map { it.toVideo(it.id.toUri()) }
     }
 
-    override val videosWithTags: Flow<List<VideoWithTags>> = tagVideoCrossRefDao.getVideosWithTags().map { videoEntityWithTagEntities ->
-        videoEntityWithTagEntities.map { it.toVideoWithTags() }
+    override val videosWithTags: Flow<List<VideoWithTags>> = tagVideoCrossRefDao.getVideosWithTagsFilteredNotByTag().map { videoEntityWithTagEntities ->
+        videoEntityWithTagEntities.map { it.toVideoWithTags(it.videoEntity.id.toUri()) }
     }
 
     override suspend fun updateVideos(): Result<Unit> = runCatching {
@@ -34,7 +34,11 @@ class VideoRepositoryImpl @Inject constructor(
 
     override fun getVideosWithTagsFilteredByTag(tagIds: List<Long>): Flow<List<VideoWithTags>> {
         return tagVideoCrossRefDao.getVideosWithTagsFilteredByTag(tagIds).map { videoEntityWithTagEntities ->
-            videoEntityWithTagEntities.map { it.toVideoWithTags() }
+            videoEntityWithTagEntities.map { it.toVideoWithTags(it.videoEntity.id.toUri()) }
         }
+    }
+
+    private fun Long.toUri(): String {
+        return "${videoLocalDataSource.contentUri}/$this"
     }
 }

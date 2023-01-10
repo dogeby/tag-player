@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dogeby.tagplayer.ui.permission.PermissionScreen
+import com.dogeby.tagplayer.ui.videolist.VideoListRoute
 
 @Composable
 fun TagPlayerNavHost(
@@ -30,7 +31,10 @@ fun TagPlayerNavHost(
             )
         }
         composable(VideoListRoute) {
-            // TODO: VideoListScreen 구현
+            VideoListRoute(
+                onNavigateToPlayer = { /*TODO*/ },
+                onNavigateToFilterSetting = { /*TODO*/ },
+            )
         }
     }
 }

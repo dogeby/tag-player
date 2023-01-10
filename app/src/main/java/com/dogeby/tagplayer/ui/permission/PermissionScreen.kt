@@ -167,13 +167,12 @@ fun PermissionScreen(
             description = R.string.permission_read_media_video_description,
         )
         Spacer(modifier = Modifier.weight(1f))
-
         Button(
             onClick = {
                 if (permissionState.status.shouldShowRationale) {
-                    permissionState.launchPermissionRequest()
-                } else {
                     permissionDialogState.value = true
+                } else {
+                    permissionState.launchPermissionRequest()
                 }
             },
             modifier = Modifier.fillMaxWidth(),

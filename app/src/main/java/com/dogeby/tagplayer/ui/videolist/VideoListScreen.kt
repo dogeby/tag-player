@@ -94,13 +94,14 @@ fun VideoThumbnail(
                     .fallback(R.drawable.ic_broken_image)
             }
 
+            val thumbnailDurationPadding = dimensionResource(id = R.dimen.videolist_video_thumbnail_duration_padding)
             VideoDuration(
                 duration = duration,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(
-                        end = dimensionResource(id = R.dimen.videolist_video_thumbnail_end_bottom_padding),
-                        bottom = dimensionResource(id = R.dimen.videolist_video_thumbnail_end_bottom_padding),
+                        end = thumbnailDurationPadding,
+                        bottom = thumbnailDurationPadding,
                     ),
             )
         }
@@ -122,6 +123,27 @@ fun VideoDuration(
             color = Color.White,
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.videolist_video_duration_horizontal_padding)),
+        )
+    }
+}
+
+@Composable
+fun VideoTag(
+    name: String,
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.small,
+        color = color,
+    ) {
+        Text(
+            text = name,
+            modifier = Modifier
+                .padding(horizontal = dimensionResource(id = R.dimen.videolist_video_tag_horizontal_padding)),
+            maxLines = 1,
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }

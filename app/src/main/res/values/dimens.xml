@@ -9,5 +9,5 @@
 
     <dimen name="videolist_setting_assist_chip_max_width">210dp</dimen>
     <dimen name="videolist_video_duration_horizontal_padding">2dp</dimen>
-    <dimen name="videolist_video_thumbnail_end_bottom_padding">4dp</dimen>
+    <dimen name="videolist_video_tag_horizontal_padding">4dp</dimen>
 </resources>

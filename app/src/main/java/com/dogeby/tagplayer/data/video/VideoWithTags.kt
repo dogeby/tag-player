@@ -15,6 +15,7 @@ fun VideoWithTags.toVideoItem(duration: String) =
             uri = uri,
             name = name,
             duration = duration,
+            parentDirectories = path.split('/').filter { it.isNotBlank() },
             tags = tags,
         )
     }

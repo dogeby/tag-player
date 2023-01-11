@@ -51,7 +51,7 @@ class TagVideoCrossRefDaoTest {
     fun insertTagVideoCrossRefsAndGetTagsWithVideosWhereInId() = runTest {
         val tagEntities = List(5) { TagEntity(name = it.toString()) }
         val tagIds = tagDao.insertTags(tagEntities)
-        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it.toString(), it, it.toString()) }
         val videoIds = videoDao.insertVideos(videoEntities)
         val tagVideoCrossRefs =
             List(videoIds.size) { TagVideoCrossRef(tagIds.first(), videoIds[it]) }
@@ -69,7 +69,7 @@ class TagVideoCrossRefDaoTest {
     fun autoDeleteByForeignKeyOnDelete() = runTest {
         val tagEntities = List(5) { TagEntity(name = it.toString()) }
         val tagIds = tagDao.insertTags(tagEntities)
-        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it.toString(), it, it.toString()) }
         val videoIds = videoDao.insertVideos(videoEntities)
         val tagVideoCrossRefs =
             List(videoIds.size) { TagVideoCrossRef(tagIds.first(), videoIds[it]) }
@@ -85,7 +85,7 @@ class TagVideoCrossRefDaoTest {
     fun getVideosWithTagsFilteredNotByTag() = runTest {
         val tagEntities = List(5) { TagEntity(name = it.toString()) }
         val tagIds = tagDao.insertTags(tagEntities)
-        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it.toString(), it, it.toString()) }
         val videoIds = videoDao.insertVideos(videoEntities)
 
         val tagVideoCrossRefs = List(videoIds.size / 2) {
@@ -112,7 +112,7 @@ class TagVideoCrossRefDaoTest {
     fun getVideosWithTagsFilteredByTag() = runTest {
         val tagEntities = List(5) { TagEntity(name = it.toString()) }
         val tagIds = tagDao.insertTags(tagEntities)
-        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it.toString(), it, it.toString()) }
         val videoIds = videoDao.insertVideos(videoEntities)
         tagVideoCrossRefDao.insertTagVideoCrossRefs(
             List(videoIds.size) {

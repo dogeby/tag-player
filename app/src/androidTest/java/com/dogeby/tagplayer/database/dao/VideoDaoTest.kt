@@ -36,7 +36,7 @@ class VideoDaoTest {
 
     @Test
     fun cacheVideos_insertVideos() = runTest {
-        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it.toString(), it, it.toString()) }
         videoDao.insertVideos(videoEntities.dropLast(1))
 
         videoDao.cacheVideos(videoEntities)
@@ -47,7 +47,7 @@ class VideoDaoTest {
 
     @Test
     fun cacheVideos_updateVideos() = runTest {
-        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it.toString(), it, it.toString()) }
         val changedNameVideoEntities = videoEntities.map { it.copy(name = "new${it.name}") }
         videoDao.insertVideos(videoEntities)
 
@@ -59,7 +59,7 @@ class VideoDaoTest {
 
     @Test
     fun cacheVideos_deleteVideos() = runTest {
-        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it.toString(), it, it.toString()) }
         val newVideoEntities = videoEntities.drop(1)
         videoDao.insertVideos(videoEntities)
 
@@ -71,7 +71,7 @@ class VideoDaoTest {
 
     @Test
     fun deleteVideosNotInIds() = runTest {
-        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it, it.toString()) }
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it.toString(), it, it.toString()) }
         val ids = videoDao.insertVideos(videoEntities)
 
         videoDao.deleteVideosNotInIds(listOf(ids.first()))

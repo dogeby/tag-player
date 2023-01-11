@@ -8,6 +8,7 @@ import com.dogeby.tagplayer.data.video.Video
 data class VideoEntity(
     @PrimaryKey val id: Long,
     val name: String,
+    val extension: String,
     val duration: Int,
     val path: String,
 )
@@ -17,6 +18,7 @@ fun VideoEntity.toVideo(uri: String) =
         id = id,
         uri = uri,
         name = name,
+        extension = extension,
         duration = duration,
         path = path,
     )

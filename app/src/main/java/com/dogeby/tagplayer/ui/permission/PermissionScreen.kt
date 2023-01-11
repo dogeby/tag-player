@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -140,8 +141,10 @@ fun PermissionScreen(
         },
     )
     if (permissionState.status.isGranted) {
-        permissionDialogState.value = false
-        onNavigateToDestination()
+        LaunchedEffect(permissionState.permission) {
+            permissionDialogState.value = false
+            onNavigateToDestination()
+        }
     }
 
     Column(
@@ -167,13 +170,12 @@ fun PermissionScreen(
             description = R.string.permission_read_media_video_description,
         )
         Spacer(modifier = Modifier.weight(1f))
-
         Button(
             onClick = {
                 if (permissionState.status.shouldShowRationale) {
-                    permissionState.launchPermissionRequest()
-                } else {
                     permissionDialogState.value = true
+                } else {
+                    permissionState.launchPermissionRequest()
                 }
             },
             modifier = Modifier.fillMaxWidth(),

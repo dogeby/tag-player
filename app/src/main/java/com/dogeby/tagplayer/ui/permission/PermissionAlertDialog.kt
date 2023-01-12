@@ -24,11 +24,12 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 fun PermissionAlertDialog(
     modifier: Modifier = Modifier,
     dismissButtonText: String = stringResource(id = R.string.cancel),
-    onDismissRequest: () -> Unit = {},
+    isDismissRequest: Boolean = false,
+    onDismiss: () -> Unit = {},
 ) {
     AlertDialog(
         modifier = modifier.padding(all = dimensionResource(id = R.dimen.padding_medium)),
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = { if (isDismissRequest) onDismiss() },
         text = {
             Text(
                 text = "${stringResource(id = R.string.permission_dialog_require_description)}\n\n${
@@ -45,7 +46,7 @@ fun PermissionAlertDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismissRequest) {
+            TextButton(onClick = onDismiss) {
                 Text(text = dismissButtonText)
             }
         },

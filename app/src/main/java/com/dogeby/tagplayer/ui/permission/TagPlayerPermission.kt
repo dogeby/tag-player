@@ -26,7 +26,7 @@ fun AppPermissionDeniedByExternalAction(
     if (permissionState.status.isGranted.not()) {
         PermissionAlertDialog(
             dismissButtonText = stringResource(id = R.string.exit),
-            onDismissRequest = onExitClick
+            onDismiss = onExitClick,
         )
     }
 }

@@ -80,7 +80,8 @@ fun PermissionScreen(
     var isShowPermissionDialog by rememberSaveable { mutableStateOf(false) }
     if (isShowPermissionDialog) {
         PermissionAlertDialog(
-            onDismissRequest = { isShowPermissionDialog = false },
+            isDismissRequest = true,
+            onDismiss = { isShowPermissionDialog = false },
         )
     }
 

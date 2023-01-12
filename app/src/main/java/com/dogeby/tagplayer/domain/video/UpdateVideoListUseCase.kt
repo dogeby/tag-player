@@ -3,7 +3,7 @@ package com.dogeby.tagplayer.domain.video
 import com.dogeby.tagplayer.data.video.VideoRepository
 import javax.inject.Inject
 
-class UpdateVideoUseCase @Inject constructor(
+class UpdateVideoListUseCase @Inject constructor(
     private val videoRepository: VideoRepository
 ) {
 

@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,8 +43,14 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
+import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun VideoListRoute(
     onExit: () -> Unit,
@@ -55,6 +62,12 @@ fun VideoListRoute(
     val videoListUiState: VideoListUiState by viewModel.videoListUiState.collectAsState()
     val filteredTagsUiState: FilteredTagsUiState by viewModel.filteredTagsUiState.collectAsState()
 
+    val permissionState: PermissionState = rememberPermissionState(AppRequiredPermission)
+    if (permissionState.status.isGranted) {
+        LaunchedEffect(Unit) {
+            viewModel.updateVideoList()
+        }
+    }
     AppPermissionDeniedByExternalAction(onExit)
 
     VideoListScreen(

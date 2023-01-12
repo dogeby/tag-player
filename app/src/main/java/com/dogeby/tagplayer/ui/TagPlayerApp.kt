@@ -14,13 +14,13 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TagPlayerApp(
-    onExitClick: () -> Unit = {},
+    onExit: () -> Unit = {},
     isRequiredPermissionsGranted: Boolean,
 ) {
     TagPlayerTheme {
         Scaffold { contentPadding ->
             TagPlayerNavHost(
-                onExitClick = onExitClick,
+                onExit = onExit,
                 modifier = Modifier
                     .padding(contentPadding)
                     .fillMaxSize(),

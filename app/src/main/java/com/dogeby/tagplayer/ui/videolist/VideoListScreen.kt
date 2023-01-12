@@ -41,10 +41,12 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
+import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
 fun VideoListRoute(
+    onExit: () -> Unit,
     onNavigateToPlayer: () -> Unit,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
@@ -52,6 +54,8 @@ fun VideoListRoute(
 ) {
     val videoListUiState: VideoListUiState by viewModel.videoListUiState.collectAsState()
     val filteredTagsUiState: FilteredTagsUiState by viewModel.filteredTagsUiState.collectAsState()
+
+    AppPermissionDeniedByExternalAction(onExit)
 
     VideoListScreen(
         videoListUiState = videoListUiState,

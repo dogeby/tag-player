@@ -20,7 +20,7 @@ class TagPlayerActivity : ComponentActivity() {
 
         setContent {
             TagPlayerApp(
-                onExitClick = { finish() },
+                onExit = { finish() },
                 isRequiredPermissionsGranted = isRequiredPermissionsGranted,
             )
         }

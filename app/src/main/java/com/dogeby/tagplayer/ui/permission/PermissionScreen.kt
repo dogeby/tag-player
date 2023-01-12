@@ -1,8 +1,6 @@
 package com.dogeby.tagplayer.ui.permission
 
-import android.Manifest
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -87,11 +85,7 @@ fun PermissionScreen(
     }
 
     val permissionState = rememberPermissionState(
-        permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_VIDEO
-        } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        },
+        permission = AppRequiredPermission
     )
     if (permissionState.status.isGranted) {
         LaunchedEffect(permissionState.permission) {

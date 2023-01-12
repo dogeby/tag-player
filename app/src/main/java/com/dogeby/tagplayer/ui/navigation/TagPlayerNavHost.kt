@@ -11,6 +11,7 @@ import com.dogeby.tagplayer.ui.videolist.VideoListRoute
 
 @Composable
 fun TagPlayerNavHost(
+    onExit: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = PermissionRoute,
@@ -32,6 +33,7 @@ fun TagPlayerNavHost(
         }
         composable(VideoListRoute) {
             VideoListRoute(
+                onExit = onExit,
                 onNavigateToPlayer = { /*TODO*/ },
                 onNavigateToFilterSetting = { /*TODO*/ },
             )

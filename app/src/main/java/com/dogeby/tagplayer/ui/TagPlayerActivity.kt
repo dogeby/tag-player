@@ -19,7 +19,10 @@ class TagPlayerActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            TagPlayerApp(isRequiredPermissionsGranted)
+            TagPlayerApp(
+                onExitClick = { finish() },
+                isRequiredPermissionsGranted = isRequiredPermissionsGranted,
+            )
         }
     }
 }

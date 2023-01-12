@@ -6,11 +6,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
 import com.dogeby.tagplayer.ui.permission.PermissionScreen
 import com.dogeby.tagplayer.ui.videolist.VideoListRoute
 
 @Composable
 fun TagPlayerNavHost(
+    onExitClick: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = PermissionRoute,
@@ -31,6 +33,7 @@ fun TagPlayerNavHost(
             )
         }
         composable(VideoListRoute) {
+            AppPermissionDeniedByExternalAction(onExitClick)
             VideoListRoute(
                 onNavigateToPlayer = { /*TODO*/ },
                 onNavigateToFilterSetting = { /*TODO*/ },

@@ -2,6 +2,7 @@
     <string name="app_name">택플</string>
     <string name="ok">확인</string>
     <string name="cancel">닫기</string>
+    <string name="exit">종료</string>
 
     <string name="permission_guide_app_access_permission">앱 접근 권한 안내</string>
     <string name="permission_app_permission_request_description">택플을 사용하기 위해서는 다음과 같은 권한들이 필요합니다.</string>

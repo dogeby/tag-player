@@ -1,9 +1,7 @@
 package com.dogeby.tagplayer.ui.permission
 
 import android.Manifest
-import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.net.Uri
 import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -16,27 +14,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.dogeby.tagplayer.BuildConfig
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -78,58 +73,16 @@ private fun PermissionElement(
     }
 }
 
-@Composable
-fun PermissionAlertDialog(
-    modifier: Modifier = Modifier,
-    onConfirmClick: () -> Unit,
-    dialogState: MutableState<Boolean> = rememberSaveable { mutableStateOf(true) },
-) {
-    if (dialogState.value) {
-        AlertDialog(
-            modifier = modifier.padding(all = dimensionResource(id = R.dimen.padding_medium)),
-            onDismissRequest = { dialogState.value = false },
-            text = {
-                Text(
-                    text = "${stringResource(id = R.string.permission_dialog_require_description)}\n\n${
-                    stringResource(id = R.string.permission_dialog_method_description)
-                    }",
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = onConfirmClick,
-                ) {
-                    Text(text = stringResource(id = R.string.permission_dialog_app_setting))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { dialogState.value = false }) {
-                    Text(text = stringResource(id = R.string.cancel))
-                }
-            },
-        )
-    }
-}
-
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PermissionScreen(
     modifier: Modifier = Modifier,
     onNavigateToDestination: () -> Unit,
 ) {
-    val permissionDialogState = rememberSaveable { mutableStateOf(false) }
-    if (permissionDialogState.value) {
-        val context = LocalContext.current
+    var isShowPermissionDialog by rememberSaveable { mutableStateOf(false) }
+    if (isShowPermissionDialog) {
         PermissionAlertDialog(
-            onConfirmClick = {
-                context.startActivity(
-                    Intent(
-                        android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.parse("package:" + BuildConfig.APPLICATION_ID),
-                    ),
-                )
-            },
-            dialogState = permissionDialogState,
+            onDismissRequest = { isShowPermissionDialog = false },
         )
     }
 
@@ -142,7 +95,7 @@ fun PermissionScreen(
     )
     if (permissionState.status.isGranted) {
         LaunchedEffect(permissionState.permission) {
-            permissionDialogState.value = false
+            isShowPermissionDialog = false
             onNavigateToDestination()
         }
     }
@@ -173,7 +126,7 @@ fun PermissionScreen(
         Button(
             onClick = {
                 if (permissionState.status.shouldShowRationale) {
-                    permissionDialogState.value = true
+                    isShowPermissionDialog = true
                 } else {
                     permissionState.launchPermissionRequest()
                 }
@@ -195,17 +148,6 @@ fun PermissionElementPreview() {
             image = R.drawable.ic_media_video_permission,
             title = R.string.permission_read_media_video,
             description = R.string.permission_read_media_video_description,
-        )
-    }
-}
-
-@Preview(name = "light", showBackground = true)
-@Preview(name = "night", showBackground = true, uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun PermissionAlertDialogPreview() {
-    TagPlayerTheme {
-        PermissionAlertDialog(
-            onConfirmClick = {},
         )
     }
 }

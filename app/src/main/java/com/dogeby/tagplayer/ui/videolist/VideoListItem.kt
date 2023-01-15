@@ -22,7 +22,7 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 
 @Composable
-fun VideoItem(
+fun VideoListItem(
     videoItem: VideoItem,
     onNavigateToPlayer: () -> Unit,
     modifier: Modifier = Modifier,

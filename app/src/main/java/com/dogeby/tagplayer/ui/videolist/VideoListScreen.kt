@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
-import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
@@ -130,7 +129,7 @@ fun VideoList(
         modifier = modifier,
     ) {
         items(videoListUiState.videoItems) { videoItem ->
-            VideoItem(
+            VideoListItem(
                 videoItem = videoItem,
                 onNavigateToPlayer = onNavigateToPlayer,
                 modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.padding_small)),

@@ -131,7 +131,7 @@ fun VideoList(
         items(videoListUiState.videoItems) { videoItem ->
             VideoListItem(
                 videoItem = videoItem,
-                onNavigateToPlayer = onNavigateToPlayer,
+                onClick = { onNavigateToPlayer() },
                 modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.padding_small)),
             )
         }

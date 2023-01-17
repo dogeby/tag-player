@@ -79,13 +79,21 @@ fun VideoListScreen(
     Scaffold(
         modifier = modifier,
         bottomBar = {
-            VideoListBottomAppBar(
-                isFilterButtonChecked = isFilteredTag,
-                onSearchButtonClick = { /*TODO*/ },
-                onFilterButtonClick = onNavigateToFilterSetting,
-                onSortButtonClick = { /*TODO*/ },
-            )
-        }
+            if (isSelectMode) {
+                VideoItemBottomAppBar(
+                    onAllItemSelectButtonClick = { /*TODO*/ },
+                    onTagSettingButtonClick = { /*TODO*/ },
+                    onInfoButtonClick = { /*TODO*/ },
+                )
+            } else {
+                VideoListBottomAppBar(
+                    isFilterButtonChecked = isFilteredTag,
+                    onSearchButtonClick = { /*TODO*/ },
+                    onFilterButtonClick = onNavigateToFilterSetting,
+                    onSortButtonClick = { /*TODO*/ },
+                )
+            }
+        },
     ) { contentPadding ->
         Column(
             modifier = Modifier.padding(contentPadding),

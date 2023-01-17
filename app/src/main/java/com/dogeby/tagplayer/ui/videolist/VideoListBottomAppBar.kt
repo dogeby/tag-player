@@ -37,6 +37,28 @@ fun VideoListBottomAppBar(
     }
 }
 
+@Composable
+fun VideoItemBottomAppBar(
+    onAllItemSelectButtonClick: () -> Unit,
+    onTagSettingButtonClick: () -> Unit,
+    onInfoButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    BottomAppBar(
+        modifier = modifier,
+    ) {
+        IconButton(onClick = onAllItemSelectButtonClick) {
+            Icon(painter = painterResource(id = R.drawable.ic_all_select), contentDescription = null)
+        }
+        IconButton(onClick = onTagSettingButtonClick) {
+            Icon(painter = painterResource(id = R.drawable.ic_tag), contentDescription = null)
+        }
+        IconButton(onClick = onInfoButtonClick,) {
+            Icon(painter = painterResource(id = R.drawable.ic_info), contentDescription = null)
+        }
+    }
+}
+
 @Preview
 @Composable
 fun VideoListBottomAppBar() {

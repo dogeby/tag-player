@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,6 +37,7 @@ fun VideoListRoute(
     viewModel: VideoListViewModel = hiltViewModel(),
 ) {
     val videoListUiState: VideoListUiState by viewModel.videoListUiState.collectAsState()
+    val isFilteredTag: Boolean by viewModel.isFilteredTag.collectAsState()
     val isSelectMode: Boolean by viewModel.isSelectMode.collectAsState()
     val isSelectedVideoItems: Map<Long, Boolean> = viewModel.isSelectedVideoItems
 
@@ -52,11 +55,13 @@ fun VideoListRoute(
         isSelectedVideoItems = isSelectedVideoItems.toMap(),
         onNavigateToPlayer = onNavigateToPlayer,
         onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
+        isFilteredTag = isFilteredTag,
         modifier = modifier.fillMaxWidth(),
         onNavigateToFilterSetting = onNavigateToFilterSetting,
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoListScreen(
     videoListUiState: VideoListUiState,
@@ -64,28 +69,42 @@ fun VideoListScreen(
     isSelectedVideoItems: Map<Long, Boolean>,
     onNavigateToPlayer: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
+    isFilteredTag: Boolean,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var progressIndicatorState by rememberSaveable { mutableStateOf(videoListUiState is VideoListUiState.Loading) }
     if (progressIndicatorState) LinearProgressIndicator(modifier = modifier)
 
-    Column(
-        modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small)),
-    ) {
-        when (videoListUiState) {
-            VideoListUiState.Loading -> {
-                progressIndicatorState = true
-            }
-            is VideoListUiState.Success -> {
-                progressIndicatorState = false
-                VideoList(
-                    videoListUiState = videoListUiState,
-                    isSelectMode = isSelectMode,
-                    isSelectedVideoItems = isSelectedVideoItems,
-                    onNavigateToPlayer = onNavigateToPlayer,
-                    onToggleVideoItem = onToggleVideoItem,
-                )
+    Scaffold(
+        modifier = modifier,
+        bottomBar = {
+            VideoListBottomAppBar(
+                isFilterButtonChecked = isFilteredTag,
+                onSearchButtonClick = { /*TODO*/ },
+                onFilterButtonClick = onNavigateToFilterSetting,
+                onSortButtonClick = { /*TODO*/ },
+            )
+        }
+    ) { contentPadding ->
+        Column(
+            modifier = Modifier.padding(contentPadding),
+        ) {
+            when (videoListUiState) {
+                VideoListUiState.Loading -> {
+                    progressIndicatorState = true
+                }
+                is VideoListUiState.Success -> {
+                    progressIndicatorState = false
+                    VideoList(
+                        videoListUiState = videoListUiState,
+                        isSelectMode = isSelectMode,
+                        isSelectedVideoItems = isSelectedVideoItems,
+                        onNavigateToPlayer = onNavigateToPlayer,
+                        onToggleVideoItem = onToggleVideoItem,
+                        modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+                    )
+                }
             }
         }
     }

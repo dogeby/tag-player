@@ -29,16 +29,23 @@ import com.dogeby.tagplayer.domain.video.VideoItem
 @Composable
 fun VideoListItem(
     videoItem: VideoItem,
+    isSelected: Boolean,
     onClick: (VideoItem) -> Unit,
+    onLongClick: (VideoItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer
+            else MaterialTheme.colorScheme.surfaceVariant,
+        ),
         modifier = modifier
             .fillMaxWidth()
             .height(dimensionResource(id = R.dimen.videolist_video_item_height))
             .clip(CardDefaults.shape)
             .combinedClickable(
                 onClick = { onClick(videoItem) },
+                onLongClick = { onLongClick(videoItem) },
             ),
     ) {
         Row {

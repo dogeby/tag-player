@@ -41,6 +41,8 @@ fun VideoListRoute(
 ) {
     val videoListUiState: VideoListUiState by viewModel.videoListUiState.collectAsState()
     val filteredTagsUiState: FilteredTagsUiState by viewModel.filteredTagsUiState.collectAsState()
+    val isSelectMode: Boolean by viewModel.isSelectMode.collectAsState()
+    val isSelectedVideoItems: Map<Long, Boolean> = viewModel.isSelectedVideoItems
 
     val permissionState: PermissionState = rememberPermissionState(AppRequiredPermission)
     if (permissionState.status.isGranted) {
@@ -53,7 +55,10 @@ fun VideoListRoute(
     VideoListScreen(
         videoListUiState = videoListUiState,
         filteredTagsUiState = filteredTagsUiState,
+        isSelectMode = isSelectMode,
+        isSelectedVideoItems = isSelectedVideoItems.toMap(),
         onNavigateToPlayer = onNavigateToPlayer,
+        onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
         modifier = modifier.fillMaxWidth(),
         onNavigateToFilterSetting = onNavigateToFilterSetting,
     )
@@ -63,7 +68,10 @@ fun VideoListRoute(
 fun VideoListScreen(
     videoListUiState: VideoListUiState,
     filteredTagsUiState: FilteredTagsUiState,
+    isSelectMode: Boolean,
+    isSelectedVideoItems: Map<Long, Boolean>,
     onNavigateToPlayer: () -> Unit,
+    onToggleVideoItem: (Long) -> Unit,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -86,7 +94,10 @@ fun VideoListScreen(
                 progressIndicatorState = false
                 VideoList(
                     videoListUiState = videoListUiState,
+                    isSelectMode = isSelectMode,
+                    isSelectedVideoItems = isSelectedVideoItems,
                     onNavigateToPlayer = onNavigateToPlayer,
+                    onToggleVideoItem = onToggleVideoItem,
                 )
             }
         }
@@ -122,7 +133,10 @@ fun VideoListSetting(
 @Composable
 fun VideoList(
     videoListUiState: VideoListUiState.Success,
+    isSelectedVideoItems: Map<Long, Boolean>,
+    isSelectMode: Boolean,
     onNavigateToPlayer: () -> Unit,
+    onToggleVideoItem: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -131,8 +145,16 @@ fun VideoList(
         items(videoListUiState.videoItems) { videoItem ->
             VideoListItem(
                 videoItem = videoItem,
-                onClick = { onNavigateToPlayer() },
-                modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.padding_small)),
+                isSelected = isSelectedVideoItems.getOrDefault(videoItem.id, false),
+                onClick = {
+                    if (isSelectMode) {
+                        onToggleVideoItem(videoItem.id)
+                    } else {
+                        onNavigateToPlayer()
+                    }
+                },
+                onLongClick = { onToggleVideoItem(videoItem.id) },
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.padding_small)),
             )
         }
     }

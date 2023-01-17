@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.videolist
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -101,6 +102,7 @@ fun VideoList(
 ) {
     LazyColumn(
         modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     ) {
         items(videoListUiState.videoItems) { videoItem ->
             VideoListItem(
@@ -114,7 +116,6 @@ fun VideoList(
                     }
                 },
                 onLongClick = { onToggleVideoItem(videoItem.id) },
-                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.padding_small)),
             )
         }
     }

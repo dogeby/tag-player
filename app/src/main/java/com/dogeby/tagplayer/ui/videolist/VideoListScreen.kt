@@ -14,6 +14,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -76,6 +78,12 @@ fun VideoListScreen(
     var progressIndicatorState by rememberSaveable { mutableStateOf(videoListUiState is VideoListUiState.Loading) }
     if (progressIndicatorState) LinearProgressIndicator(modifier = modifier)
 
+    var currentIsSelectMode by remember { mutableStateOf(isSelectMode) }
+    val isShowBottomAppBarIconAnimation by rememberUpdatedState(
+        newValue = currentIsSelectMode != isSelectMode
+    )
+    currentIsSelectMode = isSelectMode
+
     Scaffold(
         modifier = modifier,
         bottomBar = {
@@ -84,6 +92,7 @@ fun VideoListScreen(
                     onAllItemSelectButtonClick = { /*TODO*/ },
                     onTagSettingButtonClick = { /*TODO*/ },
                     onInfoButtonClick = { /*TODO*/ },
+                    isShowAnimation = isShowBottomAppBarIconAnimation
                 )
             } else {
                 VideoListBottomAppBar(
@@ -91,6 +100,7 @@ fun VideoListScreen(
                     onSearchButtonClick = { /*TODO*/ },
                     onFilterButtonClick = onNavigateToFilterSetting,
                     onSortButtonClick = { /*TODO*/ },
+                    isShowAnimation = isShowBottomAppBarIconAnimation
                 )
             }
         },

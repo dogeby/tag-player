@@ -51,7 +51,7 @@ fun VideoListRoute(
     viewModel: VideoListViewModel = hiltViewModel(),
 ) {
     val videoListUiState: VideoListUiState by viewModel.videoListUiState.collectAsState()
-    val isFilteredTag: Boolean by viewModel.isFilteredTag.collectAsState()
+    val isTagFiltered: Boolean by viewModel.isTagFiltered.collectAsState()
     val isSelectMode: Boolean by viewModel.isSelectMode.collectAsState()
     val isSelectedVideoItems: Map<Long, Boolean> = viewModel.isSelectedVideoItems
 
@@ -69,7 +69,7 @@ fun VideoListRoute(
         isSelectedVideoItems = isSelectedVideoItems.toMap(),
         onNavigateToPlayer = onNavigateToPlayer,
         onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
-        isFilteredTag = isFilteredTag,
+        isTagFiltered = isTagFiltered,
         modifier = modifier.fillMaxWidth(),
         onNavigateToFilterSetting = onNavigateToFilterSetting,
     )
@@ -83,7 +83,7 @@ fun VideoListScreen(
     isSelectedVideoItems: Map<Long, Boolean>,
     onNavigateToPlayer: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
-    isFilteredTag: Boolean,
+    isTagFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -126,7 +126,7 @@ fun VideoListScreen(
                     )
                 } else {
                     VideoListBottomAppBar(
-                        isFilterButtonChecked = isFilteredTag,
+                        isFilterButtonChecked = isTagFiltered,
                         onSearchButtonClick = { /*TODO*/ },
                         onFilterButtonClick = onNavigateToFilterSetting,
                         onSortButtonClick = { /*TODO*/ },

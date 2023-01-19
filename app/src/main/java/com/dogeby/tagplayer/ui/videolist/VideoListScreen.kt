@@ -35,7 +35,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.component.BottomAppBarAnimation
 import com.dogeby.tagplayer.ui.component.BottomAppBarAnimationIconButton
-import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -46,7 +45,6 @@ import com.google.accompanist.permissions.rememberPermissionState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun VideoListRoute(
-    onExit: () -> Unit,
     onNavigateToPlayer: () -> Unit,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
@@ -63,7 +61,6 @@ fun VideoListRoute(
             viewModel.updateVideoList()
         }
     }
-    AppPermissionDeniedByExternalAction(onExit)
 
     VideoListScreen(
         videoListUiState = videoListUiState,

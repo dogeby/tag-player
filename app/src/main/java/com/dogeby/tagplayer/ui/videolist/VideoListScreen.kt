@@ -101,20 +101,7 @@ fun VideoListScreen(
 
     Scaffold(
         modifier = modifier,
-        topBar = {
-            TopAppBar(
-                modifier = modifier,
-                title = { Text(text = stringResource(id = R.string.videoList_topAppBar_title)) },
-                navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = null,
-                        )
-                    }
-                },
-            )
-        },
+        topBar = { VideoListTopAppBar() },
         bottomBar = {
             AnimatedVisibility(
                 visible = bottomBarShown,
@@ -173,6 +160,25 @@ fun VideoListScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun VideoListTopAppBar(
+    modifier: Modifier = Modifier,
+) {
+    TopAppBar(
+        modifier = modifier,
+        title = { Text(text = stringResource(id = R.string.videoList_topAppBar_title)) },
+        navigationIcon = {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = null,
+                )
+            }
+        },
+    )
 }
 
 @Composable

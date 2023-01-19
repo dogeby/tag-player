@@ -1,13 +1,5 @@
 package com.dogeby.tagplayer.ui.videolist
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
+import com.dogeby.tagplayer.ui.component.BottomAppBarAnimation
 import com.dogeby.tagplayer.ui.component.BottomAppBarAnimationIconButton
 import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
@@ -104,24 +97,8 @@ fun VideoListScreen(
         modifier = modifier,
         topBar = { VideoListTopAppBar() },
         bottomBar = {
-            AnimatedVisibility(
-                visible = bottomBarShown,
-                enter = slideInVertically(
-                    animationSpec = tween(
-                        durationMillis = 250,
-                    ),
-                    initialOffsetY = { it },
-                ) +
-                    expandVertically() +
-                    fadeIn(initialAlpha = 0.3f),
-                exit = slideOutVertically(
-                    animationSpec = tween(
-                        durationMillis = 200,
-                    ),
-                    targetOffsetY = { it },
-                ) +
-                    shrinkVertically() +
-                    fadeOut(),
+            BottomAppBarAnimation(
+                shown = bottomBarShown,
             ) {
                 if (isSelectMode) {
                     VideoItemBottomAppBar(

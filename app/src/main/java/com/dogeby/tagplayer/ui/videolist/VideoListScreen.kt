@@ -97,25 +97,23 @@ fun VideoListScreen(
         modifier = modifier,
         topBar = { VideoListTopAppBar() },
         bottomBar = {
-            BottomAppBarAnimation(
-                shown = bottomBarShown,
-            ) {
-                if (isSelectMode) {
-                    VideoItemBottomAppBar(
-                        onAllItemSelectButtonClick = { /*TODO*/ },
-                        onTagSettingButtonClick = { /*TODO*/ },
-                        onInfoButtonClick = { /*TODO*/ },
-                        isShowAnimation = isShowBottomAppBarIconAnimation
-                    )
-                } else {
-                    VideoListBottomAppBar(
-                        isFilterButtonChecked = isTagFiltered,
-                        onSearchButtonClick = { /*TODO*/ },
-                        onFilterButtonClick = onNavigateToFilterSetting,
-                        onSortButtonClick = { /*TODO*/ },
-                        isShowAnimation = isShowBottomAppBarIconAnimation
-                    )
-                }
+            if (isSelectMode) {
+                VideoItemBottomAppBar(
+                    shown = bottomBarShown,
+                    onAllItemSelectButtonClick = { /*TODO*/ },
+                    onTagSettingButtonClick = { /*TODO*/ },
+                    onInfoButtonClick = { /*TODO*/ },
+                    isShowActionIconAnimation = isShowBottomAppBarIconAnimation
+                )
+            } else {
+                VideoListBottomAppBar(
+                    shown = bottomBarShown,
+                    isFilterButtonChecked = isTagFiltered,
+                    onSearchButtonClick = { /*TODO*/ },
+                    onFilterButtonClick = onNavigateToFilterSetting,
+                    onSortButtonClick = { /*TODO*/ },
+                    isShowActionIconAnimation = isShowBottomAppBarIconAnimation
+                )
             }
             isShowBottomAppBarIconAnimation = true
         },
@@ -134,7 +132,7 @@ fun VideoListScreen(
             }
             is VideoListUiState.Success -> {
                 progressIndicatorState = false
-                VideoListContent(
+                VideoList(
                     modifier = Modifier.padding(contentPadding),
                     videoListUiState = videoListUiState,
                     isSelectMode = isSelectMode,
@@ -169,71 +167,81 @@ fun VideoListTopAppBar(
 
 @Composable
 fun VideoListBottomAppBar(
+    shown: Boolean,
     isFilterButtonChecked: Boolean,
     onSearchButtonClick: () -> Unit,
     onFilterButtonClick: () -> Unit,
     onSortButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isShowAnimation: Boolean = true,
+    isShowActionIconAnimation: Boolean = true,
 ) {
-    BottomAppBar(
-        modifier = modifier,
+    BottomAppBarAnimation(
+        shown = shown,
     ) {
-        BottomAppBarAnimationIconButton(
-            iconResId = R.drawable.ic_search,
-            onClick = onSearchButtonClick,
-            isShowAnimation = isShowAnimation,
-            stiffness = 400f,
-        )
-        BottomAppBarAnimationIconButton(
-            iconResId = if (isFilterButtonChecked) R.drawable.ic_filled_filter else R.drawable.ic_outlined_filter,
-            onClick = onFilterButtonClick,
-            isShowAnimation = isShowAnimation,
-            stiffness = 200f,
-        )
-        BottomAppBarAnimationIconButton(
-            iconResId = R.drawable.ic_sort,
-            onClick = onSortButtonClick,
-            isShowAnimation = isShowAnimation,
-            stiffness = 120f,
-        )
+        BottomAppBar(
+            modifier = modifier,
+        ) {
+            BottomAppBarAnimationIconButton(
+                iconResId = R.drawable.ic_search,
+                onClick = onSearchButtonClick,
+                isShowAnimation = isShowActionIconAnimation,
+                stiffness = 400f,
+            )
+            BottomAppBarAnimationIconButton(
+                iconResId = if (isFilterButtonChecked) R.drawable.ic_filled_filter else R.drawable.ic_outlined_filter,
+                onClick = onFilterButtonClick,
+                isShowAnimation = isShowActionIconAnimation,
+                stiffness = 200f,
+            )
+            BottomAppBarAnimationIconButton(
+                iconResId = R.drawable.ic_sort,
+                onClick = onSortButtonClick,
+                isShowAnimation = isShowActionIconAnimation,
+                stiffness = 120f,
+            )
+        }
     }
 }
 
 @Composable
 fun VideoItemBottomAppBar(
+    shown: Boolean,
     onAllItemSelectButtonClick: () -> Unit,
     onTagSettingButtonClick: () -> Unit,
     onInfoButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isShowAnimation: Boolean = true,
+    isShowActionIconAnimation: Boolean = true,
 ) {
-    BottomAppBar(
-        modifier = modifier,
+    BottomAppBarAnimation(
+        shown = shown,
     ) {
-        BottomAppBarAnimationIconButton(
-            iconResId = R.drawable.ic_all_select,
-            onClick = onAllItemSelectButtonClick,
-            isShowAnimation = isShowAnimation,
-            stiffness = 400f,
-        )
-        BottomAppBarAnimationIconButton(
-            iconResId = R.drawable.ic_tag,
-            onClick = onTagSettingButtonClick,
-            isShowAnimation = isShowAnimation,
-            stiffness = 200f,
-        )
-        BottomAppBarAnimationIconButton(
-            iconResId = R.drawable.ic_info,
-            onClick = onInfoButtonClick,
-            isShowAnimation = isShowAnimation,
-            stiffness = 120f,
-        )
+        BottomAppBar(
+            modifier = modifier,
+        ) {
+            BottomAppBarAnimationIconButton(
+                iconResId = R.drawable.ic_all_select,
+                onClick = onAllItemSelectButtonClick,
+                isShowAnimation = isShowActionIconAnimation,
+                stiffness = 400f,
+            )
+            BottomAppBarAnimationIconButton(
+                iconResId = R.drawable.ic_tag,
+                onClick = onTagSettingButtonClick,
+                isShowAnimation = isShowActionIconAnimation,
+                stiffness = 200f,
+            )
+            BottomAppBarAnimationIconButton(
+                iconResId = R.drawable.ic_info,
+                onClick = onInfoButtonClick,
+                isShowAnimation = isShowActionIconAnimation,
+                stiffness = 120f,
+            )
+        }
     }
 }
 
 @Composable
-fun VideoListContent(
+fun VideoList(
     videoListUiState: VideoListUiState.Success,
     isSelectedVideoItems: Map<Long, Boolean>,
     isSelectMode: Boolean,
@@ -288,14 +296,15 @@ private fun LazyListState.isScrollingUp(): Boolean {
 
 @Preview
 @Composable
-fun VideoListBottomAppBar() {
+fun VideoListBottomAppBarPreview() {
     TagPlayerTheme {
         VideoListBottomAppBar(
+            shown = true,
             isFilterButtonChecked = true,
             onSearchButtonClick = { },
             onFilterButtonClick = { },
             onSortButtonClick = { },
-            isShowAnimation = true,
+            isShowActionIconAnimation = true,
         )
     }
 }

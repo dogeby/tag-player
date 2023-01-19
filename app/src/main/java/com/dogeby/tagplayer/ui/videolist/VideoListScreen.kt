@@ -93,10 +93,7 @@ fun VideoListScreen(
     modifier: Modifier = Modifier,
 ) {
     var progressIndicatorState by rememberSaveable { mutableStateOf(videoListUiState is VideoListUiState.Loading) }
-    if (progressIndicatorState) LinearProgressIndicator(modifier = modifier)
-
     var isShowBottomAppBarIconAnimation by remember { mutableStateOf(false) }
-
     var bottomBarShown by rememberSaveable { mutableStateOf(true) }
 
     Scaffold(
@@ -142,6 +139,14 @@ fun VideoListScreen(
             isShowBottomAppBarIconAnimation = true
         },
     ) { contentPadding ->
+        if (progressIndicatorState) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(contentPadding)
+            )
+        }
+
         when (videoListUiState) {
             VideoListUiState.Loading -> {
                 progressIndicatorState = true

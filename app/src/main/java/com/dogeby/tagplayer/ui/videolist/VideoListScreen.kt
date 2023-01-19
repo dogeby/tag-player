@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,10 +38,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
+import com.dogeby.tagplayer.ui.component.BottomAppBarAnimationIconButton
 import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
+import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -153,7 +157,7 @@ fun VideoListScreen(
             }
             is VideoListUiState.Success -> {
                 progressIndicatorState = false
-                VideoList(
+                VideoListContent(
                     modifier = Modifier.padding(contentPadding),
                     videoListUiState = videoListUiState,
                     isSelectMode = isSelectMode,
@@ -187,7 +191,72 @@ fun VideoListTopAppBar(
 }
 
 @Composable
-fun VideoList(
+fun VideoListBottomAppBar(
+    isFilterButtonChecked: Boolean,
+    onSearchButtonClick: () -> Unit,
+    onFilterButtonClick: () -> Unit,
+    onSortButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isShowAnimation: Boolean = true,
+) {
+    BottomAppBar(
+        modifier = modifier,
+    ) {
+        BottomAppBarAnimationIconButton(
+            iconResId = R.drawable.ic_search,
+            onClick = onSearchButtonClick,
+            isShowAnimation = isShowAnimation,
+            stiffness = 400f,
+        )
+        BottomAppBarAnimationIconButton(
+            iconResId = if (isFilterButtonChecked) R.drawable.ic_filled_filter else R.drawable.ic_outlined_filter,
+            onClick = onFilterButtonClick,
+            isShowAnimation = isShowAnimation,
+            stiffness = 200f,
+        )
+        BottomAppBarAnimationIconButton(
+            iconResId = R.drawable.ic_sort,
+            onClick = onSortButtonClick,
+            isShowAnimation = isShowAnimation,
+            stiffness = 120f,
+        )
+    }
+}
+
+@Composable
+fun VideoItemBottomAppBar(
+    onAllItemSelectButtonClick: () -> Unit,
+    onTagSettingButtonClick: () -> Unit,
+    onInfoButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isShowAnimation: Boolean = true,
+) {
+    BottomAppBar(
+        modifier = modifier,
+    ) {
+        BottomAppBarAnimationIconButton(
+            iconResId = R.drawable.ic_all_select,
+            onClick = onAllItemSelectButtonClick,
+            isShowAnimation = isShowAnimation,
+            stiffness = 400f,
+        )
+        BottomAppBarAnimationIconButton(
+            iconResId = R.drawable.ic_tag,
+            onClick = onTagSettingButtonClick,
+            isShowAnimation = isShowAnimation,
+            stiffness = 200f,
+        )
+        BottomAppBarAnimationIconButton(
+            iconResId = R.drawable.ic_info,
+            onClick = onInfoButtonClick,
+            isShowAnimation = isShowAnimation,
+            stiffness = 120f,
+        )
+    }
+}
+
+@Composable
+fun VideoListContent(
     videoListUiState: VideoListUiState.Success,
     isSelectedVideoItems: Map<Long, Boolean>,
     isSelectMode: Boolean,
@@ -238,4 +307,18 @@ private fun LazyListState.isScrollingUp(): Boolean {
             }
         }
     }.value
+}
+
+@Preview
+@Composable
+fun VideoListBottomAppBar() {
+    TagPlayerTheme {
+        VideoListBottomAppBar(
+            isFilterButtonChecked = true,
+            onSearchButtonClick = { },
+            onFilterButtonClick = { },
+            onSortButtonClick = { },
+            isShowAnimation = true,
+        )
+    }
 }

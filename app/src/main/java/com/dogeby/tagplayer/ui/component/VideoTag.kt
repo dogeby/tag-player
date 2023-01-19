@@ -1,4 +1,4 @@
-package com.dogeby.tagplayer.ui.videolist
+package com.dogeby.tagplayer.ui.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme

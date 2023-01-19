@@ -24,6 +24,8 @@ import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
+import com.dogeby.tagplayer.ui.component.VideoTag
+import com.dogeby.tagplayer.ui.component.VideoThumbnail
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -198,19 +198,19 @@ fun VideoListBottomAppBar(
                 iconResId = R.drawable.ic_search,
                 onClick = onSearchButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 400f,
+                delayMillis = 100,
             )
             BottomAppBarAnimationIconButton(
                 iconResId = if (isFilterButtonChecked) R.drawable.ic_filled_filter else R.drawable.ic_outlined_filter,
                 onClick = onFilterButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 200f,
+                delayMillis = 200,
             )
             BottomAppBarAnimationIconButton(
                 iconResId = R.drawable.ic_sort,
                 onClick = onSortButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 120f,
+                delayMillis = 300,
             )
         }
     }
@@ -235,19 +235,19 @@ fun VideoItemBottomAppBar(
                 iconResId = R.drawable.ic_all_select,
                 onClick = onAllItemSelectButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 400f,
+                delayMillis = 100,
             )
             BottomAppBarAnimationIconButton(
                 iconResId = R.drawable.ic_tag,
                 onClick = onTagSettingButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 200f,
+                delayMillis = 200,
             )
             BottomAppBarAnimationIconButton(
                 iconResId = R.drawable.ic_info,
                 onClick = onInfoButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 120f,
+                delayMillis = 300,
             )
         }
     }

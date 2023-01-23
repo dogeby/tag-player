@@ -1,13 +1,13 @@
 package com.dogeby.tagplayer.ui.videolist
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BottomAppBar
@@ -19,15 +19,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,7 +78,7 @@ fun VideoListRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun VideoListScreen(
     videoListUiState: VideoListUiState,
@@ -88,56 +92,68 @@ fun VideoListScreen(
 ) {
     var progressIndicatorState by rememberSaveable { mutableStateOf(videoListUiState is VideoListUiState.Loading) }
     var isShowBottomAppBarIconAnimation by remember { mutableStateOf(false) }
-    var bottomBarShown by rememberSaveable { mutableStateOf(true) }
+    var bottomBarShown by rememberSaveable { mutableStateOf(true) }.apply {
+        if (isSelectMode) this.value = isSelectMode
+    }
 
-    Scaffold(
-        modifier = modifier,
-        topBar = { VideoListTopAppBar() },
-        bottomBar = {
-            if (isSelectMode) {
-                VideoItemBottomAppBar(
-                    shown = bottomBarShown,
-                    onAllItemSelectButtonClick = { /*TODO*/ },
-                    onTagSettingButtonClick = { /*TODO*/ },
-                    onInfoButtonClick = { /*TODO*/ },
-                    isShowActionIconAnimation = isShowBottomAppBarIconAnimation
-                )
-            } else {
-                VideoListBottomAppBar(
-                    shown = bottomBarShown,
-                    isFilterButtonChecked = isTagFiltered,
-                    onSearchButtonClick = { /*TODO*/ },
-                    onFilterButtonClick = onNavigateToFilterSetting,
-                    onSortButtonClick = { /*TODO*/ },
-                    isShowActionIconAnimation = isShowBottomAppBarIconAnimation
-                )
-            }
-            isShowBottomAppBarIconAnimation = true
-        },
-    ) { contentPadding ->
-        if (progressIndicatorState) {
-            LinearProgressIndicator(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(contentPadding)
-            )
+    val nestedScrollConnection = object : NestedScrollConnection {
+        override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+            bottomBarShown = isSelectMode || available.y > 0
+            return super.onPreScroll(available, source)
         }
+    }
 
-        when (videoListUiState) {
-            VideoListUiState.Loading -> {
-                progressIndicatorState = true
-            }
-            is VideoListUiState.Success -> {
-                progressIndicatorState = false
-                VideoList(
-                    modifier = Modifier.padding(contentPadding),
-                    videoListUiState = videoListUiState,
-                    isSelectMode = isSelectMode,
-                    isSelectedVideoItems = isSelectedVideoItems,
-                    onNavigateToPlayer = onNavigateToPlayer,
-                    onToggleVideoItem = onToggleVideoItem,
-                    onScrollingUp = { bottomBarShown = isSelectMode || it },
+    CompositionLocalProvider(
+        LocalOverscrollConfiguration provides null
+    ) {
+        Scaffold(
+            modifier = modifier.nestedScroll(nestedScrollConnection),
+            topBar = { VideoListTopAppBar() },
+            bottomBar = {
+                if (isSelectMode) {
+                    VideoItemBottomAppBar(
+                        shown = bottomBarShown,
+                        onAllItemSelectButtonClick = { /*TODO*/ },
+                        onTagSettingButtonClick = { /*TODO*/ },
+                        onInfoButtonClick = { /*TODO*/ },
+                        isShowActionIconAnimation = isShowBottomAppBarIconAnimation
+                    )
+                } else {
+                    VideoListBottomAppBar(
+                        shown = bottomBarShown,
+                        isFilterButtonChecked = isTagFiltered,
+                        onSearchButtonClick = { /*TODO*/ },
+                        onFilterButtonClick = onNavigateToFilterSetting,
+                        onSortButtonClick = { /*TODO*/ },
+                        isShowActionIconAnimation = isShowBottomAppBarIconAnimation
+                    )
+                }
+                isShowBottomAppBarIconAnimation = true
+            },
+        ) { contentPadding ->
+            if (progressIndicatorState) {
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(contentPadding)
                 )
+            }
+
+            when (videoListUiState) {
+                VideoListUiState.Loading -> {
+                    progressIndicatorState = true
+                }
+                is VideoListUiState.Success -> {
+                    progressIndicatorState = false
+                    VideoList(
+                        modifier = Modifier.padding(contentPadding),
+                        videoListUiState = videoListUiState,
+                        isSelectMode = isSelectMode,
+                        isSelectedVideoItems = isSelectedVideoItems,
+                        onNavigateToPlayer = onNavigateToPlayer,
+                        onToggleVideoItem = onToggleVideoItem,
+                    )
+                }
             }
         }
     }
@@ -182,19 +198,19 @@ fun VideoListBottomAppBar(
                 iconResId = R.drawable.ic_search,
                 onClick = onSearchButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 400f,
+                delayMillis = 100,
             )
             BottomAppBarAnimationIconButton(
                 iconResId = if (isFilterButtonChecked) R.drawable.ic_filled_filter else R.drawable.ic_outlined_filter,
                 onClick = onFilterButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 200f,
+                delayMillis = 200,
             )
             BottomAppBarAnimationIconButton(
                 iconResId = R.drawable.ic_sort,
                 onClick = onSortButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 120f,
+                delayMillis = 300,
             )
         }
     }
@@ -219,19 +235,19 @@ fun VideoItemBottomAppBar(
                 iconResId = R.drawable.ic_all_select,
                 onClick = onAllItemSelectButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 400f,
+                delayMillis = 100,
             )
             BottomAppBarAnimationIconButton(
                 iconResId = R.drawable.ic_tag,
                 onClick = onTagSettingButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 200f,
+                delayMillis = 200,
             )
             BottomAppBarAnimationIconButton(
                 iconResId = R.drawable.ic_info,
                 onClick = onInfoButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
-                stiffness = 120f,
+                delayMillis = 300,
             )
         }
     }
@@ -244,15 +260,11 @@ fun VideoList(
     isSelectMode: Boolean,
     onNavigateToPlayer: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
-    onScrollingUp: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val videoListState = rememberLazyListState()
-    onScrollingUp(videoListState.isScrollingUp())
 
     LazyColumn(
         modifier = modifier,
-        state = videoListState,
         contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     ) {
@@ -271,24 +283,6 @@ fun VideoList(
             )
         }
     }
-}
-
-@Composable
-private fun LazyListState.isScrollingUp(): Boolean {
-    var previousIndex by remember(this) { mutableStateOf(firstVisibleItemIndex) }
-    var previousScrollOffset by remember(this) { mutableStateOf(firstVisibleItemScrollOffset) }
-    return remember(this) {
-        derivedStateOf {
-            if (previousIndex != firstVisibleItemIndex) {
-                previousIndex > firstVisibleItemIndex
-            } else {
-                previousScrollOffset >= firstVisibleItemScrollOffset
-            }.also {
-                previousIndex = firstVisibleItemIndex
-                previousScrollOffset = firstVisibleItemScrollOffset
-            }
-        }
-    }.value
 }
 
 @Preview

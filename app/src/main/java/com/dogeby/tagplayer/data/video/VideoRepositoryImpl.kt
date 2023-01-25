@@ -4,6 +4,7 @@ import com.dogeby.tagplayer.data.video.source.local.VideoLocalDataSource
 import com.dogeby.tagplayer.data.video.source.local.toVideoEntity
 import com.dogeby.tagplayer.database.dao.TagVideoCrossRefDao
 import com.dogeby.tagplayer.database.dao.VideoDao
+import com.dogeby.tagplayer.database.model.TagVideoCrossRef
 import com.dogeby.tagplayer.database.model.toVideo
 import com.dogeby.tagplayer.database.model.toVideoWithTags
 import javax.inject.Inject
@@ -40,5 +41,11 @@ class VideoRepositoryImpl @Inject constructor(
 
     private fun Long.toUri(): String {
         return "${videoLocalDataSource.contentUri}/$this"
+    }
+
+    override suspend fun addTagToVideos(tagId: Long, videoIds: List<Long>) {
+        tagVideoCrossRefDao.insertTagVideoCrossRefs(
+            videoIds.map { videoId -> TagVideoCrossRef(tagId, videoId) }
+        )
     }
 }

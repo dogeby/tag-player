@@ -13,4 +13,6 @@ interface VideoRepository {
     fun getVideosWithTagsFilteredByTag(tagIds: List<Long>): Flow<List<VideoWithTags>>
 
     suspend fun addTagToVideos(tagId: Long, videoIds: List<Long>)
+
+    suspend fun removeTagFromVideos(tagId: Long, videoIds: List<Long>)
 }

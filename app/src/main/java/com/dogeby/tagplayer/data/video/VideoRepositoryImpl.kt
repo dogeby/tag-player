@@ -48,4 +48,10 @@ class VideoRepositoryImpl @Inject constructor(
             videoIds.map { videoId -> TagVideoCrossRef(tagId, videoId) }
         )
     }
+
+    override suspend fun removeTagFromVideos(tagId: Long, videoIds: List<Long>) {
+        tagVideoCrossRefDao.deleteTagVideoCrossRefs(
+            videoIds.map { videoId -> TagVideoCrossRef(tagId, videoId) }
+        )
+    }
 }

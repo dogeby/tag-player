@@ -34,4 +34,8 @@ class TagRepositoryImpl @Inject constructor(
     override fun getTags(ids: List<Long>): Flow<List<Tag>> {
         return tagDao.getTagEntities(ids).map { tagEntities -> tagEntities.map { it.toTag() } }
     }
+
+    override fun findTags(nameKeyword: String): Flow<List<Tag>> {
+        return tagDao.getTagEntities(nameKeyword).map { tagEntities -> tagEntities.map { it.toTag() } }
+    }
 }

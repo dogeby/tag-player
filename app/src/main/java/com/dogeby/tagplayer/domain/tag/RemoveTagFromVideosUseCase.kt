@@ -1,9 +1,9 @@
-package com.dogeby.tagplayer.domain.video
+package com.dogeby.tagplayer.domain.tag
 
 import com.dogeby.tagplayer.data.video.VideoRepository
 import javax.inject.Inject
 
-class RemoveTagFromVideos @Inject constructor(
+class RemoveTagFromVideosUseCase @Inject constructor(
     private val videoRepository: VideoRepository
 ) {
 

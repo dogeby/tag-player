@@ -1,9 +1,9 @@
-package com.dogeby.tagplayer.domain.video
+package com.dogeby.tagplayer.domain.tag
 
 import com.dogeby.tagplayer.data.video.VideoRepository
 import javax.inject.Inject
 
-class AddTagToVideos @Inject constructor(
+class AddTagToVideosUseCase @Inject constructor(
     private val videoRepository: VideoRepository
 ) {
 

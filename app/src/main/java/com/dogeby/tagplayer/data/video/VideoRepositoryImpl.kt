@@ -27,6 +27,12 @@ class VideoRepositoryImpl @Inject constructor(
         videoEntityWithTagEntities.map { it.toVideoWithTags(it.videoEntity.id.toUri()) }
     }
 
+    override fun getVideosWithTags(videoIds: List<Long>): Flow<List<VideoWithTags>> {
+        return tagVideoCrossRefDao.getVideosWithTags(videoIds).map { videoEntityWithTagEntities ->
+            videoEntityWithTagEntities.map { it.toVideoWithTags(it.videoEntity.id.toUri()) }
+        }
+    }
+
     override suspend fun updateVideos(): Result<Unit> = runCatching {
         videoLocalDataSource.getVideoDataList().onSuccess { videoDataList ->
             videoDao.cacheVideos(videoDataList.map { it.toVideoEntity() })

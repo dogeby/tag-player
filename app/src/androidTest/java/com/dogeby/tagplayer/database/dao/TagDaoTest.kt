@@ -95,4 +95,18 @@ class TagDaoTest {
 
         Assert.assertEquals(tagEntities.first().copy(id = id), tag)
     }
+
+    @Test
+    fun findTags() = runTest {
+        val keyword = "1"
+        val tagEntities = List(20) { TagEntity(name = it.toString()) }
+        val tagsWithKeywordInTheName = tagEntities.filter {
+            it.name.contains(keyword)
+        }
+        tagDao.insertTags(tagEntities)
+
+        val tagSearchResult = tagDao.getTagEntities(keyword).first()
+
+        Assert.assertEquals(tagsWithKeywordInTheName.map { it.name }, tagSearchResult.map { it.name })
+    }
 }

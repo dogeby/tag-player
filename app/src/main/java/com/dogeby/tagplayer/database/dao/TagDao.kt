@@ -41,7 +41,16 @@ interface TagDao {
             SELECT * FROM tags
             WHERE id IN (:ids)
             ORDER BY name
-        """
+        """,
     )
     fun getTagEntities(ids: List<Long>): Flow<List<TagEntity>>
+
+    @Query(
+        value = """
+            SELECT * FROM tags
+            WHERE name LIKE '%'||:nameKeyword||'%'
+            ORDER BY name
+        """,
+    )
+    fun getTagEntities(nameKeyword: String): Flow<List<TagEntity>>
 }

@@ -1,6 +1,7 @@
 package com.dogeby.tagplayer.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -22,6 +23,9 @@ abstract class TagVideoCrossRefDao {
 
     @Query(value = "DELETE FROM tag_video_cross_refs")
     abstract suspend fun deleteTagVideoCrossRefs(): Int
+
+    @Delete
+    abstract suspend fun deleteTagVideoCrossRefs(tagVideoCrossRefs: List<TagVideoCrossRef>): Int
 
     @Query(value = "SELECT * FROM tag_video_cross_refs")
     abstract fun getTagVideoCrossRefs(): Flow<List<TagVideoCrossRef>>

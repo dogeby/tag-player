@@ -15,4 +15,6 @@ interface TagRepository {
     suspend fun deleteAllTags(): Result<Int>
 
     fun getTags(ids: List<Long>): Flow<List<Tag>>
+
+    fun findTags(nameKeyword: String): Flow<List<Tag>>
 }

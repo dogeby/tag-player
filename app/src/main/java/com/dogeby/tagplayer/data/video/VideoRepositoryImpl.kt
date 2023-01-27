@@ -4,6 +4,7 @@ import com.dogeby.tagplayer.data.video.source.local.VideoLocalDataSource
 import com.dogeby.tagplayer.data.video.source.local.toVideoEntity
 import com.dogeby.tagplayer.database.dao.TagVideoCrossRefDao
 import com.dogeby.tagplayer.database.dao.VideoDao
+import com.dogeby.tagplayer.database.model.TagVideoCrossRef
 import com.dogeby.tagplayer.database.model.toVideo
 import com.dogeby.tagplayer.database.model.toVideoWithTags
 import javax.inject.Inject
@@ -26,6 +27,12 @@ class VideoRepositoryImpl @Inject constructor(
         videoEntityWithTagEntities.map { it.toVideoWithTags(it.videoEntity.id.toUri()) }
     }
 
+    override fun getVideosWithTags(videoIds: List<Long>): Flow<List<VideoWithTags>> {
+        return tagVideoCrossRefDao.getVideosWithTags(videoIds).map { videoEntityWithTagEntities ->
+            videoEntityWithTagEntities.map { it.toVideoWithTags(it.videoEntity.id.toUri()) }
+        }
+    }
+
     override suspend fun updateVideos(): Result<Unit> = runCatching {
         videoLocalDataSource.getVideoDataList().onSuccess { videoDataList ->
             videoDao.cacheVideos(videoDataList.map { it.toVideoEntity() })
@@ -40,5 +47,17 @@ class VideoRepositoryImpl @Inject constructor(
 
     private fun Long.toUri(): String {
         return "${videoLocalDataSource.contentUri}/$this"
+    }
+
+    override suspend fun addTagToVideos(tagId: Long, videoIds: List<Long>) {
+        tagVideoCrossRefDao.insertTagVideoCrossRefs(
+            videoIds.map { videoId -> TagVideoCrossRef(tagId, videoId) }
+        )
+    }
+
+    override suspend fun removeTagFromVideos(tagId: Long, videoIds: List<Long>) {
+        tagVideoCrossRefDao.deleteTagVideoCrossRefs(
+            videoIds.map { videoId -> TagVideoCrossRef(tagId, videoId) }
+        )
     }
 }

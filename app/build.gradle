@@ -101,6 +101,9 @@ dependencies {
 
     //glide
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
+
+    //gson
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 kapt {

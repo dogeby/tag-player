@@ -34,14 +34,14 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TagInputChipField(
+fun TagInputChipTextField(
     tags: List<Tag>,
     modifier: Modifier = Modifier,
     onTagChipClick: (Long) -> Unit = {},
     onTagChipClear: (Long) -> Unit = {},
     onKeywordChange: (String) -> Unit = {},
 ) {
-    InputChipField(
+    InputChipTextField(
         modifier = modifier,
         onKeywordChange = onKeywordChange,
     ) {
@@ -68,7 +68,7 @@ fun TagInputChipField(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun InputChipField(
+fun InputChipTextField(
     modifier: Modifier = Modifier,
     onKeywordChange: (String) -> Unit = {},
     content: @Composable () -> Unit,
@@ -111,9 +111,9 @@ fun InputChipField(
 
 @Preview(showBackground = true)
 @Composable
-fun TagInputChipFieldPreview() {
+fun TagInputChipTextFieldPreview() {
     TagPlayerTheme {
-        TagInputChipField(
+        TagInputChipTextField(
             tags = List(19) { Tag(it.toLong(), "Tag$it$it") },
         )
     }

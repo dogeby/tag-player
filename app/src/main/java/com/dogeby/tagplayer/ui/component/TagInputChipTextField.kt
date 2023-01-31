@@ -2,10 +2,12 @@ package com.dogeby.tagplayer.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -13,15 +15,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.InputChip
+import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -52,11 +55,11 @@ fun TagInputChipTextField(
                 label = { Text(tag.name) },
                 modifier = Modifier.padding(
                     end = dimensionResource(R.dimen.padding_small),
-                    bottom = dimensionResource(R.dimen.padding_medium),
                 ),
                 trailingIcon = {
                     IconButton(
                         onClick = { onTagChipClear(tag.id) },
+                        modifier = Modifier.size(InputChipDefaults.IconSize),
                     ) {
                         Icon(Icons.Default.Clear, null)
                     }
@@ -66,7 +69,7 @@ fun TagInputChipTextField(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InputChipTextField(
     modifier: Modifier = Modifier,
@@ -90,22 +93,26 @@ fun InputChipTextField(
             },
     ) {
         content()
-        BasicTextField(
-            value = keyword,
-            onValueChange = {
-                keyword = it
-                onKeywordChange(it)
-            },
+        Box(
             modifier = Modifier
                 .defaultMinSize(
-                    minWidth = TextFieldDefaults.MinWidth,
-                    minHeight = TextFieldDefaults.MinHeight,
-                )
-                .focusRequester(keywordTextFieldFocusRequester),
-            textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-            singleLine = true,
-            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        )
+                    minHeight = dimensionResource(id = R.dimen.inputChipTextField_textField_minHeight),
+                ),
+        ) {
+            BasicTextField(
+                value = keyword,
+                onValueChange = {
+                    keyword = it
+                    onKeywordChange(it)
+                },
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .focusRequester(keywordTextFieldFocusRequester),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+                singleLine = true,
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            )
+        }
     }
 }
 

@@ -7,6 +7,7 @@ import com.dogeby.tagplayer.data.tag.Tag
 import com.dogeby.tagplayer.domain.tag.AddTagToVideosUseCase
 import com.dogeby.tagplayer.domain.tag.CreateTagUseCase
 import com.dogeby.tagplayer.domain.tag.FindTagsUseCase
+import com.dogeby.tagplayer.domain.tag.GetAllTagsUseCase
 import com.dogeby.tagplayer.domain.tag.GetCommonTagsFromVideosUseCase
 import com.dogeby.tagplayer.domain.tag.RemoveTagFromVideosUseCase
 import com.dogeby.tagplayer.ui.navigation.VideoIdsArgument
@@ -18,9 +19,9 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 class TagSettingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getCommonTagsFromVideosUseCase: GetCommonTagsFromVideosUseCase,
+    getAllTagsUseCase: GetAllTagsUseCase,
     findTagsUseCase: FindTagsUseCase,
     private val createTagUseCase: CreateTagUseCase,
     private val addTagToVideosUseCase: AddTagToVideosUseCase,
@@ -39,8 +41,7 @@ class TagSettingViewModel @Inject constructor(
         LongArray::class.java,
     ).toList()
 
-    private val _tagSearchKeyword = MutableStateFlow("")
-    private val tagSearchKeyword = _tagSearchKeyword.asStateFlow()
+    private val tagSearchKeyword = MutableStateFlow("")
 
     val commonTags: StateFlow<List<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
         .stateIn(
@@ -53,7 +54,16 @@ class TagSettingViewModel @Inject constructor(
     val tagSearchResult: StateFlow<List<Tag>> = tagSearchKeyword
         .debounce(KEYWORD_INPUT_TIMEOUT)
         .flatMapLatest { keyword ->
-            findTagsUseCase(keyword)
+            if (keyword.isBlank()) {
+                getAllTagsUseCase()
+            } else {
+                findTagsUseCase(keyword)
+            }
+        }
+        .mapLatest { tags ->
+            commonTags.value.toHashSet().run {
+                tags.filterNot { contains(it) }
+            }
         }
         .stateIn(
             scope = viewModelScope,
@@ -62,7 +72,7 @@ class TagSettingViewModel @Inject constructor(
         )
 
     fun setTagSearchKeyword(keyword: String) {
-        _tagSearchKeyword.value = keyword
+        tagSearchKeyword.value = keyword
     }
 
     fun createTag(name: String) {

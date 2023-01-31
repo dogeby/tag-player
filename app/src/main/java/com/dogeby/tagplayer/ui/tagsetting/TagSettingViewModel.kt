@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class TagSettingViewModel @Inject constructor(
@@ -64,16 +65,22 @@ class TagSettingViewModel @Inject constructor(
         _tagSearchKeyword.value = keyword
     }
 
-    suspend fun createTag(name: String) {
-        createTagUseCase(name)
+    fun createTag(name: String) {
+        viewModelScope.launch {
+            createTagUseCase(name)
+        }
     }
 
-    suspend fun addTagToVideos(tagId: Long) {
-        addTagToVideosUseCase(tagId, videoIds)
+    fun addTagToVideos(tagId: Long) {
+        viewModelScope.launch {
+            addTagToVideosUseCase(tagId, videoIds)
+        }
     }
 
-    suspend fun removeTagFromVideos(tagId: Long) {
-        removeTagFromVideosUseCase(tagId, videoIds)
+    fun removeTagFromVideos(tagId: Long) {
+        viewModelScope.launch {
+            removeTagFromVideosUseCase(tagId, videoIds)
+        }
     }
 
     companion object {

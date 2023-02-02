@@ -14,4 +14,6 @@
     <string name="permission_dialog_app_setting">앱 설정</string>
 
     <string name="videoList_topAppBar_title">동영상 목록</string>
+
+    <string name="tagInputChipTextField_searchHint">태그 검색 또는 생성</string>
 </resources>

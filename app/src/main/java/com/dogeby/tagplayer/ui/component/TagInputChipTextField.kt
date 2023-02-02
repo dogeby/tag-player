@@ -30,6 +30,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.data.tag.Tag
@@ -45,6 +46,7 @@ fun TagInputChipTextField(
     onKeywordChange: (String) -> Unit = {},
 ) {
     InputChipTextField(
+        isInputChipIncluded = tags.isNotEmpty(),
         modifier = modifier,
         onKeywordChange = onKeywordChange,
     ) {
@@ -72,6 +74,7 @@ fun TagInputChipTextField(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InputChipTextField(
+    isInputChipIncluded: Boolean,
     modifier: Modifier = Modifier,
     onKeywordChange: (String) -> Unit = {},
     content: @Composable () -> Unit,
@@ -111,6 +114,16 @@ fun InputChipTextField(
                 textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
                 singleLine = true,
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                decorationBox = {
+                    if (isInputChipIncluded.not() && keyword.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.tagInputChipTextField_searchHint),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else {
+                        it()
+                    }
+                },
             )
         }
     }

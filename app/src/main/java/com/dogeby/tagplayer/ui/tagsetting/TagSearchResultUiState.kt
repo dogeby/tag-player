@@ -4,6 +4,8 @@ sealed interface TagSearchResultUiState {
 
     object Loading : TagSearchResultUiState
 
+    object Empty : TagSearchResultUiState
+
     data class EmptySearchResult(
         val keyword: String,
     ) : TagSearchResultUiState

@@ -51,7 +51,7 @@ class TagSettingViewModel @Inject constructor(
         )
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val tagSearchResult: StateFlow<List<Tag>> = tagSearchKeyword
+    val tagSearchResultUiState: StateFlow<TagSearchResultUiState> = tagSearchKeyword
         .debounce(KEYWORD_INPUT_TIMEOUT)
         .flatMapLatest { keyword ->
             if (keyword.isBlank()) {
@@ -61,14 +61,22 @@ class TagSettingViewModel @Inject constructor(
             }
         }
         .mapLatest { tags ->
-            commonTags.value.toHashSet().run {
-                tags.filterNot { contains(it) }
+            if (tags.isEmpty()) {
+                if (tagSearchKeyword.value.isBlank()) {
+                    TagSearchResultUiState.Empty
+                } else {
+                    TagSearchResultUiState.EmptySearchResult(tagSearchKeyword.value)
+                }
+            } else {
+                val commonTagsHashSet = commonTags.value.toHashSet()
+                val tagSearchResultItemUiStates = tags.map { TagSearchResultItemUiState(it.id, it.name, commonTagsHashSet.contains(it)) }
+                TagSearchResultUiState.Success(tagSearchResultItemUiStates)
             }
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
+            initialValue = TagSearchResultUiState.Loading,
         )
 
     fun setTagSearchKeyword(keyword: String) {

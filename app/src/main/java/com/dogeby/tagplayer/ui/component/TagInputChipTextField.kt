@@ -31,6 +31,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.data.tag.Tag
@@ -54,7 +55,13 @@ fun TagInputChipTextField(
             InputChip(
                 selected = false,
                 onClick = { onTagChipClick(tag.id) },
-                label = { Text(tag.name) },
+                label = {
+                    Text(
+                        text = tag.name,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                    )
+                },
                 modifier = Modifier.padding(
                     end = dimensionResource(R.dimen.padding_small),
                 ),
@@ -112,13 +119,12 @@ fun InputChipTextField(
                     .align(Alignment.Center)
                     .focusRequester(keywordTextFieldFocusRequester),
                 textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-                singleLine = true,
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                 decorationBox = {
                     if (isInputChipIncluded.not() && keyword.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.tagInputChipTextField_searchHint),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     } else {
                         it()

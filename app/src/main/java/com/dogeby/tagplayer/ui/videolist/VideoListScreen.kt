@@ -51,6 +51,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 fun VideoListRoute(
     onNavigateToPlayer: () -> Unit,
     onNavigateToFilterSetting: () -> Unit,
+    onNavigateToTagSetting: (List<Long>) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: VideoListViewModel = hiltViewModel(),
 ) {
@@ -71,6 +72,7 @@ fun VideoListRoute(
         isSelectMode = isSelectMode,
         isSelectedVideoItems = isSelectedVideoItems.toMap(),
         onNavigateToPlayer = onNavigateToPlayer,
+        onNavigateToTagSetting = { onNavigateToTagSetting(isSelectedVideoItems.filterValues { it }.keys.toList()) },
         onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
         isTagFiltered = isTagFiltered,
         modifier = modifier.fillMaxWidth(),
@@ -85,6 +87,7 @@ fun VideoListScreen(
     isSelectMode: Boolean,
     isSelectedVideoItems: Map<Long, Boolean>,
     onNavigateToPlayer: () -> Unit,
+    onNavigateToTagSetting: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
     isTagFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
@@ -114,7 +117,7 @@ fun VideoListScreen(
                     VideoItemBottomAppBar(
                         shown = bottomBarShown,
                         onAllItemSelectButtonClick = { /*TODO*/ },
-                        onTagSettingButtonClick = { /*TODO*/ },
+                        onTagSettingButtonClick = onNavigateToTagSetting,
                         onInfoButtonClick = { /*TODO*/ },
                         isShowActionIconAnimation = isShowBottomAppBarIconAnimation
                     )

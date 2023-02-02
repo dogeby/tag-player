@@ -1,38 +1,47 @@
 package com.dogeby.tagplayer.ui.tagsetting
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.data.tag.Tag
 import com.dogeby.tagplayer.domain.tag.AddTagToVideosUseCase
 import com.dogeby.tagplayer.domain.tag.CreateTagUseCase
 import com.dogeby.tagplayer.domain.tag.FindTagsUseCase
+import com.dogeby.tagplayer.domain.tag.GetAllTagsUseCase
 import com.dogeby.tagplayer.domain.tag.GetCommonTagsFromVideosUseCase
 import com.dogeby.tagplayer.domain.tag.RemoveTagFromVideosUseCase
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import com.dogeby.tagplayer.ui.navigation.VideoIdsArgument
+import com.google.gson.Gson
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class TagSettingViewModel @AssistedInject constructor(
+@HiltViewModel
+class TagSettingViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     getCommonTagsFromVideosUseCase: GetCommonTagsFromVideosUseCase,
+    getAllTagsUseCase: GetAllTagsUseCase,
     findTagsUseCase: FindTagsUseCase,
-    @Assisted private val videoIds: List<Long>,
     private val createTagUseCase: CreateTagUseCase,
     private val addTagToVideosUseCase: AddTagToVideosUseCase,
     private val removeTagFromVideosUseCase: RemoveTagFromVideosUseCase,
 ) : ViewModel() {
 
-    private val _tagSearchKeyword = MutableStateFlow("")
-    private val tagSearchKeyword = _tagSearchKeyword.asStateFlow()
+    private val videoIds: List<Long> = Gson().fromJson(
+        checkNotNull<String>(savedStateHandle[VideoIdsArgument]),
+        LongArray::class.java,
+    ).toList()
+
+    private val tagSearchKeyword = MutableStateFlow("")
 
     val commonTags: StateFlow<List<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
         .stateIn(
@@ -42,55 +51,58 @@ class TagSettingViewModel @AssistedInject constructor(
         )
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val tagSearchResult: StateFlow<List<Tag>> = tagSearchKeyword
+    val tagSearchResultUiState: StateFlow<TagSearchResultUiState> = tagSearchKeyword
         .debounce(KEYWORD_INPUT_TIMEOUT)
         .flatMapLatest { keyword ->
-            findTagsUseCase(keyword)
+            if (keyword.isBlank()) {
+                getAllTagsUseCase()
+            } else {
+                findTagsUseCase(keyword)
+            }
+        }
+        .mapLatest { tags ->
+            if (tags.isEmpty()) {
+                if (tagSearchKeyword.value.isBlank()) {
+                    TagSearchResultUiState.Empty
+                } else {
+                    TagSearchResultUiState.EmptySearchResult(tagSearchKeyword.value)
+                }
+            } else {
+                val commonTagsHashSet = commonTags.value.toHashSet()
+                val tagSearchResultItemUiStates = tags.map { TagSearchResultItemUiState(it.id, it.name, commonTagsHashSet.contains(it)) }
+                TagSearchResultUiState.Success(tagSearchResultItemUiStates)
+            }
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
+            initialValue = TagSearchResultUiState.Loading,
         )
 
     fun setTagSearchKeyword(keyword: String) {
-        _tagSearchKeyword.value = keyword
+        tagSearchKeyword.value = keyword
     }
 
-    suspend fun createTag(name: String) {
-        createTagUseCase(name)
+    fun createTag(name: String) {
+        viewModelScope.launch {
+            createTagUseCase(name)
+        }
     }
 
-    suspend fun addTagToVideos(tagId: Long) {
-        addTagToVideosUseCase(tagId, videoIds)
+    fun addTagToVideos(tagId: Long) {
+        viewModelScope.launch {
+            addTagToVideosUseCase(tagId, videoIds)
+        }
     }
 
-    suspend fun removeTagFromVideos(tagId: Long) {
-        removeTagFromVideosUseCase(tagId, videoIds)
+    fun removeTagFromVideos(tagId: Long) {
+        viewModelScope.launch {
+            removeTagFromVideosUseCase(tagId, videoIds)
+        }
     }
 
     companion object {
 
         private const val KEYWORD_INPUT_TIMEOUT = 500L
-
-        @Suppress("UNCHECKED_CAST")
-        fun provideFactory(
-            assistedFactory: Factory,
-            videoIds: List<Long>,
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                if (modelClass.isAssignableFrom(TagSettingViewModel::class.java)) {
-                    return assistedFactory.create(videoIds) as T
-                }
-                throw IllegalAccessException()
-            }
-        }
-    }
-
-    @AssistedFactory
-    interface Factory {
-
-        fun create(videoIds: List<Long>): TagSettingViewModel
     }
 }

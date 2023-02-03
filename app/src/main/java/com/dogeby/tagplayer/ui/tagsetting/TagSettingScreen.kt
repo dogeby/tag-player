@@ -132,7 +132,7 @@ fun TagSettingSelectionItem(
     Row(
         modifier = modifier
             .clickable {
-                onClick(tag.id)
+                if (tag.isIncluded.not()) onClick(tag.id)
             },
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {

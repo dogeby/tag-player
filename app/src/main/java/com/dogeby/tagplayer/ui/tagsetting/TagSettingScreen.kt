@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -16,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +39,7 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 fun TagSettingRoute(
     modifier: Modifier = Modifier,
     viewModel: TagSettingViewModel = hiltViewModel(),
+    onNavigateUp: () -> Unit = {},
 ) {
     val commonTags: List<Tag> by viewModel.commonTags.collectAsState()
     val tagSearchResultUiState: TagSearchResultUiState by viewModel.tagSearchResultUiState.collectAsState()
@@ -44,6 +48,7 @@ fun TagSettingRoute(
         commonTags = commonTags,
         tagSearchResultUiState = tagSearchResultUiState,
         modifier = modifier,
+        onNavigateUp = onNavigateUp,
         onCreateTag = viewModel::createTag,
         onAddTagToVideo = viewModel::addTagToVideos,
         onTagChipClear = viewModel::removeTagFromVideos,
@@ -57,6 +62,7 @@ fun TagSettingScreen(
     commonTags: List<Tag>,
     tagSearchResultUiState: TagSearchResultUiState,
     modifier: Modifier = Modifier,
+    onNavigateUp: () -> Unit = {},
     onCreateTag: (String) -> Unit = {},
     onAddTagToVideo: (Long) -> Unit = {},
     onTagChipClear: (Long) -> Unit = {},
@@ -64,6 +70,7 @@ fun TagSettingScreen(
 ) {
     Scaffold(
         modifier = modifier,
+        topBar = { TagSettingTopAppBar(onArrowBackButtonClick = onNavigateUp) },
     ) { contentPadding ->
         LazyColumn(
             Modifier
@@ -120,6 +127,26 @@ fun TagSettingScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TagSettingTopAppBar(
+    modifier: Modifier = Modifier,
+    onArrowBackButtonClick: () -> Unit = {}
+) {
+    TopAppBar(
+        title = { Text(text = stringResource(id = R.string.tagSetting_topAppBarTitle)) },
+        modifier = modifier,
+        navigationIcon = {
+            IconButton(onClick = onArrowBackButtonClick) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                )
+            }
+        },
+    )
 }
 
 @Composable

@@ -109,4 +109,28 @@ class TagDaoTest {
 
         Assert.assertEquals(tagsWithKeywordInTheName.map { it.name }, tagSearchResult.map { it.name })
     }
+
+    @Test
+    fun modifyTagName() = runTest {
+        val newName = "newTagName"
+        val tagEntity = TagEntity(name = "tag")
+        val tagId = tagDao.insertTags(listOf(tagEntity)).first()
+
+        tagDao.modifyTagName(tagId, newName)
+        val tagInDb = tagDao.getTagEntities(listOf(tagId)).first().first()
+
+        Assert.assertEquals(newName, tagInDb.name)
+    }
+
+    @Test
+    fun modifyTagName_duplicateName() = runTest {
+        val tagEntities = List(2) { TagEntity(name = it.toString()) }
+        val tagIds = tagDao.insertTags(tagEntities)
+
+        val result = runCatching {
+            tagDao.modifyTagName(tagIds.last(), tagEntities.first().name)
+        }
+
+        Assert.assertTrue(result.isFailure)
+    }
 }

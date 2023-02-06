@@ -23,7 +23,7 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 @Composable
 fun PermissionAlertDialog(
     modifier: Modifier = Modifier,
-    dismissButtonText: String = stringResource(id = R.string.cancel),
+    dismissButtonText: String = stringResource(id = R.string.close),
     isDismissRequest: Boolean = false,
     onDismiss: () -> Unit = {},
 ) {

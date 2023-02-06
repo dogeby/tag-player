@@ -17,6 +17,15 @@ interface TagDao {
     @Update(onConflict = OnConflictStrategy.IGNORE)
     suspend fun updateTags(entities: List<TagEntity>): Int
 
+    @Query(
+        value = """
+            UPDATE tags
+            SET name = :name
+            WHERE id is :id
+        """,
+    )
+    suspend fun modifyTagName(id: Long, name: String)
+
     @Query(value = "DELETE FROM tags")
     suspend fun deleteTags(): Int
 

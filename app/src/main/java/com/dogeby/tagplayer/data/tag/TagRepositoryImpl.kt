@@ -38,4 +38,8 @@ class TagRepositoryImpl @Inject constructor(
     override fun findTags(nameKeyword: String): Flow<List<Tag>> {
         return tagDao.getTagEntities(nameKeyword).map { tagEntities -> tagEntities.map { it.toTag() } }
     }
+
+    override suspend fun modifyTagName(id: Long, name: String): Result<Unit> = runCatching {
+        tagDao.modifyTagName(id, name)
+    }
 }

@@ -1,6 +1,5 @@
 package com.dogeby.tagplayer.ui.component
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.MutableTransitionState
@@ -12,12 +11,10 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.dogeby.tagplayer.ui.theme.EmphasizedAccelerateEasing
 import com.dogeby.tagplayer.ui.theme.EmphasizedDecelerateEasing
@@ -56,12 +53,11 @@ fun BottomAppBarAnimation(
 
 @Composable
 fun BottomAppBarAnimationIconButton(
-    @DrawableRes iconResId: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    contentDescription: String? = null,
     isShowAnimation: Boolean = false,
     delayMillis: Int = 0,
+    iconButtonContent: @Composable () -> Unit,
 ) {
     val transitionState = remember {
         MutableTransitionState(isShowAnimation.not()).apply {
@@ -81,9 +77,10 @@ fun BottomAppBarAnimationIconButton(
             initialOffsetY = { it },
         )
     ) {
-        IconButton(onClick = onClick) {
-            Icon(painter = painterResource(id = iconResId), contentDescription = contentDescription)
-        }
+        IconButton(
+            onClick = onClick,
+            content = iconButtonContent
+        )
     }
 }
 

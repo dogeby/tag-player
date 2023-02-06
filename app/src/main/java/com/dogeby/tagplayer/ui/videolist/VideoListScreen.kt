@@ -33,6 +33,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -107,7 +108,7 @@ fun VideoListScreen(
     }
 
     CompositionLocalProvider(
-        LocalOverscrollConfiguration provides null
+        LocalOverscrollConfiguration provides null,
     ) {
         Scaffold(
             modifier = modifier.nestedScroll(nestedScrollConnection),
@@ -119,7 +120,7 @@ fun VideoListScreen(
                         onAllItemSelectButtonClick = { /*TODO*/ },
                         onTagSettingButtonClick = onNavigateToTagSetting,
                         onInfoButtonClick = { /*TODO*/ },
-                        isShowActionIconAnimation = isShowBottomAppBarIconAnimation
+                        isShowActionIconAnimation = isShowBottomAppBarIconAnimation,
                     )
                 } else {
                     VideoListBottomAppBar(
@@ -128,7 +129,7 @@ fun VideoListScreen(
                         onSearchButtonClick = { /*TODO*/ },
                         onFilterButtonClick = onNavigateToFilterSetting,
                         onSortButtonClick = { /*TODO*/ },
-                        isShowActionIconAnimation = isShowBottomAppBarIconAnimation
+                        isShowActionIconAnimation = isShowBottomAppBarIconAnimation,
                     )
                 }
                 isShowBottomAppBarIconAnimation = true
@@ -138,7 +139,7 @@ fun VideoListScreen(
                 LinearProgressIndicator(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(contentPadding)
+                        .padding(contentPadding),
                 )
             }
 
@@ -198,23 +199,34 @@ fun VideoListBottomAppBar(
             modifier = modifier,
         ) {
             BottomAppBarAnimationIconButton(
-                iconResId = R.drawable.ic_search,
                 onClick = onSearchButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
                 delayMillis = 100,
-            )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_search),
+                    contentDescription = null,
+                )
+            }
             BottomAppBarAnimationIconButton(
-                iconResId = if (isFilterButtonChecked) R.drawable.ic_filled_filter else R.drawable.ic_outlined_filter,
                 onClick = onFilterButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
                 delayMillis = 200,
-            )
+            ) {
+                Icon(
+                    painter = painterResource(
+                        id = if (isFilterButtonChecked) R.drawable.ic_filled_filter else R.drawable.ic_outlined_filter,
+                    ),
+                    contentDescription = null,
+                )
+            }
             BottomAppBarAnimationIconButton(
-                iconResId = R.drawable.ic_sort,
                 onClick = onSortButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
                 delayMillis = 300,
-            )
+            ) {
+                Icon(painter = painterResource(id = R.drawable.ic_sort), contentDescription = null)
+            }
         }
     }
 }
@@ -235,23 +247,29 @@ fun VideoItemBottomAppBar(
             modifier = modifier,
         ) {
             BottomAppBarAnimationIconButton(
-                iconResId = R.drawable.ic_all_select,
                 onClick = onAllItemSelectButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
                 delayMillis = 100,
-            )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_all_select),
+                    contentDescription = null,
+                )
+            }
             BottomAppBarAnimationIconButton(
-                iconResId = R.drawable.ic_tag,
                 onClick = onTagSettingButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
                 delayMillis = 200,
-            )
+            ) {
+                Icon(painter = painterResource(id = R.drawable.ic_tag), contentDescription = null)
+            }
             BottomAppBarAnimationIconButton(
-                iconResId = R.drawable.ic_info,
                 onClick = onInfoButtonClick,
                 isShowAnimation = isShowActionIconAnimation,
                 delayMillis = 300,
-            )
+            ) {
+                Icon(painter = painterResource(id = R.drawable.ic_info), contentDescription = null)
+            }
         }
     }
 }

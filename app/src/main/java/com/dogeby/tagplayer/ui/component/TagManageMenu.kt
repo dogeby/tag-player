@@ -73,8 +73,14 @@ fun TagManageMenuMoreButton(
         TagManageMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            onEditMenuItemClick = onTagEdit,
-            onDeleteMenuItemClick = onTagDelete,
+            onEditMenuItemClick = {
+                expanded = false
+                onTagEdit()
+            },
+            onDeleteMenuItemClick = {
+                expanded = false
+                onTagDelete()
+            },
         )
     }
 }

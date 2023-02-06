@@ -30,11 +30,12 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 @Composable
 fun TagNameEditDialog(
     originalName: String,
-    isDuplicateError: Boolean,
+    isError: Boolean,
     onEditButtonClick: (String) -> Unit,
     onCancelButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit = {},
+    supportingText: String = ""
 ) {
     var name by rememberSaveable {
         mutableStateOf(originalName)
@@ -59,8 +60,8 @@ fun TagNameEditDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    supportingText = { Text(text = if (isDuplicateError) stringResource(id = R.string.tagNameModifyDialog_duplicateNameError) else "") },
-                    isError = isDuplicateError,
+                    supportingText = { Text(text = supportingText) },
+                    isError = isError,
                     singleLine = true,
                 )
 
@@ -90,7 +91,7 @@ fun TagNameEditDialogPreview() {
     TagPlayerTheme {
         TagNameEditDialog(
             originalName = "tag",
-            isDuplicateError = false,
+            isError = false,
             onEditButtonClick = {},
             onCancelButtonClick = {},
         )
@@ -103,7 +104,7 @@ fun TagNameEditDialog_duplicateNameErrorPreview() {
     TagPlayerTheme {
         TagNameEditDialog(
             originalName = "tag",
-            isDuplicateError = true,
+            isError = true,
             onEditButtonClick = {},
             onCancelButtonClick = {},
         )

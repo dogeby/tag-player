@@ -7,6 +7,7 @@
     <string name="create">생성</string>
     <string name="delete">삭제</string>
     <string name="edit">수정</string>
+    <string name="cancel">취소</string>
 
     <string name="permission_guide_app_access_permission">앱 접근 권한 안내</string>
     <string name="permission_app_permission_request_description">택플을 사용하기 위해서는 다음과 같은 권한들이 필요합니다.</string>
@@ -22,4 +23,7 @@
     <string name="tagSetting_selectOrCreate">선택 또는 생성</string>
     <string name="tagSetting_tagSearchResultEmpty">태그를 찾지 못했습니다.</string>
     <string name="tagInputChipTextField_searchHint">태그 검색 또는 생성</string>
+
+    <string name="tagNameModifyDialog_dialogTitle">태그 이름 수정</string>
+    <string name="tagNameModifyDialog_duplicateNameError">중복된 태그가 있습니다.</string>
 </resources>

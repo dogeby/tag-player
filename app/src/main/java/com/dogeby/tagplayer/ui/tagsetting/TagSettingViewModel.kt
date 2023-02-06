@@ -3,6 +3,7 @@ package com.dogeby.tagplayer.ui.tagsetting
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.data.tag.Tag
 import com.dogeby.tagplayer.domain.tag.AddTagToVideosUseCase
 import com.dogeby.tagplayer.domain.tag.CreateTagUseCase
@@ -21,6 +22,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
@@ -73,7 +75,13 @@ class TagSettingViewModel @Inject constructor(
                 }
             } else {
                 val commonTagsHashSet = commonTags.value.toHashSet()
-                val tagSearchResultItemUiStates = tags.map { TagSearchResultItemUiState(it.id, it.name, commonTagsHashSet.contains(it)) }
+                val tagSearchResultItemUiStates = tags.map {
+                    TagSearchResultItemUiState(
+                        id = it.id,
+                        name = it.name,
+                        isIncluded = commonTagsHashSet.contains(it),
+                    )
+                }
                 TagSearchResultUiState.Success(tagSearchResultItemUiStates)
             }
         }
@@ -82,6 +90,11 @@ class TagSettingViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = TagSearchResultUiState.Loading,
         )
+
+    private val _tagNameEditDialogUiState: MutableStateFlow<TagNameEditDialogUiState> =
+        MutableStateFlow(TagNameEditDialogUiState.Hide)
+    val tagNameEditDialogUiState: StateFlow<TagNameEditDialogUiState> =
+        _tagNameEditDialogUiState.asStateFlow()
 
     fun setTagSearchKeyword(keyword: String) {
         tagSearchKeyword.value = keyword
@@ -112,9 +125,34 @@ class TagSettingViewModel @Inject constructor(
     }
 
     fun modifyTagName(tagId: Long, name: String) {
-        viewModelScope.launch {
-            modifyTagNameUseCase(tagId, name)
+        val tagNameEditDialogUiStateValue = tagNameEditDialogUiState.value
+        if (tagNameEditDialogUiStateValue is TagNameEditDialogUiState.Show) {
+            if (name.isBlank()) {
+                _tagNameEditDialogUiState.value = tagNameEditDialogUiStateValue.copy(
+                    isError = true,
+                    supportingTextResId = R.string.tagNameModifyDialog_blankError,
+                )
+                return
+            }
+            viewModelScope.launch {
+                if (modifyTagNameUseCase(tagId, name.trim()).isSuccess) {
+                    hideTagNameEditDialog()
+                } else {
+                    _tagNameEditDialogUiState.value = tagNameEditDialogUiStateValue.copy(
+                        isError = true,
+                        supportingTextResId = R.string.tagNameModifyDialog_duplicateNameError,
+                    )
+                }
+            }
         }
+    }
+
+    fun showTagNameEditDialog(tagId: Long, name: String) {
+        _tagNameEditDialogUiState.value = TagNameEditDialogUiState.Show(tagId, name, false)
+    }
+
+    fun hideTagNameEditDialog() {
+        _tagNameEditDialogUiState.value = TagNameEditDialogUiState.Hide
     }
 
     companion object {

@@ -6,9 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.data.tag.Tag
 import com.dogeby.tagplayer.domain.tag.AddTagToVideosUseCase
 import com.dogeby.tagplayer.domain.tag.CreateTagUseCase
+import com.dogeby.tagplayer.domain.tag.DeleteTagsUseCase
 import com.dogeby.tagplayer.domain.tag.FindTagsUseCase
 import com.dogeby.tagplayer.domain.tag.GetAllTagsUseCase
 import com.dogeby.tagplayer.domain.tag.GetCommonTagsFromVideosUseCase
+import com.dogeby.tagplayer.domain.tag.ModifyTagNameUseCase
 import com.dogeby.tagplayer.domain.tag.RemoveTagFromVideosUseCase
 import com.dogeby.tagplayer.ui.navigation.VideoIdsArgument
 import com.google.gson.Gson
@@ -34,6 +36,8 @@ class TagSettingViewModel @Inject constructor(
     private val createTagUseCase: CreateTagUseCase,
     private val addTagToVideosUseCase: AddTagToVideosUseCase,
     private val removeTagFromVideosUseCase: RemoveTagFromVideosUseCase,
+    private val deleteTagsUseCase: DeleteTagsUseCase,
+    private val modifyTagNameUseCase: ModifyTagNameUseCase,
 ) : ViewModel() {
 
     private val videoIds: List<Long> = Gson().fromJson(
@@ -98,6 +102,18 @@ class TagSettingViewModel @Inject constructor(
     fun removeTagFromVideos(tagId: Long) {
         viewModelScope.launch {
             removeTagFromVideosUseCase(tagId, videoIds)
+        }
+    }
+
+    fun deleteTag(tagId: Long) {
+        viewModelScope.launch {
+            deleteTagsUseCase(listOf(tagId))
+        }
+    }
+
+    fun modifyTagName(tagId: Long, name: String) {
+        viewModelScope.launch {
+            modifyTagNameUseCase(tagId, name)
         }
     }
 

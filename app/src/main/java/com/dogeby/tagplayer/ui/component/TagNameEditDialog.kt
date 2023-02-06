@@ -37,7 +37,7 @@ fun TagNameEditDialog(
     onDismissRequest: () -> Unit = {},
 ) {
     var name by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf(originalName)
     }
 
     AlertDialog(
@@ -59,8 +59,7 @@ fun TagNameEditDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    placeholder = { Text(text = originalName) },
-                    supportingText = { if (isDuplicateError) Text(text = stringResource(id = R.string.tagNameModifyDialog_duplicateNameError)) },
+                    supportingText = { Text(text = if (isDuplicateError) stringResource(id = R.string.tagNameModifyDialog_duplicateNameError) else "") },
                     isError = isDuplicateError,
                     singleLine = true,
                 )

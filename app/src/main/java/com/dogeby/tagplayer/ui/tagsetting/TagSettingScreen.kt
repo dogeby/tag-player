@@ -138,7 +138,8 @@ fun TagSettingScreen(
                         TagCreateText(
                             keyword = tagSearchResultUiState.keyword,
                             modifier = Modifier
-                                .padding(dimensionResource(id = R.dimen.padding_small)),
+                                .padding(dimensionResource(id = R.dimen.padding_small))
+                                .fillMaxWidth(),
                             onClick = onCreateTag,
                         )
                     }

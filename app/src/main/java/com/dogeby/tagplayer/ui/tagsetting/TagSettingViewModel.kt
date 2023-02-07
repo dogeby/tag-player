@@ -114,7 +114,6 @@ class TagSettingViewModel @Inject constructor(
         viewModelScope.launch {
             createTagUseCase(name).onSuccess {
                 addTagToVideos(it)
-                tagSearchKeyword.value = ""
             }
         }
     }
@@ -122,6 +121,7 @@ class TagSettingViewModel @Inject constructor(
     fun addTagToVideos(tagId: Long) {
         viewModelScope.launch {
             addTagToVideosUseCase(tagId, videoIds)
+            tagSearchKeyword.value = ""
         }
     }
 
@@ -170,6 +170,6 @@ class TagSettingViewModel @Inject constructor(
 
     companion object {
 
-        private const val KEYWORD_INPUT_TIMEOUT = 500L
+        private const val KEYWORD_INPUT_TIMEOUT = 200L
     }
 }

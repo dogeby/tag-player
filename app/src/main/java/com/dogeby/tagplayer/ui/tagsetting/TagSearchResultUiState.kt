@@ -6,12 +6,10 @@ sealed interface TagSearchResultUiState {
 
     object Empty : TagSearchResultUiState
 
-    data class EmptySearchResult(
-        val keyword: String,
-    ) : TagSearchResultUiState
-
     data class Success(
-        val tags: List<TagSearchResultItemUiState>
+        val tags: List<TagSearchResultItemUiState>,
+        val keyword: String = "",
+        val isShowTagCreateText: Boolean = false,
     ) : TagSearchResultUiState
 }
 

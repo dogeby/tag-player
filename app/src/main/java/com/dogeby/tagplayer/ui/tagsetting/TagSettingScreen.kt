@@ -132,16 +132,16 @@ fun TagSettingScreen(
                             onDeleteButtonClick = onTagDelete,
                         )
                     }
-                }
-                is TagSearchResultUiState.EmptySearchResult -> {
-                    item {
-                        TagCreateText(
-                            keyword = tagSearchResultUiState.keyword,
-                            modifier = Modifier
-                                .padding(dimensionResource(id = R.dimen.padding_small))
-                                .fillMaxWidth(),
-                            onClick = onCreateTag,
-                        )
+                    if (tagSearchResultUiState.isShowTagCreateText) {
+                        item {
+                            TagCreateText(
+                                keyword = tagSearchResultUiState.keyword,
+                                modifier = Modifier
+                                    .padding(dimensionResource(id = R.dimen.padding_small))
+                                    .fillMaxWidth(),
+                                onClick = onCreateTag,
+                            )
+                        }
                     }
                 }
                 TagSearchResultUiState.Empty -> {

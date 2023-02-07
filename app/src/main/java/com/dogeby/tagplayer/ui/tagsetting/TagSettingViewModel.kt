@@ -67,23 +67,22 @@ class TagSettingViewModel @Inject constructor(
             }
         }
         .mapLatest { tags ->
-            if (tags.isEmpty()) {
-                if (tagSearchKeyword.value.isBlank()) {
-                    TagSearchResultUiState.Empty
-                } else {
-                    TagSearchResultUiState.EmptySearchResult(tagSearchKeyword.value)
-                }
-            } else {
-                val commonTagsHashSet = commonTags.value.toHashSet()
-                val tagSearchResultItemUiStates = tags.map {
-                    TagSearchResultItemUiState(
-                        id = it.id,
-                        name = it.name,
-                        isIncluded = commonTagsHashSet.contains(it),
-                    )
-                }
-                TagSearchResultUiState.Success(tagSearchResultItemUiStates)
+            if (tags.isEmpty() && tagSearchKeyword.value.isBlank()) {
+                return@mapLatest TagSearchResultUiState.Empty
             }
+            val commonTagsHashSet = commonTags.value.toHashSet()
+            val tagSearchResultItemUiStates = tags.map {
+                TagSearchResultItemUiState(
+                    id = it.id,
+                    name = it.name,
+                    isIncluded = commonTagsHashSet.contains(it),
+                )
+            }
+            TagSearchResultUiState.Success(
+                tags = tagSearchResultItemUiStates,
+                keyword = tagSearchKeyword.value,
+                isShowTagCreateText = tagSearchKeyword.value.isNotBlank() && tags.find { it.name == tagSearchKeyword.value } == null,
+            )
         }
         .stateIn(
             scope = viewModelScope,

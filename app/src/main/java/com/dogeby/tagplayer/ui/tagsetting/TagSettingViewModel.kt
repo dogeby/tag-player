@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -50,15 +50,16 @@ class TagSettingViewModel @Inject constructor(
 
     private val tagSearchKeyword = MutableStateFlow("")
 
-    private val commonTags: StateFlow<List<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
+    private val commonTags: StateFlow<HashSet<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
+        .map { it.toHashSet() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
+            initialValue = HashSet(),
         )
 
-    val tagInputChipTextFieldUiState: StateFlow<TagInputChipTextFieldUiState> = commonTags.combine(tagSearchKeyword) { tags: List<Tag>, keyword: String ->
-        TagInputChipTextFieldUiState(tags, keyword)
+    val tagInputChipTextFieldUiState: StateFlow<TagInputChipTextFieldUiState> = commonTags.combine(tagSearchKeyword) { tags: HashSet<Tag>, keyword: String ->
+        TagInputChipTextFieldUiState(tags.toList(), keyword)
     }
         .stateIn(
             scope = viewModelScope,
@@ -76,23 +77,22 @@ class TagSettingViewModel @Inject constructor(
                 findTagsUseCase(keyword)
             }
         }
-        .mapLatest { tags ->
+        .combine(commonTags) { foundTags, commonTags ->
             val keyword = tagSearchKeyword.value.trim()
-            if (tags.isEmpty() && keyword.isBlank()) {
-                return@mapLatest TagSearchResultUiState.Empty
+            if (foundTags.isEmpty() && keyword.isBlank()) {
+                return@combine TagSearchResultUiState.Empty
             }
-            val commonTagsHashSet = commonTags.value.toHashSet()
-            val tagSearchResultItemUiStates = tags.map {
+            val tagSearchResultItemUiStates = foundTags.map {
                 TagSearchResultItemUiState(
                     id = it.id,
                     name = it.name,
-                    isIncluded = commonTagsHashSet.contains(it),
+                    isIncluded = commonTags.contains(it),
                 )
             }
             TagSearchResultUiState.Success(
                 tags = tagSearchResultItemUiStates,
                 keyword = keyword,
-                isShowTagCreateText = keyword.isNotBlank() && tags.find { it.name == keyword } == null,
+                isShowTagCreateText = keyword.isNotBlank() && foundTags.find { it.name == keyword } == null,
             )
         }
         .stateIn(

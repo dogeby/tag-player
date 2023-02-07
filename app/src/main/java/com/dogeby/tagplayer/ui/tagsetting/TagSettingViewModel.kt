@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.mapLatest
@@ -49,11 +50,20 @@ class TagSettingViewModel @Inject constructor(
 
     private val tagSearchKeyword = MutableStateFlow("")
 
-    val commonTags: StateFlow<List<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
+    private val commonTags: StateFlow<List<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyList(),
+        )
+
+    val tagInputChipTextFieldUiState: StateFlow<TagInputChipTextFieldUiState> = commonTags.combine(tagSearchKeyword) { tags: List<Tag>, keyword: String ->
+        TagInputChipTextFieldUiState(tags, keyword)
+    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = TagInputChipTextFieldUiState(),
         )
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -102,7 +112,10 @@ class TagSettingViewModel @Inject constructor(
 
     fun createTag(name: String) {
         viewModelScope.launch {
-            createTagUseCase(name)
+            createTagUseCase(name).onSuccess {
+                addTagToVideos(it)
+                tagSearchKeyword.value = ""
+            }
         }
     }
 

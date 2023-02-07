@@ -42,12 +42,12 @@ fun TagSettingRoute(
     viewModel: TagSettingViewModel = hiltViewModel(),
     onNavigateUp: () -> Unit = {},
 ) {
-    val commonTags: List<Tag> by viewModel.commonTags.collectAsState()
+    val tagInputChipTextFieldUiState: TagInputChipTextFieldUiState by viewModel.tagInputChipTextFieldUiState.collectAsState()
     val tagSearchResultUiState: TagSearchResultUiState by viewModel.tagSearchResultUiState.collectAsState()
     val tagNameEditDialogUiState by viewModel.tagNameEditDialogUiState.collectAsState()
 
     TagSettingScreen(
-        commonTags = commonTags,
+        tagInputChipTextFieldUiState = tagInputChipTextFieldUiState,
         tagSearchResultUiState = tagSearchResultUiState,
         tagNameEditDialogUiState = tagNameEditDialogUiState,
         modifier = modifier,
@@ -66,7 +66,7 @@ fun TagSettingRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TagSettingScreen(
-    commonTags: List<Tag>,
+    tagInputChipTextFieldUiState: TagInputChipTextFieldUiState,
     tagSearchResultUiState: TagSearchResultUiState,
     tagNameEditDialogUiState: TagNameEditDialogUiState,
     modifier: Modifier = Modifier,
@@ -105,10 +105,11 @@ fun TagSettingScreen(
             }
             item {
                 TagInputChipTextField(
-                    tags = commonTags,
+                    keyword = tagInputChipTextFieldUiState.keyword,
+                    onKeywordChange = onKeywordChange,
+                    tags = tagInputChipTextFieldUiState.commonTags,
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
                     onTagChipClear = onTagChipClear,
-                    onKeywordChange = onKeywordChange,
                 )
             }
             item {
@@ -246,7 +247,7 @@ fun TagCreateText(
 fun TagSettingScreenPreview() {
     TagPlayerTheme {
         TagSettingScreen(
-            commonTags = List(25) { Tag(it.toLong(), "Tag $it") },
+            tagInputChipTextFieldUiState = TagInputChipTextFieldUiState(List(25) { Tag(it.toLong(), "Tag $it") }),
             tagSearchResultUiState = TagSearchResultUiState.Success(
                 List(20) {
                     TagSearchResultItemUiState(

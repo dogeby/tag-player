@@ -40,13 +40,15 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TagInputChipTextField(
+    keyword: String,
+    onKeywordChange: (String) -> Unit,
     tags: List<Tag>,
     modifier: Modifier = Modifier,
     onTagChipClick: (Long) -> Unit = {},
     onTagChipClear: (Long) -> Unit = {},
-    onKeywordChange: (String) -> Unit = {},
 ) {
     InputChipTextField(
+        keyword = keyword,
         isInputChipIncluded = tags.isNotEmpty(),
         modifier = modifier,
         onKeywordChange = onKeywordChange,
@@ -81,14 +83,12 @@ fun TagInputChipTextField(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun InputChipTextField(
+    keyword: String,
     isInputChipIncluded: Boolean,
     modifier: Modifier = Modifier,
     onKeywordChange: (String) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
-    var keyword by rememberSaveable {
-        mutableStateOf("")
-    }
     val keywordTextFieldFocusRequester = remember {
         FocusRequester()
     }
@@ -112,7 +112,6 @@ fun InputChipTextField(
             BasicTextField(
                 value = keyword,
                 onValueChange = {
-                    keyword = it
                     onKeywordChange(it)
                 },
                 modifier = Modifier
@@ -139,7 +138,12 @@ fun InputChipTextField(
 @Composable
 fun TagInputChipTextFieldPreview() {
     TagPlayerTheme {
+        var keyword by rememberSaveable {
+            mutableStateOf("")
+        }
         TagInputChipTextField(
+            keyword = keyword,
+            onKeywordChange = { keyword = it },
             tags = List(19) { Tag(it.toLong(), "Tag$it$it") },
         )
     }

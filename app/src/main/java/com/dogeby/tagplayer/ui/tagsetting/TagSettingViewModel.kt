@@ -67,7 +67,8 @@ class TagSettingViewModel @Inject constructor(
             }
         }
         .mapLatest { tags ->
-            if (tags.isEmpty() && tagSearchKeyword.value.isBlank()) {
+            val keyword = tagSearchKeyword.value.trim()
+            if (tags.isEmpty() && keyword.isBlank()) {
                 return@mapLatest TagSearchResultUiState.Empty
             }
             val commonTagsHashSet = commonTags.value.toHashSet()
@@ -80,8 +81,8 @@ class TagSettingViewModel @Inject constructor(
             }
             TagSearchResultUiState.Success(
                 tags = tagSearchResultItemUiStates,
-                keyword = tagSearchKeyword.value,
-                isShowTagCreateText = tagSearchKeyword.value.isNotBlank() && tags.find { it.name == tagSearchKeyword.value } == null,
+                keyword = keyword,
+                isShowTagCreateText = keyword.isNotBlank() && tags.find { it.name == keyword } == null,
             )
         }
         .stateIn(

@@ -23,9 +23,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -49,11 +50,21 @@ class TagSettingViewModel @Inject constructor(
 
     private val tagSearchKeyword = MutableStateFlow("")
 
-    val commonTags: StateFlow<List<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
+    private val commonTags: StateFlow<HashSet<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
+        .map { it.toHashSet() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = emptyList(),
+            initialValue = HashSet(),
+        )
+
+    val tagInputChipTextFieldUiState: StateFlow<TagInputChipTextFieldUiState> = commonTags.combine(tagSearchKeyword) { tags: HashSet<Tag>, keyword: String ->
+        TagInputChipTextFieldUiState(tags.toList(), keyword)
+    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = TagInputChipTextFieldUiState(),
         )
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -66,24 +77,23 @@ class TagSettingViewModel @Inject constructor(
                 findTagsUseCase(keyword)
             }
         }
-        .mapLatest { tags ->
-            if (tags.isEmpty()) {
-                if (tagSearchKeyword.value.isBlank()) {
-                    TagSearchResultUiState.Empty
-                } else {
-                    TagSearchResultUiState.EmptySearchResult(tagSearchKeyword.value)
-                }
-            } else {
-                val commonTagsHashSet = commonTags.value.toHashSet()
-                val tagSearchResultItemUiStates = tags.map {
-                    TagSearchResultItemUiState(
-                        id = it.id,
-                        name = it.name,
-                        isIncluded = commonTagsHashSet.contains(it),
-                    )
-                }
-                TagSearchResultUiState.Success(tagSearchResultItemUiStates)
+        .combine(commonTags) { foundTags, commonTags ->
+            val keyword = tagSearchKeyword.value.trim()
+            if (foundTags.isEmpty() && keyword.isBlank()) {
+                return@combine TagSearchResultUiState.Empty
             }
+            val tagSearchResultItemUiStates = foundTags.map {
+                TagSearchResultItemUiState(
+                    id = it.id,
+                    name = it.name,
+                    isIncluded = commonTags.contains(it),
+                )
+            }
+            TagSearchResultUiState.Success(
+                tags = tagSearchResultItemUiStates,
+                keyword = keyword,
+                isShowTagCreateText = keyword.isNotBlank() && foundTags.find { it.name == keyword } == null,
+            )
         }
         .stateIn(
             scope = viewModelScope,
@@ -102,13 +112,16 @@ class TagSettingViewModel @Inject constructor(
 
     fun createTag(name: String) {
         viewModelScope.launch {
-            createTagUseCase(name)
+            createTagUseCase(name).onSuccess {
+                addTagToVideos(it)
+            }
         }
     }
 
     fun addTagToVideos(tagId: Long) {
         viewModelScope.launch {
             addTagToVideosUseCase(tagId, videoIds)
+            tagSearchKeyword.value = ""
         }
     }
 
@@ -157,6 +170,6 @@ class TagSettingViewModel @Inject constructor(
 
     companion object {
 
-        private const val KEYWORD_INPUT_TIMEOUT = 500L
+        private const val KEYWORD_INPUT_TIMEOUT = 200L
     }
 }

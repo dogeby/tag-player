@@ -8,7 +8,9 @@ class CreateTagUseCase @Inject constructor(
     private val tagRepository: TagRepository,
 ) {
 
-    suspend operator fun invoke(name: String) {
-        tagRepository.addTags(listOf(Tag(name = name)))
+    suspend operator fun invoke(name: String): Result<Long> {
+        return tagRepository.addTags(listOf(Tag(name = name))).map {
+            it.first()
+        }
     }
 }

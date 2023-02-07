@@ -10,6 +10,6 @@ class FindTagsUseCase @Inject constructor(
 ) {
 
     operator fun invoke(nameKeyword: String): Flow<List<Tag>> {
-        return tagRepository.findTags(nameKeyword)
+        return tagRepository.findTags(nameKeyword.trim())
     }
 }

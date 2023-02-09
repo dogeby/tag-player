@@ -34,6 +34,7 @@ import com.dogeby.tagplayer.ui.component.TagInputChipTextField
 import com.dogeby.tagplayer.ui.component.TagManageMenuMoreHorizButton
 import com.dogeby.tagplayer.ui.component.TagNameEditDialog
 import com.dogeby.tagplayer.ui.component.VideoTag
+import com.dogeby.tagplayer.ui.component.clearFocusWhenTap
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
@@ -81,7 +82,7 @@ fun TagSettingScreen(
     onHideTagNameEditDialog: () -> Unit = {},
 ) {
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.clearFocusWhenTap(),
         topBar = { TagSettingTopAppBar(onArrowBackButtonClick = onNavigateUp) },
     ) { contentPadding ->
         LazyColumn(

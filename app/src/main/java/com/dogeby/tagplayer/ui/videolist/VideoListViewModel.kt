@@ -53,7 +53,6 @@ class VideoListViewModel @Inject constructor(
         }
 
         if (isSelectedVideoItems.all { it.value.not() }) {
-            setSelectMode(false)
             clearIsSelectedVideoItems()
         } else {
             setSelectMode(true)
@@ -76,7 +75,8 @@ class VideoListViewModel @Inject constructor(
         _isSelectMode.value = isSelectMode
     }
 
-    private fun clearIsSelectedVideoItems() {
+    fun clearIsSelectedVideoItems() {
+        setSelectMode(false)
         _isSelectedVideoItems.clear()
     }
 }

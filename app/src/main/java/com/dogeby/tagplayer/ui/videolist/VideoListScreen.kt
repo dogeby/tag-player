@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.videolist
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.Arrangement
@@ -76,6 +77,7 @@ fun VideoListRoute(
         onNavigateToTagSetting = { onNavigateToTagSetting(isSelectedVideoItems.filterValues { it }.keys.toList()) },
         onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
         onSelectAllVideoItem = viewModel::selectAllVideoItems,
+        onClearSelectedVideoItems = viewModel::clearIsSelectedVideoItems,
         isTagFiltered = isTagFiltered,
         modifier = modifier.fillMaxWidth(),
         onNavigateToFilterSetting = onNavigateToFilterSetting,
@@ -92,6 +94,7 @@ fun VideoListScreen(
     onNavigateToTagSetting: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
     onSelectAllVideoItem: () -> Unit,
+    onClearSelectedVideoItems: () -> Unit,
     isTagFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
@@ -122,6 +125,7 @@ fun VideoListScreen(
                         onAllItemSelectButtonClick = onSelectAllVideoItem,
                         onTagSettingButtonClick = onNavigateToTagSetting,
                         onInfoButtonClick = { /*TODO*/ },
+                        onClearSelectedVideoItems = onClearSelectedVideoItems,
                         isShowActionIconAnimation = isShowBottomAppBarIconAnimation,
                     )
                 } else {
@@ -239,9 +243,16 @@ fun VideoItemBottomAppBar(
     onAllItemSelectButtonClick: () -> Unit,
     onTagSettingButtonClick: () -> Unit,
     onInfoButtonClick: () -> Unit,
+    onClearSelectedVideoItems: () -> Unit,
     modifier: Modifier = Modifier,
     isShowActionIconAnimation: Boolean = true,
 ) {
+
+    BackHandler(
+        enabled = shown,
+        onBack = onClearSelectedVideoItems
+    )
+
     BottomAppBarAnimation(
         shown = shown,
     ) {

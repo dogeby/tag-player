@@ -75,6 +75,7 @@ fun VideoListRoute(
         onNavigateToPlayer = onNavigateToPlayer,
         onNavigateToTagSetting = { onNavigateToTagSetting(isSelectedVideoItems.filterValues { it }.keys.toList()) },
         onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
+        onSelectAllVideoItem = viewModel::selectAllVideoItems,
         isTagFiltered = isTagFiltered,
         modifier = modifier.fillMaxWidth(),
         onNavigateToFilterSetting = onNavigateToFilterSetting,
@@ -90,6 +91,7 @@ fun VideoListScreen(
     onNavigateToPlayer: () -> Unit,
     onNavigateToTagSetting: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
+    onSelectAllVideoItem: () -> Unit,
     isTagFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
@@ -117,7 +119,7 @@ fun VideoListScreen(
                 if (isSelectMode) {
                     VideoItemBottomAppBar(
                         shown = bottomBarShown,
-                        onAllItemSelectButtonClick = { /*TODO*/ },
+                        onAllItemSelectButtonClick = onSelectAllVideoItem,
                         onTagSettingButtonClick = onNavigateToTagSetting,
                         onInfoButtonClick = { /*TODO*/ },
                         isShowActionIconAnimation = isShowBottomAppBarIconAnimation,

@@ -42,7 +42,7 @@ class VideoListViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = false
+            initialValue = false,
         )
 
     suspend fun updateVideoList() = updateVideoListUseCase()
@@ -57,6 +57,18 @@ class VideoListViewModel @Inject constructor(
             clearIsSelectedVideoItems()
         } else {
             setSelectMode(true)
+        }
+    }
+
+    fun selectAllVideoItems() {
+        val videoListUiState = videoListUiState.value
+        if (videoListUiState is VideoListUiState.Success) {
+            _isSelectedVideoItems.putAll(
+                videoListUiState.videoItems.associateBy(
+                    keySelector = { it.id },
+                    valueTransform = { true },
+                ),
+            )
         }
     }
 

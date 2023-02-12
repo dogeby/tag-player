@@ -109,6 +109,45 @@ private fun VideoInfoTags(
     }
 }
 
+@Composable
+fun MultiVideoInfoDialog(
+    representativeName: String,
+    count: Int,
+    totalSize: String,
+    onDismissRequest: () -> Unit,
+    onConfirmButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(text = stringResource(id = R.string.videoInfoDialog_title))
+        },
+        text = {
+            Column {
+                VideoInfoItem(
+                    title = stringResource(id = R.string.name),
+                    content = stringResource(
+                        R.string.multiVideoInfoDialog_name,
+                        representativeName,
+                        count - 1,
+                    ),
+                )
+                VideoInfoItem(
+                    title = stringResource(id = R.string.total_size),
+                    content = totalSize,
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirmButtonClick) {
+                Text(text = stringResource(id = R.string.ok))
+            }
+        },
+        modifier = modifier,
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun VideoInfoDialogPreview() {
@@ -118,6 +157,20 @@ fun VideoInfoDialogPreview() {
                 0, "", "동영상1", "MP4", "12:20", "10.23 MB", 1023000000, "/movie/", listOf("movie"),
                 List(1) { Tag(name = "tag$it") },
             ),
+            onDismissRequest = {},
+            onConfirmButtonClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MultiVideoInfoDialogPreview() {
+    TagPlayerTheme {
+        MultiVideoInfoDialog(
+            representativeName = "동영상1",
+            count = 3,
+            totalSize = "10.23 MB",
             onDismissRequest = {},
             onConfirmButtonClick = {},
         )

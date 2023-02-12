@@ -13,6 +13,7 @@ class GetVideoItemsUseCase @Inject constructor(
     private val videoRepository: VideoRepository,
     private val preferencesRepository: PreferencesRepository,
     private val formatDurationUseCase: FormatDurationUseCase,
+    private val formatSizeUseCase: FormatSizeUseCase,
 ) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -27,7 +28,10 @@ class GetVideoItemsUseCase @Inject constructor(
 
             videosWithTags.map { videos ->
                 videos.map {
-                    it.toVideoItem(formatDurationUseCase(it.video.duration))
+                    it.toVideoItem(
+                        duration = formatDurationUseCase(it.video.duration),
+                        formattedSize = formatSizeUseCase(it.video.size),
+                    )
                 }
             }
         }

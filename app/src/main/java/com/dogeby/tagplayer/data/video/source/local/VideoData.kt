@@ -8,7 +8,7 @@ data class VideoData(
     val fileName: String,
     val duration: Int,
     val path: String,
-    val size: Int,
+    val size: Long,
 )
 
 fun VideoData.toVideo(uri: String) = Video(
@@ -18,6 +18,7 @@ fun VideoData.toVideo(uri: String) = Video(
     extension = fileName.toExtension(),
     duration = duration,
     path = path,
+    size = size,
 )
 
 fun VideoData.toVideoEntity() = VideoEntity(
@@ -25,7 +26,8 @@ fun VideoData.toVideoEntity() = VideoEntity(
     name = fileName.toName(),
     extension = fileName.toExtension(),
     duration = duration,
-    path = path
+    path = path,
+    size = size,
 )
 
 private fun String.toName() = substringBeforeLast(".")

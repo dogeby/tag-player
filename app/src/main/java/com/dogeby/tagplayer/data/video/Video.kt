@@ -9,6 +9,7 @@ data class Video(
     val extension: String,
     val duration: Int,
     val path: String,
+    val size: Long,
 )
 
 fun Video.toVideoEntity() =
@@ -17,5 +18,6 @@ fun Video.toVideoEntity() =
         name = name,
         extension = extension,
         duration = duration,
-        path = path
+        path = path,
+        size = size,
     )

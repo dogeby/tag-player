@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.videolist
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.Arrangement
@@ -60,6 +61,7 @@ fun VideoListRoute(
     val isTagFiltered: Boolean by viewModel.isTagFiltered.collectAsState()
     val isSelectMode: Boolean by viewModel.isSelectMode.collectAsState()
     val isSelectedVideoItems: Map<Long, Boolean> = viewModel.isSelectedVideoItems
+    val videoInfoDialogUiState: VideoInfoDialogUiState by viewModel.videoInfoDialogUiState.collectAsState()
 
     val permissionState: PermissionState = rememberPermissionState(AppRequiredPermission)
     if (permissionState.status.isGranted) {
@@ -72,9 +74,14 @@ fun VideoListRoute(
         videoListUiState = videoListUiState,
         isSelectMode = isSelectMode,
         isSelectedVideoItems = isSelectedVideoItems.toMap(),
+        videoInfoDialogUiState = videoInfoDialogUiState,
         onNavigateToPlayer = onNavigateToPlayer,
         onNavigateToTagSetting = { onNavigateToTagSetting(isSelectedVideoItems.filterValues { it }.keys.toList()) },
         onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
+        onSelectAllVideoItem = viewModel::selectAllVideoItems,
+        onClearSelectedVideoItems = viewModel::clearIsSelectedVideoItems,
+        onShowVideoInfoDialog = viewModel::showVideoInfoDialog,
+        onHideVideoInfoDialog = viewModel::hideVideoInfoDialog,
         isTagFiltered = isTagFiltered,
         modifier = modifier.fillMaxWidth(),
         onNavigateToFilterSetting = onNavigateToFilterSetting,
@@ -87,9 +94,14 @@ fun VideoListScreen(
     videoListUiState: VideoListUiState,
     isSelectMode: Boolean,
     isSelectedVideoItems: Map<Long, Boolean>,
+    videoInfoDialogUiState: VideoInfoDialogUiState,
     onNavigateToPlayer: () -> Unit,
     onNavigateToTagSetting: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
+    onSelectAllVideoItem: () -> Unit,
+    onClearSelectedVideoItems: () -> Unit,
+    onShowVideoInfoDialog: () -> Unit,
+    onHideVideoInfoDialog: () -> Unit,
     isTagFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
@@ -117,9 +129,10 @@ fun VideoListScreen(
                 if (isSelectMode) {
                     VideoItemBottomAppBar(
                         shown = bottomBarShown,
-                        onAllItemSelectButtonClick = { /*TODO*/ },
+                        onAllItemSelectButtonClick = onSelectAllVideoItem,
                         onTagSettingButtonClick = onNavigateToTagSetting,
-                        onInfoButtonClick = { /*TODO*/ },
+                        onInfoButtonClick = onShowVideoInfoDialog,
+                        onClearSelectedVideoItems = onClearSelectedVideoItems,
                         isShowActionIconAnimation = isShowBottomAppBarIconAnimation,
                     )
                 } else {
@@ -141,6 +154,26 @@ fun VideoListScreen(
                         .fillMaxWidth()
                         .padding(contentPadding),
                 )
+            }
+
+            when (videoInfoDialogUiState) {
+                VideoInfoDialogUiState.Hide -> {}
+                is VideoInfoDialogUiState.ShowSingleInfo -> {
+                    VideoInfoDialog(
+                        videoItem = videoInfoDialogUiState.videoItem,
+                        onDismissRequest = onHideVideoInfoDialog,
+                        onConfirmButtonClick = onHideVideoInfoDialog,
+                    )
+                }
+                is VideoInfoDialogUiState.ShowMultiInfo -> {
+                    MultiVideoInfoDialog(
+                        representativeName = videoInfoDialogUiState.representativeName,
+                        count = videoInfoDialogUiState.count,
+                        totalSize = videoInfoDialogUiState.totalSize,
+                        onDismissRequest = onHideVideoInfoDialog,
+                        onConfirmButtonClick = onHideVideoInfoDialog,
+                    )
+                }
             }
 
             when (videoListUiState) {
@@ -237,9 +270,16 @@ fun VideoItemBottomAppBar(
     onAllItemSelectButtonClick: () -> Unit,
     onTagSettingButtonClick: () -> Unit,
     onInfoButtonClick: () -> Unit,
+    onClearSelectedVideoItems: () -> Unit,
     modifier: Modifier = Modifier,
     isShowActionIconAnimation: Boolean = true,
 ) {
+
+    BackHandler(
+        enabled = shown,
+        onBack = onClearSelectedVideoItems
+    )
+
     BottomAppBarAnimation(
         shown = shown,
     ) {

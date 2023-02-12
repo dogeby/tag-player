@@ -22,4 +22,6 @@
     <dimen name="inputChipTextField_textField_minHeight">48dp</dimen>
 
     <dimen name="tagSetting_tagCreateTextHeight">48dp</dimen>
+
+    <dimen name="videoInfoDialog_infoItemTitleContentPadding">2dp</dimen>
 </resources>

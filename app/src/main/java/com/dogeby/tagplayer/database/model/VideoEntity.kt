@@ -11,6 +11,7 @@ data class VideoEntity(
     val extension: String,
     val duration: Int,
     val path: String,
+    val size: Long,
 )
 
 fun VideoEntity.toVideo(uri: String) =
@@ -21,4 +22,5 @@ fun VideoEntity.toVideo(uri: String) =
         extension = extension,
         duration = duration,
         path = path,
+        size = size,
     )

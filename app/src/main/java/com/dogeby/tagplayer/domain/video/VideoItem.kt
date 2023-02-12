@@ -8,6 +8,7 @@ data class VideoItem(
     val name: String,
     val extension: String,
     val duration: String,
+    val size: String,
     val parentDirectories: List<String>,
     val tags: List<Tag>,
 )

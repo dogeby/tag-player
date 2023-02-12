@@ -30,7 +30,7 @@ class GetVideoItemsUseCase @Inject constructor(
                 videos.map {
                     it.toVideoItem(
                         duration = formatDurationUseCase(it.video.duration),
-                        size = formatSizeUseCase(it.video.size),
+                        formattedSize = formatSizeUseCase(it.video.size),
                     )
                 }
             }

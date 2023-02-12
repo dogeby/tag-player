@@ -50,7 +50,7 @@ fun VideoInfoDialog(
                 )
                 VideoInfoItem(
                     title = stringResource(id = R.string.size),
-                    content = videoItem.size,
+                    content = videoItem.formattedSize,
                 )
                 VideoInfoItem(
                     title = stringResource(id = R.string.path),
@@ -115,7 +115,7 @@ fun VideoInfoDialogPreview() {
     TagPlayerTheme {
         VideoInfoDialog(
             videoItem = VideoItem(
-                0, "", "동영상1", "MP4", "12:20", "10.23 MB", "/movie/", listOf("movie"),
+                0, "", "동영상1", "MP4", "12:20", "10.23 MB", 1023000000, "/movie/", listOf("movie"),
                 List(1) { Tag(name = "tag$it") },
             ),
             onDismissRequest = {},

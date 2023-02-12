@@ -8,7 +8,7 @@ data class VideoWithTags(
     val tags: List<Tag>,
 )
 
-fun VideoWithTags.toVideoItem(duration: String, size: String) =
+fun VideoWithTags.toVideoItem(duration: String, formattedSize: String) =
     with(video) {
         VideoItem(
             id = id,
@@ -16,6 +16,7 @@ fun VideoWithTags.toVideoItem(duration: String, size: String) =
             name = name,
             extension = extension,
             duration = duration,
+            formattedSize = formattedSize,
             size = size,
             path = path,
             parentDirectories = path.split('/').filter { it.isNotBlank() },

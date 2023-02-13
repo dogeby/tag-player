@@ -1,6 +1,5 @@
 package com.dogeby.tagplayer.ui.videolist
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,15 +32,10 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
-import com.dogeby.tagplayer.ui.component.BottomAppBarAnimation
-import com.dogeby.tagplayer.ui.component.BottomAppBarAnimationIconButton
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
-import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -216,105 +209,6 @@ fun VideoListTopAppBar(
 }
 
 @Composable
-fun VideoListBottomAppBar(
-    shown: Boolean,
-    isFilterButtonChecked: Boolean,
-    onSearchButtonClick: () -> Unit,
-    onFilterButtonClick: () -> Unit,
-    onSortButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    isShowActionIconAnimation: Boolean = true,
-) {
-    BottomAppBarAnimation(
-        shown = shown,
-    ) {
-        BottomAppBar(
-            modifier = modifier,
-        ) {
-            BottomAppBarAnimationIconButton(
-                onClick = onSearchButtonClick,
-                isShowAnimation = isShowActionIconAnimation,
-                delayMillis = 100,
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_search),
-                    contentDescription = null,
-                )
-            }
-            BottomAppBarAnimationIconButton(
-                onClick = onFilterButtonClick,
-                isShowAnimation = isShowActionIconAnimation,
-                delayMillis = 200,
-            ) {
-                Icon(
-                    painter = painterResource(
-                        id = if (isFilterButtonChecked) R.drawable.ic_filled_filter else R.drawable.ic_outlined_filter,
-                    ),
-                    contentDescription = null,
-                )
-            }
-            BottomAppBarAnimationIconButton(
-                onClick = onSortButtonClick,
-                isShowAnimation = isShowActionIconAnimation,
-                delayMillis = 300,
-            ) {
-                Icon(painter = painterResource(id = R.drawable.ic_sort), contentDescription = null)
-            }
-        }
-    }
-}
-
-@Composable
-fun VideoItemBottomAppBar(
-    shown: Boolean,
-    onAllItemSelectButtonClick: () -> Unit,
-    onTagSettingButtonClick: () -> Unit,
-    onInfoButtonClick: () -> Unit,
-    onClearSelectedVideoItems: () -> Unit,
-    modifier: Modifier = Modifier,
-    isShowActionIconAnimation: Boolean = true,
-) {
-
-    BackHandler(
-        enabled = shown,
-        onBack = onClearSelectedVideoItems
-    )
-
-    BottomAppBarAnimation(
-        shown = shown,
-    ) {
-        BottomAppBar(
-            modifier = modifier,
-        ) {
-            BottomAppBarAnimationIconButton(
-                onClick = onAllItemSelectButtonClick,
-                isShowAnimation = isShowActionIconAnimation,
-                delayMillis = 100,
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_all_select),
-                    contentDescription = null,
-                )
-            }
-            BottomAppBarAnimationIconButton(
-                onClick = onTagSettingButtonClick,
-                isShowAnimation = isShowActionIconAnimation,
-                delayMillis = 200,
-            ) {
-                Icon(painter = painterResource(id = R.drawable.ic_tag), contentDescription = null)
-            }
-            BottomAppBarAnimationIconButton(
-                onClick = onInfoButtonClick,
-                isShowAnimation = isShowActionIconAnimation,
-                delayMillis = 300,
-            ) {
-                Icon(painter = painterResource(id = R.drawable.ic_info), contentDescription = null)
-            }
-        }
-    }
-}
-
-@Composable
 fun VideoList(
     videoListUiState: VideoListUiState.Success,
     isSelectedVideoItems: Map<Long, Boolean>,
@@ -343,20 +237,5 @@ fun VideoList(
                 onLongClick = { onToggleVideoItem(videoItem.id) },
             )
         }
-    }
-}
-
-@Preview
-@Composable
-fun VideoListBottomAppBarPreview() {
-    TagPlayerTheme {
-        VideoListBottomAppBar(
-            shown = true,
-            isFilterButtonChecked = true,
-            onSearchButtonClick = { },
-            onFilterButtonClick = { },
-            onSortButtonClick = { },
-            isShowActionIconAnimation = true,
-        )
     }
 }

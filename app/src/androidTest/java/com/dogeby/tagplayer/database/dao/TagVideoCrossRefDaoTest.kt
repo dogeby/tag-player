@@ -135,4 +135,25 @@ class TagVideoCrossRefDaoTest {
 
         Assert.assertEquals(videoIds.size / 2, videosWithTagsInDb.size)
     }
+
+    @Test
+    fun getVideosWithTagsByName() = runTest {
+        val tagEntities = listOf(TagEntity(name = "tag"))
+        val tagId = tagDao.insertTags(tagEntities).first()
+        val videoEntities = List(5) { VideoEntity(it.toLong(), it.toString(), it.toString(), it, it.toString(), it.toLong()) }
+        val videoIds = videoDao.insertVideos(videoEntities)
+        tagVideoCrossRefDao.insertTagVideoCrossRefs(
+            List(videoIds.size) {
+                TagVideoCrossRef(
+                    tagId,
+                    videoIds[it],
+                )
+            },
+        )
+        val expectedVideoEntity = videoEntities.first().copy(id = videoIds.first())
+
+        val searchResult = tagVideoCrossRefDao.getVideosWithTags(expectedVideoEntity.name).first()
+
+        Assert.assertEquals(expectedVideoEntity, searchResult.first().videoEntity)
+    }
 }

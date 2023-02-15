@@ -47,6 +47,7 @@ fun VideoListRoute(
     onNavigateToPlayer: () -> Unit,
     onNavigateToFilterSetting: () -> Unit,
     onNavigateToTagSetting: (List<Long>) -> Unit,
+    onNavigateToVideoSearch: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: VideoListViewModel = hiltViewModel(),
 ) {
@@ -70,6 +71,7 @@ fun VideoListRoute(
         videoInfoDialogUiState = videoInfoDialogUiState,
         onNavigateToPlayer = onNavigateToPlayer,
         onNavigateToTagSetting = { onNavigateToTagSetting(isSelectedVideoItems.filterValues { it }.keys.toList()) },
+        onNavigateToVideoSearch = onNavigateToVideoSearch,
         onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
         onSelectAllVideoItem = viewModel::selectAllVideoItems,
         onClearSelectedVideoItems = viewModel::clearIsSelectedVideoItems,
@@ -90,6 +92,7 @@ fun VideoListScreen(
     videoInfoDialogUiState: VideoInfoDialogUiState,
     onNavigateToPlayer: () -> Unit,
     onNavigateToTagSetting: () -> Unit,
+    onNavigateToVideoSearch: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
     onSelectAllVideoItem: () -> Unit,
     onClearSelectedVideoItems: () -> Unit,
@@ -132,7 +135,7 @@ fun VideoListScreen(
                     VideoListBottomAppBar(
                         shown = bottomBarShown,
                         isFilterButtonChecked = isTagFiltered,
-                        onSearchButtonClick = { /*TODO*/ },
+                        onSearchButtonClick = onNavigateToVideoSearch,
                         onFilterButtonClick = onNavigateToFilterSetting,
                         onSortButtonClick = { /*TODO*/ },
                         isShowActionIconAnimation = isShowBottomAppBarIconAnimation,

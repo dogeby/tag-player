@@ -5,3 +5,4 @@ const val VideoListRoute = "videoList"
 
 const val VideoIdsArgument = "videoIds"
 const val TagSettingRoute = "tagSetting"
+const val VideoSearchRoute = "videoSearch"

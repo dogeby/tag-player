@@ -6,5 +6,7 @@ sealed interface VideoSearchViewUiState {
 
     object Empty : VideoSearchViewUiState
 
+    object QueryBlank : VideoSearchViewUiState
+
     data class Success(val videoListUiState: VideoListUiState.Success) : VideoSearchViewUiState
 }

@@ -15,6 +15,7 @@
     <string name="path">경로</string>
     <string name="tag">태그</string>
     <string name="total_size">총 크기</string>
+    <string name="search_result">검색 결과</string>
 
     <string name="permission_guide_app_access_permission">앱 접근 권한 안내</string>
     <string name="permission_app_permission_request_description">택플을 사용하기 위해서는 다음과 같은 권한들이 필요합니다.</string>
@@ -37,4 +38,8 @@
 
     <string name="videoInfoDialog_title">상세 정보</string>
     <string name="multiVideoInfoDialog_name">%1$s 외 %2$d개</string>
+
+    <string name="videoSearch_searchTextFieldHint">동영상 검색</string>
+    <string name="videoSearch_queryBlank">동영상 이름을 입력해주세요.</string>
+    <string name="videoSearch_searchResultEmpty">검색 결과가 없습니다.</string>
 </resources>

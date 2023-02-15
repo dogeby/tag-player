@@ -216,11 +216,12 @@ fun VideoList(
     onNavigateToPlayer: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(dimensionResource(id = R.dimen.padding_small))
 ) {
 
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     ) {
         items(videoListUiState.videoItems) { videoItem ->

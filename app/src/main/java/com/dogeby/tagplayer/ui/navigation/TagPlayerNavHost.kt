@@ -12,6 +12,7 @@ import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
 import com.dogeby.tagplayer.ui.permission.PermissionScreen
 import com.dogeby.tagplayer.ui.tagsetting.TagSettingRoute
 import com.dogeby.tagplayer.ui.videolist.VideoListRoute
+import com.dogeby.tagplayer.ui.videosearch.VideoSearchRoute
 import com.google.gson.Gson
 
 @Composable
@@ -44,6 +45,7 @@ fun TagPlayerNavHost(
                 onNavigateToTagSetting = { videoIds ->
                     navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
                 },
+                onNavigateToVideoSearch = { navController.navigate(VideoSearchRoute) }
             )
         }
         composable(
@@ -53,6 +55,13 @@ fun TagPlayerNavHost(
             TagSettingRoute(
                 modifier = modifier,
                 onNavigateUp = { navController.navigateUp() }
+            )
+        }
+        composable(VideoSearchRoute) {
+            AppPermissionDeniedByExternalAction(onExit)
+            VideoSearchRoute(
+                onNavigateToPlayer = { /*TODO*/ },
+                onNavigateUp = { navController.navigateUp() },
             )
         }
     }

@@ -101,6 +101,16 @@ abstract class TagVideoCrossRefDao {
     )
     abstract fun getVideosWithTags(ids: List<Long>): Flow<List<VideoEntityWithTagEntities>>
 
+    @Transaction
+    @Query(
+        """
+            SELECT * FROM videos
+            WHERE name LIKE '%'||:nameKeyword||'%'
+            ORDER BY name
+        """
+    )
+    abstract fun getVideosWithTags(nameKeyword: String): Flow<List<VideoEntityWithTagEntities>>
+
     @OptIn(ExperimentalCoroutinesApi::class)
     open fun getVideosWithTagsFilteredByTag(ids: List<Long>): Flow<List<VideoEntityWithTagEntities>> {
         return getVideoIdsFilteredByTag(ids).flatMapLatest { videoIds ->

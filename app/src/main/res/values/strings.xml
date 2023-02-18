@@ -42,4 +42,7 @@
     <string name="videoSearch_searchTextFieldHint">동영상 검색</string>
     <string name="videoSearch_queryBlank">동영상 이름을 입력해주세요.</string>
     <string name="videoSearch_searchResultEmpty">검색 결과가 없습니다.</string>
+
+    <string name="videoFilter_searchTextFieldHint">태그 검색</string>
+    <string name="videoFilter_tagEmpty">태그를 찾지 못했습니다.</string>
 </resources>

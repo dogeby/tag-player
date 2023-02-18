@@ -14,7 +14,7 @@ class PreferencesRepositoryImpl @Inject constructor(
     override val videoListPreferencesData: Flow<VideoListPreferencesData>
         get() = videoListPreferencesDataSource.videoListPreferencesData
 
-    override suspend fun setFilteredTagIds(tagIds: List<Long>) {
-        videoListPreferencesDataSource.setFilteredTagIds(tagIds)
+    override suspend fun setTagFilter(tagIds: List<Long>) {
+        videoListPreferencesDataSource.setTagFilter(tagIds)
     }
 }

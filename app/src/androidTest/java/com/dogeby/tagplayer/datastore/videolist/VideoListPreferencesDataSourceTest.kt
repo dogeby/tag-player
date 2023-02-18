@@ -30,7 +30,7 @@ class VideoListPreferencesDataSourceTest {
     fun setFilteredTagIdsAndGetFilteredTagIds() = runTest {
         val tagIds = List(5) { it.toLong() }
 
-        videoListPreferencesDataSource.setFilteredTagIds(tagIds)
+        videoListPreferencesDataSource.setTagFilter(tagIds)
         val data = videoListPreferencesDataSource.videoListPreferencesData.first()
 
         Assert.assertEquals(tagIds, data.filteredTagIds)

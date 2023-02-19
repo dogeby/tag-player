@@ -7,4 +7,6 @@ interface VideoListPreferencesDataSource {
     val videoListPreferencesData: Flow<VideoListPreferencesData>
 
     suspend fun setTagFilter(tagIds: List<Long>)
+
+    suspend fun setSortType(sortType: VideoListSortType)
 }

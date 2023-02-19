@@ -10,7 +10,11 @@ import javax.inject.Inject
 
 class VideoListPreferencesSerializer @Inject constructor() : Serializer<VideoListPreferences> {
 
-    override val defaultValue: VideoListPreferences = VideoListPreferences.getDefaultInstance()
+    override val defaultValue: VideoListPreferences =
+        VideoListPreferences.getDefaultInstance()
+            .toBuilder()
+            .setSortType(VideoListSortType.NAME.name)
+            .build()
 
     override suspend fun readFrom(input: InputStream): VideoListPreferences =
         try {

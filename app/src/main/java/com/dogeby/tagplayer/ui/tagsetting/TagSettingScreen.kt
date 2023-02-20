@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.data.tag.Tag
+import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.TagInputChipTextField
 import com.dogeby.tagplayer.ui.component.TagManageMenuMoreHorizButton
 import com.dogeby.tagplayer.ui.component.TagNameEditDialog
@@ -148,9 +149,9 @@ fun TagSettingScreen(
                 }
                 TagSearchResultUiState.Empty -> {
                     item {
-                        Text(
+                        MaxSizeCenterText(
                             text = stringResource(id = R.string.tagSetting_tagSearchResultEmpty),
-                            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+                            modifier = Modifier.fillParentMaxHeight(0.5F),
                         )
                     }
                 }

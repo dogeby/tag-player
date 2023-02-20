@@ -19,6 +19,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
+import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.videolist.VideoList
 
 @Composable
@@ -101,14 +102,14 @@ fun VideoSearchScreen(
                     )
                 }
                 VideoSearchViewUiState.QueryBlank -> {
-                    Text(
+                    MaxSizeCenterText(
                         text = stringResource(id = R.string.videoSearch_queryBlank),
                         modifier = Modifier
                             .padding(dimensionResource(id = R.dimen.padding_small)),
                     )
                 }
                 VideoSearchViewUiState.Empty -> {
-                    Text(
+                    MaxSizeCenterText(
                         text = stringResource(id = R.string.videoSearch_searchResultEmpty),
                         modifier = Modifier
                             .padding(dimensionResource(id = R.dimen.padding_small)),

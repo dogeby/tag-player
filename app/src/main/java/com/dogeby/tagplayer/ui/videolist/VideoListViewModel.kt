@@ -39,7 +39,10 @@ class VideoListViewModel @Inject constructor(
     val isSelectedVideoItems: Map<Long, Boolean> = _isSelectedVideoItems
 
     val videoListUiState: StateFlow<VideoListUiState> = getVideoItemsUseCase()
-        .map<List<VideoItem>, VideoListUiState>(VideoListUiState::Success)
+        .map { videoItems ->
+            if (videoItems.isEmpty()) return@map VideoListUiState.Empty
+            VideoListUiState.Success(videoItems)
+        }
         .onStart { emit(VideoListUiState.Loading) }
         .stateIn(
             scope = viewModelScope,

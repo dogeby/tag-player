@@ -26,6 +26,7 @@
     <string name="permission_dialog_app_setting">앱 설정</string>
 
     <string name="videoList_topAppBar_title">동영상 목록</string>
+    <string name="videoList_listEmpty">동영상을 찾지 못했습니다.</string>
 
     <string name="tagSetting_topAppBarTitle">태그 설정</string>
     <string name="tagSetting_selectOrCreate">선택 또는 생성</string>

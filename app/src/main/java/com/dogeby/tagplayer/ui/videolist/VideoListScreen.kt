@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
+import com.dogeby.tagplayer.ui.component.ListEmptyText
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -183,6 +184,13 @@ fun VideoListScreen(
             when (videoListUiState) {
                 VideoListUiState.Loading -> {
                     progressIndicatorState = true
+                }
+                VideoListUiState.Empty -> {
+                    progressIndicatorState = false
+                    ListEmptyText(
+                        text = stringResource(id = R.string.videoList_listEmpty),
+                        modifier = modifier.padding(contentPadding)
+                    )
                 }
                 is VideoListUiState.Success -> {
                     progressIndicatorState = false

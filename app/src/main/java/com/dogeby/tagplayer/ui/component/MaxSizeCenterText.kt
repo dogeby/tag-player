@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ListEmptyText(
+fun MaxSizeCenterText(
     text: String,
     modifier: Modifier = Modifier,
 ) {

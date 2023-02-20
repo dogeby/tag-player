@@ -45,4 +45,9 @@
 
     <string name="videoFilter_searchTextFieldHint">태그 검색</string>
     <string name="videoFilter_tagEmpty">태그를 찾지 못했습니다.</string>
+
+    <string-array name="videoSortTypes">
+        <item>이름</item>
+        <item>크기</item>
+    </string-array>
 </resources>

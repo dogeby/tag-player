@@ -13,4 +13,9 @@ class RemoveTagFilterUseCase @Inject constructor(
         val filteredTag = getFilteredTagIdUseCase().first()
         preferencesRepository.setTagFilter(filteredTag - tagId)
     }
+
+    suspend operator fun invoke(tagIds: List<Long>) {
+        val filteredTag = getFilteredTagIdUseCase().first()
+        preferencesRepository.setTagFilter(filteredTag - tagIds.toSet())
+    }
 }

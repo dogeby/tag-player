@@ -16,7 +16,8 @@ class VideoListPreferencesDataSourceImpl @Inject constructor(
     override val videoListPreferencesData: Flow<VideoListPreferencesData> = videoListSettingPreferences.data
         .map {
             VideoListPreferencesData(
-                filteredTagIds = it.filteredTagIdsList
+                filteredTagIds = it.filteredTagIdsList,
+                sortType = VideoListSortType.valueOf(it.sortType)
             )
         }
 
@@ -26,6 +27,14 @@ class VideoListPreferencesDataSourceImpl @Inject constructor(
                 filteredTagIds.clear()
                 filteredTagIds.addAll(tagIds)
             }
+        }
+    }
+
+    override suspend fun setSortType(sortType: VideoListSortType) {
+        videoListSettingPreferences.updateData { videoListPreferences ->
+            videoListPreferences.toBuilder()
+                .setSortType(sortType.name)
+                .build()
         }
     }
 }

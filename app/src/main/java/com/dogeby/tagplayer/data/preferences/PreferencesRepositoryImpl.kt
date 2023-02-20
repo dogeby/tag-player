@@ -2,6 +2,7 @@ package com.dogeby.tagplayer.data.preferences
 
 import com.dogeby.tagplayer.datastore.videolist.VideoListPreferencesData
 import com.dogeby.tagplayer.datastore.videolist.VideoListPreferencesDataSource
+import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -16,5 +17,9 @@ class PreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun setTagFilter(tagIds: List<Long>) {
         videoListPreferencesDataSource.setTagFilter(tagIds)
+    }
+
+    override suspend fun setSortType(sortType: VideoListSortType) {
+        videoListPreferencesDataSource.setSortType(sortType)
     }
 }

@@ -3,7 +3,10 @@ package com.dogeby.tagplayer.ui.videolist
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
 import com.dogeby.tagplayer.domain.preferences.GetIsTagFilteredUseCase
+import com.dogeby.tagplayer.domain.preferences.GetVideoListSortTypeUseCase
+import com.dogeby.tagplayer.domain.preferences.SetVideoListSortTypeUseCase
 import com.dogeby.tagplayer.domain.video.FormatSizeUseCase
 import com.dogeby.tagplayer.domain.video.GetVideoItemsUseCase
 import com.dogeby.tagplayer.domain.video.UpdateVideoListUseCase
@@ -17,13 +20,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class VideoListViewModel @Inject constructor(
     getVideoItemsUseCase: GetVideoItemsUseCase,
     getIsTagFilteredUseCase: GetIsTagFilteredUseCase,
+    getVideoListSortTypeUseCase: GetVideoListSortTypeUseCase,
     private val updateVideoListUseCase: UpdateVideoListUseCase,
     private val formatSizeUseCase: FormatSizeUseCase,
+    private val setVideoListSortTypeUseCase: SetVideoListSortTypeUseCase,
 ) : ViewModel() {
 
     private val _isSelectMode = MutableStateFlow(false)
@@ -50,6 +56,19 @@ class VideoListViewModel @Inject constructor(
 
     private val _videoInfoDialogUiState: MutableStateFlow<VideoInfoDialogUiState> = MutableStateFlow(VideoInfoDialogUiState.Hide)
     val videoInfoDialogUiState: StateFlow<VideoInfoDialogUiState> = _videoInfoDialogUiState.asStateFlow()
+
+    val videoListSortTypeUiState: StateFlow<VideoListSortTypeUiState> = getVideoListSortTypeUseCase()
+        .map { selectedSortType ->
+            val sortTypes = VideoListSortType.values().map {
+                VideoListSortTypeItemUiState(it, it == selectedSortType)
+            }
+            VideoListSortTypeUiState(sortTypes)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = VideoListSortTypeUiState(emptyList())
+        )
 
     suspend fun updateVideoList() = updateVideoListUseCase()
 
@@ -115,5 +134,11 @@ class VideoListViewModel @Inject constructor(
 
     fun hideVideoInfoDialog() {
         _videoInfoDialogUiState.value = VideoInfoDialogUiState.Hide
+    }
+
+    fun setSortType(videoListSortType: VideoListSortType) {
+        viewModelScope.launch {
+            setVideoListSortTypeUseCase(videoListSortType)
+        }
     }
 }

@@ -35,6 +35,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
+import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -56,6 +57,7 @@ fun VideoListRoute(
     val isSelectMode: Boolean by viewModel.isSelectMode.collectAsState()
     val isSelectedVideoItems: Map<Long, Boolean> = viewModel.isSelectedVideoItems
     val videoInfoDialogUiState: VideoInfoDialogUiState by viewModel.videoInfoDialogUiState.collectAsState()
+    val videoListSortTypeUiState: VideoListSortTypeUiState by viewModel.videoListSortTypeUiState.collectAsState()
 
     val permissionState: PermissionState = rememberPermissionState(AppRequiredPermission)
     if (permissionState.status.isGranted) {
@@ -69,6 +71,7 @@ fun VideoListRoute(
         isSelectMode = isSelectMode,
         isSelectedVideoItems = isSelectedVideoItems.toMap(),
         videoInfoDialogUiState = videoInfoDialogUiState,
+        videoListSortTypeUiState = videoListSortTypeUiState,
         onNavigateToPlayer = onNavigateToPlayer,
         onNavigateToTagSetting = { onNavigateToTagSetting(isSelectedVideoItems.filterValues { it }.keys.toList()) },
         onNavigateToVideoSearch = onNavigateToVideoSearch,
@@ -77,6 +80,7 @@ fun VideoListRoute(
         onClearSelectedVideoItems = viewModel::clearIsSelectedVideoItems,
         onShowVideoInfoDialog = viewModel::showVideoInfoDialog,
         onHideVideoInfoDialog = viewModel::hideVideoInfoDialog,
+        onSortTypeSet = viewModel::setSortType,
         isTagFiltered = isTagFiltered,
         modifier = modifier.fillMaxWidth(),
         onNavigateToFilterSetting = onNavigateToFilterSetting,
@@ -90,6 +94,7 @@ fun VideoListScreen(
     isSelectMode: Boolean,
     isSelectedVideoItems: Map<Long, Boolean>,
     videoInfoDialogUiState: VideoInfoDialogUiState,
+    videoListSortTypeUiState: VideoListSortTypeUiState,
     onNavigateToPlayer: () -> Unit,
     onNavigateToTagSetting: () -> Unit,
     onNavigateToVideoSearch: () -> Unit,
@@ -98,6 +103,7 @@ fun VideoListScreen(
     onClearSelectedVideoItems: () -> Unit,
     onShowVideoInfoDialog: () -> Unit,
     onHideVideoInfoDialog: () -> Unit,
+    onSortTypeSet: (VideoListSortType) -> Unit,
     isTagFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
@@ -135,9 +141,11 @@ fun VideoListScreen(
                     VideoListBottomAppBar(
                         shown = bottomBarShown,
                         isFilterButtonChecked = isTagFiltered,
+                        videoListSortTypeUiState = videoListSortTypeUiState,
                         onSearchButtonClick = onNavigateToVideoSearch,
                         onFilterButtonClick = onNavigateToFilterSetting,
-                        onSortButtonClick = { /*TODO*/ },
+                        onSortButtonClick = { },
+                        onSortTypeSet = onSortTypeSet,
                         isShowActionIconAnimation = isShowBottomAppBarIconAnimation,
                     )
                 }

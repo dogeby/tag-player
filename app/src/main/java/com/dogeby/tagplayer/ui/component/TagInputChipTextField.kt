@@ -131,9 +131,8 @@ fun InputChipTextField(
                             text = stringResource(id = R.string.tagInputChipTextField_searchHint),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
-                    } else {
-                        it()
                     }
+                    it()
                 },
             )
         }

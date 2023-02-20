@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,6 +38,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.dogeby.tagplayer.R
@@ -97,6 +100,7 @@ fun InputChipTextField(
     val keywordTextFieldFocusRequester = remember {
         FocusRequester()
     }
+    val focusManager = LocalFocusManager.current
 
     FlowRow(
         modifier = modifier
@@ -124,6 +128,8 @@ fun InputChipTextField(
                     .align(Alignment.Center)
                     .focusRequester(keywordTextFieldFocusRequester),
                 textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                 decorationBox = {
                     if (isInputChipIncluded.not() && keyword.isEmpty()) {

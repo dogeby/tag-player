@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
+import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
@@ -108,7 +109,7 @@ fun VideoFilterScreen(
                     )
                 }
                 VideoFilterUiState.Empty -> {
-                    Text(
+                    MaxSizeCenterText(
                         text = stringResource(id = R.string.videoFilter_tagEmpty),
                         modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
                     )

@@ -1,6 +1,7 @@
 package com.dogeby.tagplayer.ui.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,7 +33,7 @@ fun VideoThumbnail(
             GlideImage(
                 model = uri,
                 contentDescription = null,
-                modifier = modifier,
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
             ) {
                 it

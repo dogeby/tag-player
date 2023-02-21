@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -58,7 +57,7 @@ fun VideoListItem(
                 width = integerResource(id = R.integer.videolist_video_thumbnail_width),
                 height = integerResource(id = R.integer.videolist_video_thumbnail_height),
                 duration = videoItem.duration,
-                modifier = Modifier.width(dimensionResource(id = R.dimen.videolist_video_thumbnail_width)),
+                modifier = Modifier.fillMaxWidth(0.5F)
             )
             Box(
                 modifier = Modifier

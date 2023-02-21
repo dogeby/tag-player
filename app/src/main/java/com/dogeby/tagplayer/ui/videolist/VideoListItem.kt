@@ -3,6 +3,7 @@ package com.dogeby.tagplayer.ui.videolist
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoTag
@@ -66,20 +68,26 @@ fun VideoListItem(
                 Text(text = videoItem.name, maxLines = 2, overflow = TextOverflow.Ellipsis)
 
                 val tagListItemHorizontalPadding = Modifier.padding(horizontal = dimensionResource(id = R.dimen.videolist_video_tag_list_item_horizontal_padding))
-                LazyRow(modifier = Modifier.align(Alignment.BottomStart)) {
-                    items(videoItem.parentDirectories) {
-                        VideoTag(
-                            name = it,
-                            color = MaterialTheme.colorScheme.secondary,
-                            modifier = tagListItemHorizontalPadding,
-                        )
+                Column(modifier = Modifier.align(Alignment.BottomStart)) {
+                    LazyRow {
+                        items(videoItem.parentDirectories) {
+                            VideoTag(
+                                name = it,
+                                color = MaterialTheme.colorScheme.secondary,
+                                modifier = tagListItemHorizontalPadding,
+                            )
+                        }
                     }
-                    items(videoItem.tags) {
-                        VideoTag(
-                            name = it.name,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            modifier = tagListItemHorizontalPadding,
-                        )
+                    if (videoItem.tags.isNotEmpty()) {
+                        LazyRow(modifier = Modifier.padding(top = 4.dp)) {
+                            items(videoItem.tags) {
+                                VideoTag(
+                                    name = it.name,
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    modifier = tagListItemHorizontalPadding,
+                                )
+                            }
+                        }
                     }
                 }
             }

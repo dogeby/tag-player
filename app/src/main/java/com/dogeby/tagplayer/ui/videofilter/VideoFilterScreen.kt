@@ -1,6 +1,5 @@
 package com.dogeby.tagplayer.ui.videofilter
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -8,15 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -36,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
+import com.dogeby.tagplayer.ui.component.VideoFilterChip
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
@@ -139,7 +135,7 @@ fun VideoFilterScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun DirectoryFilterList(
     directoryFilterUiState: VideoDirectoryFilterUiState,
@@ -167,26 +163,12 @@ fun DirectoryFilterList(
             is VideoDirectoryFilterUiState.Success -> {
                 FlowRow {
                     directoryFilterUiState.directoryFilterItems.forEach { directoryFilter ->
-                        FilterChip(
+                        VideoFilterChip(
                             selected = directoryFilter.isFiltered,
-                            onClick = {
-                                if (directoryFilter.isFiltered) {
-                                    onDirectoryFilterRemove(directoryFilter.name)
-                                } else {
-                                    onDirectoryFilterAdd(directoryFilter.name)
-                                }
-                            },
-                            label = { Text(text = directoryFilter.name) },
+                            name = directoryFilter.name,
+                            onVideoFilterAdd = { onDirectoryFilterAdd(directoryFilter.name) },
+                            onVideoFilterRemove = { onDirectoryFilterRemove(directoryFilter.name) },
                             modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small)),
-                            leadingIcon = {
-                                AnimatedVisibility(directoryFilter.isFiltered) {
-                                    Icon(
-                                        imageVector = Icons.Default.Done,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                    )
-                                }
-                            },
                         )
                     }
                 }
@@ -195,7 +177,7 @@ fun DirectoryFilterList(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TagFilterList(
     tagFilterUiState: VideoTagFilterUiState,
@@ -223,26 +205,12 @@ fun TagFilterList(
             is VideoTagFilterUiState.Success -> {
                 FlowRow {
                     tagFilterUiState.tagFilterItems.forEach { tagFilter ->
-                        FilterChip(
+                        VideoFilterChip(
                             selected = tagFilter.isFilteredTag,
-                            onClick = {
-                                if (tagFilter.isFilteredTag) {
-                                    onTagFilterRemove(tagFilter.tagId)
-                                } else {
-                                    onTagFilterAdd(tagFilter.tagId)
-                                }
-                            },
-                            label = { Text(text = tagFilter.tagName) },
+                            name = tagFilter.tagName,
+                            onVideoFilterAdd = { onTagFilterAdd(tagFilter.tagId) },
+                            onVideoFilterRemove = { onTagFilterRemove(tagFilter.tagId) },
                             modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small)),
-                            leadingIcon = {
-                                AnimatedVisibility(tagFilter.isFilteredTag) {
-                                    Icon(
-                                        imageVector = Icons.Default.Done,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize),
-                                    )
-                                }
-                            },
                         )
                     }
                 }

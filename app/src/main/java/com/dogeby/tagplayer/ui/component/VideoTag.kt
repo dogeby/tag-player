@@ -1,6 +1,7 @@
 package com.dogeby.tagplayer.ui.component
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -10,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.dogeby.tagplayer.R
 
@@ -23,7 +25,7 @@ fun VideoTag(
     isEllipsis: Boolean = false
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.widthIn(dimensionResource(id = R.dimen.videoTag_min_width)),
         shape = shape,
         color = color,
     ) {
@@ -31,6 +33,7 @@ fun VideoTag(
             text = name,
             modifier = Modifier
                 .padding(horizontal = dimensionResource(id = R.dimen.videolist_video_tag_horizontal_padding)),
+            textAlign = TextAlign.Center,
             overflow = if (isEllipsis) TextOverflow.Ellipsis else TextOverflow.Clip,
             maxLines = 1,
             style = textStyle,

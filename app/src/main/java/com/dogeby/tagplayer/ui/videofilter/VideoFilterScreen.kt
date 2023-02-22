@@ -1,6 +1,5 @@
 package com.dogeby.tagplayer.ui.videofilter
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -8,15 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -36,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
+import com.dogeby.tagplayer.ui.component.VideoFilterChip
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
@@ -51,6 +47,8 @@ fun VideoFilterRoute(
         videoFilterUiState = videoFilterUiState,
         query = query,
         onQueryChange = viewModel::setQuery,
+        onDirectoryFilterAdd = viewModel::addDirectoryFilter,
+        onDirectoryFilterRemove = viewModel::removeDirectoryFilter,
         onTagFilterAdd = viewModel::addTagFilter,
         onTagFilterRemove = viewModel::removeTagFilter,
         onQueryClear = viewModel::clearQuery,
@@ -65,6 +63,8 @@ fun VideoFilterScreen(
     videoFilterUiState: VideoFilterUiState,
     query: String,
     onQueryChange: (String) -> Unit,
+    onDirectoryFilterAdd: (String) -> Unit,
+    onDirectoryFilterRemove: (String) -> Unit,
     onTagFilterAdd: (Long) -> Unit,
     onTagFilterRemove: (Long) -> Unit,
     onQueryClear: () -> Unit,
@@ -110,27 +110,77 @@ fun VideoFilterScreen(
                 }
                 VideoFilterUiState.Empty -> {
                     MaxSizeCenterText(
-                        text = stringResource(id = R.string.videoFilter_tagEmpty),
+                        text = stringResource(id = R.string.videoFilter_tagAndDirectoryEmpty),
                         modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
                     )
                 }
                 is VideoFilterUiState.Success -> {
-                    TagFilterList(
-                        tagFilters = videoFilterUiState.tagFilters,
-                        onTagFilterAdd = onTagFilterAdd,
-                        onTagFilterRemove = onTagFilterRemove,
-                        modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
-                    )
+                    Column {
+                        DirectoryFilterList(
+                            directoryFilterUiState = videoFilterUiState.directoryFilterUiState,
+                            onDirectoryFilterAdd = onDirectoryFilterAdd,
+                            onDirectoryFilterRemove = onDirectoryFilterRemove,
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+                        )
+                        TagFilterList(
+                            tagFilterUiState = videoFilterUiState.tagFilterUiState,
+                            onTagFilterAdd = onTagFilterAdd,
+                            onTagFilterRemove = onTagFilterRemove,
+                            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun DirectoryFilterList(
+    directoryFilterUiState: VideoDirectoryFilterUiState,
+    onDirectoryFilterAdd: (String) -> Unit,
+    onDirectoryFilterRemove: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        FilterTitle(
+            name = stringResource(id = R.string.folder),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_folder),
+                    contentDescription = null,
+                )
+            },
+        )
+        when (directoryFilterUiState) {
+            VideoDirectoryFilterUiState.Empty -> {
+                Text(
+                    text = stringResource(id = R.string.videoFilter_directoryEmpty),
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+                )
+            }
+            is VideoDirectoryFilterUiState.Success -> {
+                FlowRow {
+                    directoryFilterUiState.directoryFilterItems.forEach { directoryFilter ->
+                        VideoFilterChip(
+                            selected = directoryFilter.isFiltered,
+                            name = directoryFilter.name,
+                            onVideoFilterAdd = { onDirectoryFilterAdd(directoryFilter.name) },
+                            onVideoFilterRemove = { onDirectoryFilterRemove(directoryFilter.name) },
+                            modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small)),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TagFilterList(
-    tagFilters: List<VideoTagFilterUiState>,
+    tagFilterUiState: VideoTagFilterUiState,
     onTagFilterAdd: (Long) -> Unit,
     onTagFilterRemove: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -145,29 +195,25 @@ fun TagFilterList(
                 )
             },
         )
-        FlowRow {
-            tagFilters.forEach { tagFilter ->
-                FilterChip(
-                    selected = tagFilter.isFilteredTag,
-                    onClick = {
-                        if (tagFilter.isFilteredTag) {
-                            onTagFilterRemove(tagFilter.tagId)
-                        } else {
-                            onTagFilterAdd(tagFilter.tagId)
-                        }
-                    },
-                    label = { Text(text = tagFilter.tagName) },
-                    modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small)),
-                    leadingIcon = {
-                        AnimatedVisibility(tagFilter.isFilteredTag) {
-                            Icon(
-                                imageVector = Icons.Default.Done,
-                                contentDescription = null,
-                                modifier = Modifier.size(FilterChipDefaults.IconSize),
-                            )
-                        }
-                    },
+        when (tagFilterUiState) {
+            VideoTagFilterUiState.Empty -> {
+                Text(
+                    text = stringResource(id = R.string.videoFilter_tagEmpty),
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
                 )
+            }
+            is VideoTagFilterUiState.Success -> {
+                FlowRow {
+                    tagFilterUiState.tagFilterItems.forEach { tagFilter ->
+                        VideoFilterChip(
+                            selected = tagFilter.isFilteredTag,
+                            name = tagFilter.tagName,
+                            onVideoFilterAdd = { onTagFilterAdd(tagFilter.tagId) },
+                            onVideoFilterRemove = { onTagFilterRemove(tagFilter.tagId) },
+                            modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_small)),
+                        )
+                    }
+                }
             }
         }
     }
@@ -193,13 +239,15 @@ fun FilterTitle(
 fun TagFilterListPreview() {
     TagPlayerTheme {
         TagFilterList(
-            tagFilters = List(8) {
-                VideoTagFilterUiState(
-                    it.toLong(),
-                    "Tag$it",
-                    it % 2 == 0,
-                )
-            },
+            tagFilterUiState = VideoTagFilterUiState.Success(
+                List(8) {
+                    VideoTagFilterItemUiState(
+                        it.toLong(),
+                        "Tag$it",
+                        it % 2 == 0,
+                    )
+                },
+            ),
             onTagFilterAdd = {},
             onTagFilterRemove = {},
         )

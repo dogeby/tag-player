@@ -17,7 +17,8 @@ class VideoListPreferencesDataSourceImpl @Inject constructor(
         .map {
             VideoListPreferencesData(
                 filteredTagIds = it.filteredTagIdsList,
-                sortType = VideoListSortType.valueOf(it.sortType)
+                filteredDirectoryNames = it.filteredDirectoryNamesList,
+                sortType = VideoListSortType.valueOf(it.sortType),
             )
         }
 
@@ -35,6 +36,15 @@ class VideoListPreferencesDataSourceImpl @Inject constructor(
             videoListPreferences.toBuilder()
                 .setSortType(sortType.name)
                 .build()
+        }
+    }
+
+    override suspend fun setDirectoryFilter(directoryNames: List<String>) {
+        videoListSettingPreferences.updateData {
+            it.copy {
+                filteredDirectoryNames.clear()
+                filteredDirectoryNames.addAll(directoryNames)
+            }
         }
     }
 }

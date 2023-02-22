@@ -16,8 +16,9 @@
     <dimen name="videolist_video_tag_list_item_horizontal_padding">2dp</dimen>
     <dimen name="videolist_video_tag_horizontal_padding">4dp</dimen>
     <dimen name="videolist_video_item_height">108dp</dimen>
-    <dimen name="videolist_video_thumbnail_width">192dp</dimen>
     <dimen name="videolist_video_item_info_padding">4dp</dimen>
+
+    <dimen name="videoTag_min_width">32dp</dimen>
 
     <dimen name="inputChipTextField_textField_minHeight">48dp</dimen>
 

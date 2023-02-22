@@ -14,6 +14,7 @@
     <string name="size">크기</string>
     <string name="path">경로</string>
     <string name="tag">태그</string>
+    <string name="folder">폴더</string>
     <string name="total_size">총 크기</string>
     <string name="search_result">검색 결과</string>
 
@@ -46,6 +47,8 @@
 
     <string name="videoFilter_searchTextFieldHint">태그 검색</string>
     <string name="videoFilter_tagEmpty">태그를 찾지 못했습니다.</string>
+    <string name="videoFilter_directoryEmpty">폴더를 찾지 못했습니다.</string>
+    <string name="videoFilter_tagAndDirectoryEmpty">태그와 폴더를 찾지 못했습니다.</string>
 
     <string-array name="videoSortTypes">
         <item>이름</item>

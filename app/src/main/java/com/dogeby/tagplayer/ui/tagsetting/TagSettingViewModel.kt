@@ -16,6 +16,7 @@ import com.dogeby.tagplayer.domain.tag.RemoveTagFromVideosUseCase
 import com.dogeby.tagplayer.ui.navigation.VideoIdsArgument
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.SortedSet
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -50,15 +51,15 @@ class TagSettingViewModel @Inject constructor(
 
     private val tagSearchKeyword = MutableStateFlow("")
 
-    private val commonTags: StateFlow<HashSet<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
-        .map { it.toHashSet() }
+    private val commonTags: StateFlow<SortedSet<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
+        .map { tags -> tags.toSortedSet(compareBy { it.name }) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = HashSet(),
+            initialValue = sortedSetOf(),
         )
 
-    val tagInputChipTextFieldUiState: StateFlow<TagInputChipTextFieldUiState> = commonTags.combine(tagSearchKeyword) { tags: HashSet<Tag>, keyword: String ->
+    val tagInputChipTextFieldUiState: StateFlow<TagInputChipTextFieldUiState> = commonTags.combine(tagSearchKeyword) { tags: SortedSet<Tag>, keyword: String ->
         TagInputChipTextFieldUiState(tags.toList(), keyword)
     }
         .stateIn(

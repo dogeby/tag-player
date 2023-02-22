@@ -2,6 +2,7 @@ package com.dogeby.tagplayer.domain.video
 
 import com.dogeby.tagplayer.data.preferences.PreferencesRepository
 import com.dogeby.tagplayer.data.video.VideoRepository
+import com.dogeby.tagplayer.data.video.VideoWithTags
 import com.dogeby.tagplayer.data.video.toVideoItem
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
 import javax.inject.Inject
@@ -29,24 +30,36 @@ class GetVideoItemsUseCase @Inject constructor(
             }
 
             videosWithTags.mapLatest { videos ->
-                when (sortType) {
-                    VideoListSortType.NAME -> {
-                        videos.sortedBy {
-                            it.video.name
-                        }
+                videos
+                    .sorted(sortType)
+                    .map {
+                        it.toVideoItem(
+                            duration = formatDurationUseCase(it.video.duration),
+                            formattedSize = formatSizeUseCase(it.video.size),
+                        )
                     }
-                    VideoListSortType.SIZE -> {
-                        videos.sortedBy {
-                            it.video.size
-                        }
-                    }
-                }.map {
-                    it.toVideoItem(
-                        duration = formatDurationUseCase(it.video.duration),
-                        formattedSize = formatSizeUseCase(it.video.size),
-                    )
+                    .filterDirectoryFilter(videoListPreferencesData.filteredDirectoryNames.toSet())
+            }
+        }
+    }
+
+    private fun List<VideoWithTags>.sorted(videoListSortType: VideoListSortType): List<VideoWithTags> {
+        return when (videoListSortType) {
+            VideoListSortType.NAME -> {
+                this.sortedBy {
+                    it.video.name
+                }
+            }
+            VideoListSortType.SIZE -> {
+                this.sortedBy {
+                    it.video.size
                 }
             }
         }
+    }
+
+    private fun List<VideoItem>.filterDirectoryFilter(filteredDirectoryNames: Set<String>): List<VideoItem> {
+        if (filteredDirectoryNames.isEmpty()) return this
+        return filter { videoItem -> videoItem.parentDirectories.any { it in filteredDirectoryNames } }
     }
 }

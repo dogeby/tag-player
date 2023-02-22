@@ -18,6 +18,8 @@
     <dimen name="videolist_video_item_height">108dp</dimen>
     <dimen name="videolist_video_item_info_padding">4dp</dimen>
 
+    <dimen name="videoTag_min_width">32dp</dimen>
+
     <dimen name="inputChipTextField_textField_minHeight">48dp</dimen>
 
     <dimen name="tagSetting_tagCreateTextHeight">48dp</dimen>

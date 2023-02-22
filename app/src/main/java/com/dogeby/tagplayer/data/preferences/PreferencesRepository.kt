@@ -11,4 +11,6 @@ interface PreferencesRepository {
     suspend fun setTagFilter(tagIds: List<Long>)
 
     suspend fun setSortType(sortType: VideoListSortType)
+
+    suspend fun setDirectoryFilter(directoryNames: List<String>)
 }

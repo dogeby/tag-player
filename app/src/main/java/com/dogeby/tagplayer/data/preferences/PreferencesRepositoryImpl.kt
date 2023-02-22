@@ -22,4 +22,8 @@ class PreferencesRepositoryImpl @Inject constructor(
     override suspend fun setSortType(sortType: VideoListSortType) {
         videoListPreferencesDataSource.setSortType(sortType)
     }
+
+    override suspend fun setDirectoryFilter(directoryNames: List<String>) {
+        videoListPreferencesDataSource.setDirectoryFilter(directoryNames)
+    }
 }

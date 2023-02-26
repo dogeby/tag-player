@@ -108,6 +108,9 @@ dependencies {
     //media3
     implementation "androidx.media3:media3-exoplayer:$media3_version"
     implementation "androidx.media3:media3-ui:$media3_version"
+
+    //accompanist pager
+    implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
 }
 
 kapt {

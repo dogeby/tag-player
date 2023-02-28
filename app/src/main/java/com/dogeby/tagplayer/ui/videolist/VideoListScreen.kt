@@ -46,7 +46,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun VideoListRoute(
-    onNavigateToPlayer: () -> Unit,
+    onNavigateToPlayer: (List<Long>) -> Unit,
     onNavigateToFilterSetting: () -> Unit,
     onNavigateToTagSetting: (List<Long>) -> Unit,
     onNavigateToVideoSearch: () -> Unit,
@@ -96,7 +96,7 @@ fun VideoListScreen(
     isSelectedVideoItems: Map<Long, Boolean>,
     videoInfoDialogUiState: VideoInfoDialogUiState,
     videoListSortTypeUiState: VideoListSortTypeUiState,
-    onNavigateToPlayer: () -> Unit,
+    onNavigateToPlayer: (List<Long>) -> Unit,
     onNavigateToTagSetting: () -> Unit,
     onNavigateToVideoSearch: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
@@ -199,7 +199,7 @@ fun VideoListScreen(
                         videoListUiState = videoListUiState,
                         isSelectMode = isSelectMode,
                         isSelectedVideoItems = isSelectedVideoItems,
-                        onNavigateToPlayer = onNavigateToPlayer,
+                        onNavigateToPlayer = { onNavigateToPlayer(videoListUiState.videoItems.map { it.id }) },
                         onToggleVideoItem = onToggleVideoItem,
                     )
                 }

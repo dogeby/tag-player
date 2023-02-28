@@ -13,7 +13,7 @@ import com.dogeby.tagplayer.domain.tag.GetAllTagsUseCase
 import com.dogeby.tagplayer.domain.tag.GetCommonTagsFromVideosUseCase
 import com.dogeby.tagplayer.domain.tag.ModifyTagNameUseCase
 import com.dogeby.tagplayer.domain.tag.RemoveTagFromVideosUseCase
-import com.dogeby.tagplayer.ui.navigation.VideoIdsArgument
+import com.dogeby.tagplayer.ui.navigation.TagSettingVideoIdsArgument
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.SortedSet
@@ -45,7 +45,7 @@ class TagSettingViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val videoIds: List<Long> = Gson().fromJson(
-        checkNotNull<String>(savedStateHandle[VideoIdsArgument]),
+        checkNotNull<String>(savedStateHandle[TagSettingVideoIdsArgument]),
         LongArray::class.java,
     ).toList()
 

@@ -13,6 +13,7 @@ import com.dogeby.tagplayer.ui.permission.PermissionScreen
 import com.dogeby.tagplayer.ui.tagsetting.TagSettingRoute
 import com.dogeby.tagplayer.ui.videofilter.VideoFilterRoute
 import com.dogeby.tagplayer.ui.videolist.VideoListRoute
+import com.dogeby.tagplayer.ui.videoplayer.VideoPlayerRoute
 import com.dogeby.tagplayer.ui.videosearch.VideoSearchRoute
 import com.google.gson.Gson
 
@@ -41,7 +42,7 @@ fun TagPlayerNavHost(
         composable(VideoListRoute) {
             AppPermissionDeniedByExternalAction(onExit)
             VideoListRoute(
-                onNavigateToPlayer = { /*TODO*/ },
+                onNavigateToPlayer = { videoIds -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}") },
                 onNavigateToFilterSetting = { navController.navigate(VideoFilterRoute) },
                 onNavigateToTagSetting = { videoIds ->
                     navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
@@ -50,8 +51,8 @@ fun TagPlayerNavHost(
             )
         }
         composable(
-            route = "$TagSettingRoute/{$VideoIdsArgument}",
-            arguments = listOf(navArgument(VideoIdsArgument) { type = NavType.StringType }),
+            route = "$TagSettingRoute/{$TagSettingVideoIdsArgument}",
+            arguments = listOf(navArgument(TagSettingVideoIdsArgument) { type = NavType.StringType }),
         ) {
             TagSettingRoute(
                 modifier = modifier,
@@ -69,6 +70,12 @@ fun TagPlayerNavHost(
             VideoFilterRoute(
                 onNavigateUp = { navController.navigateUp() }
             )
+        }
+        composable(
+            route = "$VideoPlayerRoute/{$VideoPlayerVideoIdsArgument}",
+            arguments = listOf(navArgument(VideoPlayerVideoIdsArgument) { type = NavType.StringType })
+        ) {
+            VideoPlayerRoute()
         }
     }
 }

@@ -42,7 +42,7 @@ fun TagPlayerNavHost(
         composable(VideoListRoute) {
             AppPermissionDeniedByExternalAction(onExit)
             VideoListRoute(
-                onNavigateToPlayer = { videoIds -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}") },
+                onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
                 onNavigateToFilterSetting = { navController.navigate(VideoFilterRoute) },
                 onNavigateToTagSetting = { videoIds ->
                     navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
@@ -62,7 +62,7 @@ fun TagPlayerNavHost(
         composable(VideoSearchRoute) {
             AppPermissionDeniedByExternalAction(onExit)
             VideoSearchRoute(
-                onNavigateToPlayer = { /*TODO*/ },
+                onNavigateToPlayer = { _, _ -> /*TODO*/ },
                 onNavigateUp = { navController.navigateUp() },
             )
         }
@@ -72,8 +72,11 @@ fun TagPlayerNavHost(
             )
         }
         composable(
-            route = "$VideoPlayerRoute/{$VideoPlayerVideoIdsArgument}",
-            arguments = listOf(navArgument(VideoPlayerVideoIdsArgument) { type = NavType.StringType })
+            route = "$VideoPlayerRoute/{$VideoPlayerVideoIdsArgument}/{$VideoPlayerStartVideoId}",
+            arguments = listOf(
+                navArgument(VideoPlayerVideoIdsArgument) { type = NavType.StringType },
+                navArgument(VideoPlayerStartVideoId) { type = NavType.LongType },
+            )
         ) {
             VideoPlayerRoute()
         }

@@ -46,7 +46,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun VideoListRoute(
-    onNavigateToPlayer: (List<Long>) -> Unit,
+    onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onNavigateToFilterSetting: () -> Unit,
     onNavigateToTagSetting: (List<Long>) -> Unit,
     onNavigateToVideoSearch: () -> Unit,
@@ -96,7 +96,7 @@ fun VideoListScreen(
     isSelectedVideoItems: Map<Long, Boolean>,
     videoInfoDialogUiState: VideoInfoDialogUiState,
     videoListSortTypeUiState: VideoListSortTypeUiState,
-    onNavigateToPlayer: (List<Long>) -> Unit,
+    onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onNavigateToTagSetting: () -> Unit,
     onNavigateToVideoSearch: () -> Unit,
     onToggleVideoItem: (Long) -> Unit,
@@ -199,7 +199,7 @@ fun VideoListScreen(
                         videoListUiState = videoListUiState,
                         isSelectMode = isSelectMode,
                         isSelectedVideoItems = isSelectedVideoItems,
-                        onNavigateToPlayer = { onNavigateToPlayer(videoListUiState.videoItems.map { it.id }) },
+                        onNavigateToPlayer = onNavigateToPlayer,
                         onToggleVideoItem = onToggleVideoItem,
                     )
                 }
@@ -232,7 +232,7 @@ fun VideoList(
     videoListUiState: VideoListUiState.Success,
     isSelectedVideoItems: Map<Long, Boolean>,
     isSelectMode: Boolean,
-    onNavigateToPlayer: () -> Unit,
+    onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onToggleVideoItem: (Long) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(dimensionResource(id = R.dimen.padding_small))
@@ -251,7 +251,7 @@ fun VideoList(
                     if (isSelectMode) {
                         onToggleVideoItem(videoItem.id)
                     } else {
-                        onNavigateToPlayer()
+                        onNavigateToPlayer(videoListUiState.videoItems.map { it.id }, videoItem.id)
                     }
                 },
                 onLongClick = { onToggleVideoItem(videoItem.id) },

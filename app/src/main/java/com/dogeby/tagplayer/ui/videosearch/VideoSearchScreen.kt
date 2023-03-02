@@ -24,7 +24,7 @@ import com.dogeby.tagplayer.ui.videolist.VideoList
 
 @Composable
 fun VideoSearchRoute(
-    onNavigateToPlayer: () -> Unit,
+    onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: VideoSearchViewModel = hiltViewModel(),
@@ -49,7 +49,7 @@ fun VideoSearchScreen(
     videoSearchViewUiState: VideoSearchViewUiState,
     query: String,
     onQueryChange: (String) -> Unit,
-    onVideoClick: () -> Unit,
+    onVideoClick: (List<Long>, Long) -> Unit,
     onClear: () -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,

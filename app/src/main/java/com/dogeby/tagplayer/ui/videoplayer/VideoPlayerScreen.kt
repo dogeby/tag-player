@@ -2,10 +2,13 @@ package com.dogeby.tagplayer.ui.videoplayer
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun VideoPlayerRoute(
@@ -27,6 +30,16 @@ fun VideoPlayerScreen(
     onPlayerSettledPageChanged: (videoId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val systemUiController = rememberSystemUiController()
+    DisposableEffect(systemUiController) {
+        systemUiController.isSystemBarsVisible = false
+        systemUiController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        onDispose {
+            systemUiController.isSystemBarsVisible = true
+        }
+    }
+
     when (videoPlayerPagerUiState) {
         VideoPlayerPagerUiState.Loading -> { /*TODO*/ }
 

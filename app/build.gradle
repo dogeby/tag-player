@@ -109,8 +109,8 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer:$media3_version"
     implementation "androidx.media3:media3-ui:$media3_version"
 
-    //accompanist pager
-    implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
+    //accompanist system ui controller for jetpack compose
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
 }
 
 kapt {

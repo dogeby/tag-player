@@ -31,7 +31,6 @@ fun TagPlayerNavHost(
     ) {
         composable(PermissionRoute) {
             PermissionScreen(
-                modifier = modifier,
                 onNavigateToDestination = {
                     navController.navigate(VideoListRoute) {
                         popUpTo(PermissionRoute) { inclusive = true }

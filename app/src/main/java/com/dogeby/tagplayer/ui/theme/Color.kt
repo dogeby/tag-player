@@ -55,3 +55,5 @@ val TagPlayerDarkOutline = Color(0xFF90909A)
 val TagPlayerDarkInverseSurface = Color(0xFFF2F0F4)
 val TagPlayerDarkInverseOnSurface = Color(0xFF303034)
 val TagPlayerDarkPrimaryInverse = Color(0xFF3054CB)
+
+val PlayerBackgroundColor = Color.Black

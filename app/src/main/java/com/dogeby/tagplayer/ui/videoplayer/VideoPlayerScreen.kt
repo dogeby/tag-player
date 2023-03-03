@@ -37,6 +37,7 @@ fun VideoPlayerScreen(
 
         onDispose {
             systemUiController.isSystemBarsVisible = true
+            systemUiController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_TOUCH
         }
     }
 

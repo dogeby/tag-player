@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,7 +74,7 @@ private fun PermissionElement(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PermissionScreen(
     modifier: Modifier = Modifier,
@@ -96,41 +98,45 @@ fun PermissionScreen(
         }
     }
 
-    Column(
-        modifier = modifier.fillMaxHeight()
-            .verticalScroll(rememberScrollState())
-            .padding(all = dimensionResource(id = R.dimen.padding_medium)),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = stringResource(id = R.string.permission_guide_app_access_permission),
-            style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.permission_screen_display_bottom_padding)),
-        )
-        Text(
-            text = stringResource(id = R.string.permission_app_permission_request_description),
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.permission_request_description_bottom_padding)),
-        )
-
-        PermissionElement(
-            image = R.drawable.ic_media_video_permission,
-            title = R.string.permission_read_media_video,
-            description = R.string.permission_read_media_video_description,
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = {
-                if (permissionState.status.shouldShowRationale) {
-                    isShowPermissionDialog = true
-                } else {
-                    permissionState.launchPermissionRequest()
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.small,
+    Scaffold(modifier = modifier) {
+        Column(
+            modifier = modifier
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+                .padding(it)
+                .padding(all = dimensionResource(id = R.dimen.padding_medium)),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = stringResource(id = R.string.ok))
+            Text(
+                text = stringResource(id = R.string.permission_guide_app_access_permission),
+                style = MaterialTheme.typography.displaySmall,
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.permission_screen_display_bottom_padding)),
+            )
+            Text(
+                text = stringResource(id = R.string.permission_app_permission_request_description),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.permission_request_description_bottom_padding)),
+            )
+
+            PermissionElement(
+                image = R.drawable.ic_media_video_permission,
+                title = R.string.permission_read_media_video,
+                description = R.string.permission_read_media_video_description,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Button(
+                onClick = {
+                    if (permissionState.status.shouldShowRationale) {
+                        isShowPermissionDialog = true
+                    } else {
+                        permissionState.launchPermissionRequest()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.small,
+            ) {
+                Text(text = stringResource(id = R.string.ok))
+            }
         }
     }
 }

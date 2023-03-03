@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
@@ -14,6 +15,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.dogeby.tagplayer.domain.video.VideoItem
+import com.dogeby.tagplayer.ui.theme.PlayerBackgroundColor
 
 @Composable
 fun VideoPlayer(
@@ -45,6 +47,7 @@ fun VideoPlayer(
         factory = {
             PlayerView(context).apply {
                 useController = false
+                setBackgroundColor(PlayerBackgroundColor.toArgb())
                 player = videoPlayer
             }
         },

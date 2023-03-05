@@ -42,8 +42,8 @@ fun VideoPlayerPager(
         val videoPlayerItem = videoItems[index]
         VideoPlayer(
             videoItem = videoPlayerItem,
-            playWhenReady = videoPlayerItem.id == settledPageVideoId,
-            modifier = Modifier.fillMaxSize()
+            isPlayWhenReady = videoPlayerItem.id == settledPageVideoId,
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

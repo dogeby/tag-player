@@ -57,3 +57,5 @@ val TagPlayerDarkInverseOnSurface = Color(0xFF303034)
 val TagPlayerDarkPrimaryInverse = Color(0xFF3054CB)
 
 val PlayerBackgroundColor = Color.Black
+val PlayerProgressBarIndicatorColor = Color.White
+val PlayerProgressBarTrackColor = Color.Gray.copy(alpha = 0.1f)

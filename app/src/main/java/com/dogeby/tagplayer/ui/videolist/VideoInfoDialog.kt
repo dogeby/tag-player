@@ -21,6 +21,7 @@ import com.dogeby.tagplayer.data.tag.Tag
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoTag
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
+import com.dogeby.tagplayer.util.VideoDuration
 
 @Composable
 fun VideoInfoDialog(
@@ -46,7 +47,7 @@ fun VideoInfoDialog(
                 )
                 VideoInfoItem(
                     title = stringResource(id = R.string.duration),
-                    content = videoItem.duration,
+                    content = videoItem.duration.toString(),
                 )
                 VideoInfoItem(
                     title = stringResource(id = R.string.size),
@@ -154,7 +155,7 @@ fun VideoInfoDialogPreview() {
     TagPlayerTheme {
         VideoInfoDialog(
             videoItem = VideoItem(
-                0, "", "동영상1", "MP4", "12:20", "10.23 MB", 1023000000, "/movie/", listOf("movie"),
+                0, "", "동영상1", "MP4", VideoDuration(100), "10.23 MB", 1023000000, "/movie/", listOf("movie"),
                 List(1) { Tag(name = "tag$it") },
             ),
             onDismissRequest = {},

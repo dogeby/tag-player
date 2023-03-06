@@ -9,7 +9,7 @@ data class VideoEntity(
     @PrimaryKey val id: Long,
     val name: String,
     val extension: String,
-    val duration: Int,
+    val duration: Long,
     val path: String,
     val size: Long,
 )

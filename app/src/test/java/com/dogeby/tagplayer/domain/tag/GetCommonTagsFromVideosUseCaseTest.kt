@@ -36,7 +36,7 @@ class GetCommonTagsFromVideosUseCaseTest {
         val expectedCommonTags = tags.take(2)
         val videosWithTags = videoIds.map {
             VideoWithTags(
-                Video(it, it.toString(), it.toString(), it.toString(), it.toInt(), it.toString(), it),
+                Video(it, it.toString(), it.toString(), it.toString(), it, it.toString(), it),
                 tags.take(it.toInt().coerceAtLeast(2))
             )
         }

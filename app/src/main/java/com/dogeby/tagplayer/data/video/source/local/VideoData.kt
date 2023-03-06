@@ -6,7 +6,7 @@ import com.dogeby.tagplayer.database.model.VideoEntity
 data class VideoData(
     val id: Long,
     val fileName: String,
-    val duration: Int,
+    val duration: Long,
     val path: String,
     val size: Long,
 )

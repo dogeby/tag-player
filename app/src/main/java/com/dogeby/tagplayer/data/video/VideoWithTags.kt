@@ -1,8 +1,8 @@
 package com.dogeby.tagplayer.data.video
 
 import com.dogeby.tagplayer.data.tag.Tag
+import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
-import com.dogeby.tagplayer.util.VideoDuration
 
 data class VideoWithTags(
     val video: Video,

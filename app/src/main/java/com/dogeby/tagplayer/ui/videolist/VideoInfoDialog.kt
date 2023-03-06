@@ -18,10 +18,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.data.tag.Tag
+import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoTag
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
-import com.dogeby.tagplayer.util.VideoDuration
 
 @Composable
 fun VideoInfoDialog(

@@ -19,11 +19,12 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
 fun VideoPlayerProgressBar(
-    progress: Float,
+    currentDuration: Long,
+    totalDuration: Long,
     modifier: Modifier = Modifier,
 ) {
     val animatedProgress by animateFloatAsState(
-        targetValue = progress,
+        targetValue = currentDuration / totalDuration.toFloat(),
         animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
     LinearProgressIndicator(
@@ -41,7 +42,8 @@ fun VideoPlayerProgressBarPreview() {
         Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
             Box {
                 VideoPlayerProgressBar(
-                    progress = 0.5f,
+                    currentDuration = 30,
+                    totalDuration = 60,
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)

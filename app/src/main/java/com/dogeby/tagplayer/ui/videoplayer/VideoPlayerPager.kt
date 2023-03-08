@@ -1,10 +1,12 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,17 +35,21 @@ fun VideoPlayerPager(
     }
     onSettledPageChanged(settledPageVideoId)
 
-    VerticalPager(
-        pageCount = videoItems.size,
-        state = pagerState,
-        modifier = modifier,
-        key = { videoItems[it].id }
-    ) { index ->
-        val videoPlayerItem = videoItems[index]
-        VideoPlayer(
-            videoItem = videoPlayerItem,
-            playWhenReady = videoPlayerItem.id == settledPageVideoId,
-            modifier = Modifier.fillMaxSize()
-        )
+    CompositionLocalProvider(
+        LocalOverscrollConfiguration provides null
+    ) {
+        VerticalPager(
+            pageCount = videoItems.size,
+            state = pagerState,
+            modifier = modifier,
+            key = { videoItems[it].id }
+        ) { index ->
+            val videoPlayerItem = videoItems[index]
+            VideoPlayer(
+                videoItem = videoPlayerItem,
+                isPlayWhenReady = videoPlayerItem.id == settledPageVideoId,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
     }
 }

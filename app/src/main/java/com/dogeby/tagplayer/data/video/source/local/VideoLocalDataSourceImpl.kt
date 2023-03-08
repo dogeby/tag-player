@@ -65,7 +65,7 @@ class VideoLocalDataSourceImpl @Inject constructor(
                         VideoData(
                             id = cursor.getLong(idColumn),
                             fileName = cursor.getString(nameColumn),
-                            duration = cursor.getInt(durationColumn),
+                            duration = cursor.getLong(durationColumn),
                             path = cursor.getString(pathColumn),
                             size = cursor.getLong(sizeColumn),
                         ),

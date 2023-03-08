@@ -1,5 +1,7 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -17,8 +19,11 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.theme.PlayerBackgroundColor
+
+private const val POSITION_UPDATE_INTERVAL_MS = 200L
 
 @Composable
 fun VideoPlayer(
@@ -41,6 +46,10 @@ fun VideoPlayer(
     }
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    var currentDuration by remember {
+        mutableStateOf(VideoDuration(0))
+    }
+
     DisposableEffect(videoItem.id, lifecycleOwner) {
         videoPlayer.apply {
             setMediaItem(MediaItem.fromUri(videoItem.uri))
@@ -50,35 +59,56 @@ fun VideoPlayer(
             lifecycleEvent = event
         }
         lifecycleOwner.lifecycle.addObserver(observer)
+
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
             videoPlayer.release()
         }
     }
-
-    AndroidView(
-        factory = {
-            PlayerView(context).apply {
-                useController = false
-                setBackgroundColor(PlayerBackgroundColor.toArgb())
-                player = videoPlayer
-            }
-        },
-        update = {
-            when (lifecycleEvent) {
-                Lifecycle.Event.ON_PAUSE -> {
-                    it.player?.pause()
-                    it.onPause()
-                }
-                Lifecycle.Event.ON_RESUME -> {
-                    if (isPlayWhenReady) {
-                        it.onResume()
-                        it.player?.playWhenReady = true
+    Box(modifier = modifier) {
+        AndroidView(
+            factory = {
+                PlayerView(context).apply {
+                    useController = false
+                    setBackgroundColor(PlayerBackgroundColor.toArgb())
+                    fun getCurrentPosition() {
+                        val currentPosition = videoPlayer.currentPosition
+                        if (currentDuration.value != currentPosition) currentDuration = VideoDuration(currentPosition)
+                        if (videoPlayer.isPlaying) this.postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
                     }
+                    val playerListener = object : Player.Listener {
+
+                        override fun onIsPlayingChanged(isPlaying: Boolean) {
+                            super.onIsPlayingChanged(isPlaying)
+                            if (isPlaying) postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
+                        }
+                    }
+                    videoPlayer.addListener(playerListener)
+                    player = videoPlayer
                 }
-                else -> Unit
-            }
-        },
-        modifier = modifier,
-    )
+            },
+            update = {
+                when (lifecycleEvent) {
+                    Lifecycle.Event.ON_PAUSE -> {
+                        it.player?.pause()
+                        it.onPause()
+                    }
+                    Lifecycle.Event.ON_RESUME -> {
+                        if (isPlayWhenReady) {
+                            it.onResume()
+                            it.player?.playWhenReady = true
+                        }
+                    }
+                    else -> Unit
+                }
+            },
+            modifier = Modifier.fillMaxSize(),
+        )
+        VideoPlayerController(
+            videoItem = videoItem,
+            currentDuration = currentDuration,
+            totalDuration = videoItem.duration,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
 }

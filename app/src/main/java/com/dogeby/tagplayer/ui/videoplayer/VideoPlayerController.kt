@@ -35,22 +35,28 @@ fun VideoPlayerController(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         verticalArrangement = Arrangement.Bottom,
     ) {
-        Column(modifier = Modifier.padding(start = 4.dp)) {
+        Column(modifier = Modifier) {
             VideoPlayerVideoName(
                 name = videoItem.name,
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .padding(bottom = 8.dp),
             )
             VideoPlayerDuration(
                 currentDuration = currentDuration.toString(),
                 totalDuration = totalDuration.toString(),
+                modifier = Modifier.padding(bottom = 8.dp),
             )
         }
         VideoPlayerProgressBar(
             currentDuration = currentDuration.value,
             totalDuration = totalDuration.value,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp)
         )
     }
 }
@@ -65,7 +71,7 @@ fun VideoPlayerVideoName(
         modifier = modifier,
         color = PlayerControllerOnColor,
         overflow = TextOverflow.Ellipsis,
-        maxLines = 3,
+        maxLines = 2,
         style = MaterialTheme.typography.titleLarge,
     )
 }

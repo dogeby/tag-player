@@ -1,6 +1,9 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +37,7 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
 fun VideoPlayerController(
+    isVisible: Boolean,
     videoItem: VideoItem,
     currentDuration: VideoDuration,
     totalDuration: VideoDuration,
@@ -42,42 +46,48 @@ fun VideoPlayerController(
     onPause: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Bottom,
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(),
+        exit = fadeOut(),
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.Bottom,
         ) {
-            Column {
-                VideoPlayerVideoName(
-                    name = videoItem.name,
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column {
+                    VideoPlayerVideoName(
+                        name = videoItem.name,
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .padding(bottom = 8.dp),
+                    )
+                    VideoPlayerDuration(
+                        currentDuration = currentDuration.toString(),
+                        totalDuration = totalDuration.toString(),
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                }
+                VideoPlayerRightController(
+                    isPlaying = isPlaying,
+                    onPlay = onPlay,
+                    onPause = onPause,
                     modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .padding(bottom = 8.dp),
-                )
-                VideoPlayerDuration(
-                    currentDuration = currentDuration.toString(),
-                    totalDuration = totalDuration.toString(),
-                    modifier = Modifier.padding(bottom = 8.dp),
                 )
             }
-            VideoPlayerRightController(
-                isPlaying = isPlaying,
-                onPlay = onPlay,
-                onPause = onPause,
+
+            VideoPlayerProgressBar(
+                currentDuration = currentDuration.value,
+                totalDuration = totalDuration.value,
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
             )
         }
-
-        VideoPlayerProgressBar(
-            currentDuration = currentDuration.value,
-            totalDuration = totalDuration.value,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp)
-        )
     }
 }
 
@@ -183,6 +193,7 @@ fun VideoPlayerControllerPreview() {
         Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
             Box {
                 VideoPlayerController(
+                    isVisible = true,
                     videoItem = VideoItem(
                         id = 0,
                         uri = "",

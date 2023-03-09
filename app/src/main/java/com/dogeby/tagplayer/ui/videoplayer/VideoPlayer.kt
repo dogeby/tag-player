@@ -1,5 +1,7 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -48,6 +50,10 @@ fun VideoPlayer(
         mutableStateOf(true)
     }
 
+    var controllerVisible by rememberSaveable {
+        mutableStateOf(true)
+    }
+
     var lifecycleEvent by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
     }
@@ -72,7 +78,17 @@ fun VideoPlayer(
             videoPlayer.release()
         }
     }
-    Box(modifier = modifier) {
+
+    val playerInteractionSource = remember { MutableInteractionSource() }
+    Box(
+        modifier = modifier
+            .clickable(
+                interactionSource = playerInteractionSource,
+                indication = null,
+            ) {
+                controllerVisible = controllerVisible.not()
+            },
+    ) {
         AndroidView(
             factory = {
                 PlayerView(context).apply {
@@ -112,6 +128,7 @@ fun VideoPlayer(
             modifier = Modifier.fillMaxSize(),
         )
         VideoPlayerController(
+            isVisible = controllerVisible,
             videoItem = videoItem,
             currentDuration = currentDuration,
             totalDuration = videoItem.duration,

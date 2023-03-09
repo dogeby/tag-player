@@ -8,6 +8,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -41,6 +42,10 @@ fun VideoPlayer(
             .apply {
                 repeatMode = Player.REPEAT_MODE_ONE
             }
+    }
+
+    var userIsPlaying by rememberSaveable {
+        mutableStateOf(true)
     }
 
     var lifecycleEvent by remember {
@@ -98,7 +103,7 @@ fun VideoPlayer(
                     Lifecycle.Event.ON_RESUME -> {
                         if (isPlayWhenReady) {
                             it.onResume()
-                            it.player?.playWhenReady = true
+                            it.player?.playWhenReady = userIsPlaying
                         }
                     }
                     else -> Unit
@@ -110,6 +115,15 @@ fun VideoPlayer(
             videoItem = videoItem,
             currentDuration = currentDuration,
             totalDuration = videoItem.duration,
+            isPlaying = userIsPlaying,
+            onPlay = {
+                videoPlayer.play()
+                userIsPlaying = true
+            },
+            onPause = {
+                videoPlayer.pause()
+                userIsPlaying = false
+            },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp),

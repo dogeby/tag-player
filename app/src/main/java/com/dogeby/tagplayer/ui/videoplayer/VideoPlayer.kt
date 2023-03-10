@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -133,6 +131,7 @@ fun VideoPlayer(
             currentDuration = currentDuration,
             totalDuration = videoItem.duration,
             isPlaying = userIsPlaying,
+            isLoading = videoPlayer.isLoading,
             onPlay = {
                 videoPlayer.play()
                 userIsPlaying = true
@@ -141,9 +140,10 @@ fun VideoPlayer(
                 videoPlayer.pause()
                 userIsPlaying = false
             },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 8.dp),
+            onProgressBarChanged = {
+                videoPlayer.seekTo(it.coerceIn(0, videoItem.duration.value))
+            },
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

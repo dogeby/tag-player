@@ -1,7 +1,10 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring.DampingRatioNoBouncy
+import androidx.compose.animation.core.Spring.StiffnessHigh
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
@@ -11,15 +14,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,21 +50,25 @@ fun VideoPlayerController(
     currentDuration: VideoDuration,
     totalDuration: VideoDuration,
     isPlaying: Boolean,
+    isLoading: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
+    onProgressBarChanged: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
         visible = isVisible,
+        modifier = modifier,
         enter = fadeIn(),
         exit = fadeOut(),
     ) {
         Column(
-            modifier = modifier,
             verticalArrangement = Arrangement.Bottom,
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column {
@@ -69,23 +81,23 @@ fun VideoPlayerController(
                     VideoPlayerDuration(
                         currentDuration = currentDuration.toString(),
                         totalDuration = totalDuration.toString(),
-                        modifier = Modifier.padding(bottom = 8.dp),
                     )
                 }
                 VideoPlayerRightController(
                     isPlaying = isPlaying,
                     onPlay = onPlay,
                     onPause = onPause,
-                    modifier = Modifier
                 )
             }
 
             VideoPlayerProgressBar(
                 currentDuration = currentDuration.value,
                 totalDuration = totalDuration.value,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+                isLoading = isLoading,
+                onProgressBarChanged = {
+                    onProgressBarChanged(it)
+                },
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -120,21 +132,38 @@ fun VideoPlayerDuration(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoPlayerProgressBar(
     currentDuration: Long,
     totalDuration: Long,
+    isLoading: Boolean,
+    onProgressBarChanged: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var isScrubbing by remember(isLoading) { mutableStateOf(false) }
+    var sliderCurrentProgress by remember { mutableStateOf(currentDuration) }
+    if (isScrubbing.not()) sliderCurrentProgress = currentDuration
+
     val animatedProgress by animateFloatAsState(
-        targetValue = currentDuration / totalDuration.toFloat(),
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+        targetValue = sliderCurrentProgress.toFloat(),
+        animationSpec = if (isScrubbing) spring(DampingRatioNoBouncy, StiffnessHigh) else ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
-    LinearProgressIndicator(
-        progress = animatedProgress,
+
+    Slider(
+        value = animatedProgress,
+        onValueChange = {
+            isScrubbing = true
+            sliderCurrentProgress = it.toLong()
+        },
         modifier = modifier,
-        color = PlayerProgressBarIndicatorColor,
-        trackColor = PlayerProgressBarTrackColor,
+        valueRange = 0f..totalDuration.toFloat(),
+        colors = SliderDefaults.colors(
+            activeTrackColor = PlayerProgressBarIndicatorColor,
+            inactiveTrackColor = PlayerProgressBarTrackColor
+        ),
+        onValueChangeFinished = { onProgressBarChanged(sliderCurrentProgress) },
+        thumb = {},
     )
 }
 
@@ -191,7 +220,7 @@ fun PlayPauseButton(
 fun VideoPlayerControllerPreview() {
     TagPlayerTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
-            Box {
+            Box(modifier = Modifier.fillMaxSize()) {
                 VideoPlayerController(
                     isVisible = true,
                     videoItem = VideoItem(
@@ -209,8 +238,10 @@ fun VideoPlayerControllerPreview() {
                     currentDuration = VideoDuration(20000),
                     totalDuration = VideoDuration(200000),
                     isPlaying = true,
+                    isLoading = false,
                     onPlay = {},
                     onPause = {},
+                    onProgressBarChanged = {},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
@@ -239,6 +270,8 @@ fun VideoPlayerProgressBarPreview() {
                 VideoPlayerProgressBar(
                     currentDuration = 30,
                     totalDuration = 60,
+                    isLoading = false,
+                    onProgressBarChanged = {},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)

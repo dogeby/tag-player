@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,21 +70,16 @@ fun VideoPlayerController(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = dimensionResource(id = R.dimen.videoPlayerController_text_horizontal_padding)),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Column {
-                    VideoPlayerVideoName(
-                        name = videoItem.name,
-                        modifier = Modifier
-                            .fillMaxWidth(0.7f)
-                            .padding(bottom = 8.dp),
-                    )
-                    VideoPlayerDuration(
-                        currentDuration = currentDuration.toString(),
-                        totalDuration = totalDuration.toString(),
-                    )
-                }
+                VideoPlayerVideoName(
+                    name = videoItem.name,
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .padding(bottom = 8.dp)
+                        .align(Alignment.CenterVertically),
+                )
                 VideoPlayerRightController(
                     isPlaying = isPlaying,
                     onPlay = onPlay,
@@ -91,13 +88,12 @@ fun VideoPlayerController(
             }
 
             VideoPlayerProgressBar(
-                currentDuration = currentDuration.value,
-                totalDuration = totalDuration.value,
+                currentDuration = currentDuration,
+                totalDuration = totalDuration,
                 isLoading = isLoading,
-                onProgressBarChanged = {
-                    onProgressBarChanged(it)
-                },
-                modifier = Modifier.fillMaxWidth()
+                onScrubbingFinished = { onProgressBarChanged(it.value) },
+                modifier = Modifier.fillMaxWidth(),
+                durationTextPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.videoPlayerController_text_horizontal_padding)),
             )
         }
     }
@@ -135,36 +131,43 @@ fun VideoPlayerDuration(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoPlayerProgressBar(
-    currentDuration: Long,
-    totalDuration: Long,
+    currentDuration: VideoDuration,
+    totalDuration: VideoDuration,
     isLoading: Boolean,
-    onProgressBarChanged: (Long) -> Unit,
+    onScrubbingFinished: (VideoDuration) -> Unit,
     modifier: Modifier = Modifier,
+    durationTextPadding: PaddingValues = PaddingValues(),
 ) {
     var isScrubbing by remember(isLoading) { mutableStateOf(false) }
     var sliderCurrentProgress by remember { mutableStateOf(currentDuration) }
     if (isScrubbing.not()) sliderCurrentProgress = currentDuration
 
     val animatedProgress by animateFloatAsState(
-        targetValue = sliderCurrentProgress.toFloat(),
+        targetValue = sliderCurrentProgress.value.toFloat(),
         animationSpec = if (isScrubbing) spring(DampingRatioNoBouncy, StiffnessHigh) else ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
 
-    Slider(
-        value = animatedProgress,
-        onValueChange = {
-            isScrubbing = true
-            sliderCurrentProgress = it.toLong()
-        },
-        modifier = modifier,
-        valueRange = 0f..totalDuration.toFloat(),
-        colors = SliderDefaults.colors(
-            activeTrackColor = PlayerProgressBarIndicatorColor,
-            inactiveTrackColor = PlayerProgressBarTrackColor
-        ),
-        onValueChangeFinished = { onProgressBarChanged(sliderCurrentProgress) },
-        thumb = {},
-    )
+    Column(modifier = modifier) {
+        VideoPlayerDuration(
+            currentDuration = sliderCurrentProgress.toString(),
+            totalDuration = totalDuration.toString(),
+            modifier = Modifier.padding(durationTextPadding)
+        )
+        Slider(
+            value = animatedProgress,
+            onValueChange = {
+                isScrubbing = true
+                sliderCurrentProgress = VideoDuration(it.toLong())
+            },
+            valueRange = 0f..totalDuration.value.toFloat(),
+            colors = SliderDefaults.colors(
+                activeTrackColor = PlayerProgressBarIndicatorColor,
+                inactiveTrackColor = PlayerProgressBarTrackColor
+            ),
+            onValueChangeFinished = { onScrubbingFinished(sliderCurrentProgress) },
+            thumb = {},
+        )
+    }
 }
 
 @Composable
@@ -268,13 +271,14 @@ fun VideoPlayerProgressBarPreview() {
         Surface(color = Color.Black) {
             Box {
                 VideoPlayerProgressBar(
-                    currentDuration = 30,
-                    totalDuration = 60,
+                    currentDuration = VideoDuration(30),
+                    totalDuration = VideoDuration(60),
                     isLoading = false,
-                    onProgressBarChanged = {},
+                    onScrubbingFinished = {},
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.BottomCenter),
+                    durationTextPadding = PaddingValues(dimensionResource(id = R.dimen.videoPlayerController_text_horizontal_padding)),
                 )
             }
         }

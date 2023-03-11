@@ -57,13 +57,14 @@ fun VideoPlayer(
     }
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var currentDuration by remember {
-        mutableStateOf(VideoDuration(0))
+    var currentDuration by rememberSaveable {
+        mutableStateOf(0L)
     }
 
     DisposableEffect(videoItem.id, lifecycleOwner) {
         videoPlayer.apply {
             setMediaItem(MediaItem.fromUri(videoItem.uri))
+            if (currentDuration != 0L) videoPlayer.seekTo(currentDuration)
             prepare()
         }
         val observer = LifecycleEventObserver { _, event ->
@@ -94,7 +95,7 @@ fun VideoPlayer(
                     setBackgroundColor(PlayerBackgroundColor.toArgb())
                     fun getCurrentPosition() {
                         val currentPosition = videoPlayer.currentPosition
-                        if (currentDuration.value != currentPosition) currentDuration = VideoDuration(currentPosition)
+                        if (currentDuration != currentPosition) currentDuration = currentPosition
                         if (videoPlayer.isPlaying) this.postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
                     }
                     val playerListener = object : Player.Listener {
@@ -128,7 +129,7 @@ fun VideoPlayer(
         VideoPlayerController(
             isVisible = controllerVisible,
             videoItem = videoItem,
-            currentDuration = currentDuration,
+            currentDuration = VideoDuration(currentDuration),
             totalDuration = videoItem.duration,
             isPlaying = userIsPlaying,
             isLoading = videoPlayer.isLoading,

@@ -1,19 +1,20 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -43,6 +44,14 @@ fun VideoPlayer(
             }
     }
 
+    var userIsPlaying by rememberSaveable {
+        mutableStateOf(true)
+    }
+
+    var controllerVisible by rememberSaveable {
+        mutableStateOf(true)
+    }
+
     var lifecycleEvent by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
     }
@@ -67,7 +76,17 @@ fun VideoPlayer(
             videoPlayer.release()
         }
     }
-    Box(modifier = modifier) {
+
+    val playerInteractionSource = remember { MutableInteractionSource() }
+    Box(
+        modifier = modifier
+            .clickable(
+                interactionSource = playerInteractionSource,
+                indication = null,
+            ) {
+                controllerVisible = controllerVisible.not()
+            },
+    ) {
         AndroidView(
             factory = {
                 PlayerView(context).apply {
@@ -98,7 +117,7 @@ fun VideoPlayer(
                     Lifecycle.Event.ON_RESUME -> {
                         if (isPlayWhenReady) {
                             it.onResume()
-                            it.player?.playWhenReady = true
+                            it.player?.playWhenReady = userIsPlaying
                         }
                     }
                     else -> Unit
@@ -107,12 +126,24 @@ fun VideoPlayer(
             modifier = Modifier.fillMaxSize(),
         )
         VideoPlayerController(
+            isVisible = controllerVisible,
             videoItem = videoItem,
             currentDuration = currentDuration,
             totalDuration = videoItem.duration,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 8.dp),
+            isPlaying = userIsPlaying,
+            isLoading = videoPlayer.isLoading,
+            onPlay = {
+                videoPlayer.play()
+                userIsPlaying = true
+            },
+            onPause = {
+                videoPlayer.pause()
+                userIsPlaying = false
+            },
+            onProgressBarChanged = {
+                videoPlayer.seekTo(it.coerceIn(0, videoItem.duration.value))
+            },
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

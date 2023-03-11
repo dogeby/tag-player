@@ -25,4 +25,6 @@
     <dimen name="tagSetting_tagCreateTextHeight">48dp</dimen>
 
     <dimen name="videoInfoDialog_infoItemTitleContentPadding">2dp</dimen>
+
+    <dimen name="videoPlayerController_text_horizontal_padding">8dp</dimen>
 </resources>

@@ -1,25 +1,43 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring.DampingRatioNoBouncy
+import androidx.compose.animation.core.Spring.StiffnessHigh
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.theme.PlayerControllerOnColor
@@ -29,35 +47,55 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
 fun VideoPlayerController(
+    isVisible: Boolean,
     videoItem: VideoItem,
     currentDuration: VideoDuration,
     totalDuration: VideoDuration,
+    isPlaying: Boolean,
+    isLoading: Boolean,
+    onPlay: () -> Unit,
+    onPause: () -> Unit,
+    onProgressBarChanged: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    AnimatedVisibility(
+        visible = isVisible,
         modifier = modifier,
-        verticalArrangement = Arrangement.Bottom,
+        enter = fadeIn(),
+        exit = fadeOut(),
     ) {
-        Column(modifier = Modifier) {
-            VideoPlayerVideoName(
-                name = videoItem.name,
+        Column(
+            verticalArrangement = Arrangement.Bottom,
+        ) {
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .padding(bottom = 8.dp),
-            )
-            VideoPlayerDuration(
-                currentDuration = currentDuration.toString(),
-                totalDuration = totalDuration.toString(),
-                modifier = Modifier.padding(bottom = 8.dp),
+                    .fillMaxWidth()
+                    .padding(horizontal = dimensionResource(id = R.dimen.videoPlayerController_text_horizontal_padding)),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                VideoPlayerVideoName(
+                    name = videoItem.name,
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .padding(bottom = 8.dp)
+                        .align(Alignment.CenterVertically),
+                )
+                VideoPlayerRightController(
+                    isPlaying = isPlaying,
+                    onPlay = onPlay,
+                    onPause = onPause,
+                )
+            }
+
+            VideoPlayerProgressBar(
+                currentDuration = currentDuration,
+                totalDuration = totalDuration,
+                isLoading = isLoading,
+                onScrubbingFinished = { onProgressBarChanged(it.value) },
+                modifier = Modifier.fillMaxWidth(),
+                durationTextPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.videoPlayerController_text_horizontal_padding)),
             )
         }
-        VideoPlayerProgressBar(
-            currentDuration = currentDuration.value,
-            totalDuration = totalDuration.value,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp)
-        )
     }
 }
 
@@ -72,7 +110,7 @@ fun VideoPlayerVideoName(
         color = PlayerControllerOnColor,
         overflow = TextOverflow.Ellipsis,
         maxLines = 2,
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.titleMedium,
     )
 }
 
@@ -90,22 +128,94 @@ fun VideoPlayerDuration(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoPlayerProgressBar(
-    currentDuration: Long,
-    totalDuration: Long,
+    currentDuration: VideoDuration,
+    totalDuration: VideoDuration,
+    isLoading: Boolean,
+    onScrubbingFinished: (VideoDuration) -> Unit,
+    modifier: Modifier = Modifier,
+    durationTextPadding: PaddingValues = PaddingValues(),
+) {
+    var isScrubbing by remember(isLoading) { mutableStateOf(false) }
+    var sliderCurrentProgress by remember { mutableStateOf(currentDuration) }
+    if (isScrubbing.not()) sliderCurrentProgress = currentDuration
+
+    val animatedProgress by animateFloatAsState(
+        targetValue = sliderCurrentProgress.value.toFloat(),
+        animationSpec = if (isScrubbing) spring(DampingRatioNoBouncy, StiffnessHigh) else ProgressIndicatorDefaults.ProgressAnimationSpec,
+    )
+
+    Column(modifier = modifier) {
+        VideoPlayerDuration(
+            currentDuration = sliderCurrentProgress.toString(),
+            totalDuration = totalDuration.toString(),
+            modifier = Modifier.padding(durationTextPadding)
+        )
+        Slider(
+            value = animatedProgress,
+            onValueChange = {
+                isScrubbing = true
+                sliderCurrentProgress = VideoDuration(it.toLong())
+            },
+            valueRange = 0f..totalDuration.value.toFloat(),
+            colors = SliderDefaults.colors(
+                activeTrackColor = PlayerProgressBarIndicatorColor,
+                inactiveTrackColor = PlayerProgressBarTrackColor
+            ),
+            onValueChangeFinished = { onScrubbingFinished(sliderCurrentProgress) },
+            thumb = {},
+        )
+    }
+}
+
+@Composable
+fun VideoPlayerRightController(
+    isPlaying: Boolean,
+    onPlay: () -> Unit,
+    onPause: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val animatedProgress by animateFloatAsState(
-        targetValue = currentDuration / totalDuration.toFloat(),
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
-    )
-    LinearProgressIndicator(
-        progress = animatedProgress,
+    Column(modifier = modifier) {
+        PlayPauseButton(
+            isPlaying = isPlaying,
+            onPlay = onPlay,
+            onPause = onPause,
+        )
+    }
+}
+
+@Composable
+fun PlayPauseButton(
+    isPlaying: Boolean,
+    onPlay: () -> Unit,
+    onPause: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (isPlaying) {
+        IconButton(
+            onClick = onPause,
+            modifier = modifier,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_pause),
+                contentDescription = null,
+                tint = PlayerControllerOnColor,
+            )
+        }
+        return
+    }
+    IconButton(
+        onClick = onPlay,
         modifier = modifier,
-        color = PlayerProgressBarIndicatorColor,
-        trackColor = PlayerProgressBarTrackColor,
-    )
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_play),
+            contentDescription = null,
+            tint = PlayerControllerOnColor,
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -113,8 +223,9 @@ fun VideoPlayerProgressBar(
 fun VideoPlayerControllerPreview() {
     TagPlayerTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
-            Box {
+            Box(modifier = Modifier.fillMaxSize()) {
                 VideoPlayerController(
+                    isVisible = true,
                     videoItem = VideoItem(
                         id = 0,
                         uri = "",
@@ -129,6 +240,11 @@ fun VideoPlayerControllerPreview() {
                     ),
                     currentDuration = VideoDuration(20000),
                     totalDuration = VideoDuration(200000),
+                    isPlaying = true,
+                    isLoading = false,
+                    onPlay = {},
+                    onPause = {},
+                    onProgressBarChanged = {},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
@@ -155,11 +271,14 @@ fun VideoPlayerProgressBarPreview() {
         Surface(color = Color.Black) {
             Box {
                 VideoPlayerProgressBar(
-                    currentDuration = 30,
-                    totalDuration = 60,
+                    currentDuration = VideoDuration(30),
+                    totalDuration = VideoDuration(60),
+                    isLoading = false,
+                    onScrubbingFinished = {},
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.BottomCenter),
+                    durationTextPadding = PaddingValues(dimensionResource(id = R.dimen.videoPlayerController_text_horizontal_padding)),
                 )
             }
         }

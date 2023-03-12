@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
-import com.dogeby.tagplayer.domain.preferences.GetIsTagFilteredUseCase
+import com.dogeby.tagplayer.domain.preferences.GetIsVideoFilteredUseCase
 import com.dogeby.tagplayer.domain.preferences.GetVideoListSortTypeUseCase
 import com.dogeby.tagplayer.domain.preferences.SetVideoListSortTypeUseCase
 import com.dogeby.tagplayer.domain.video.FormatSizeUseCase
@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class VideoListViewModel @Inject constructor(
     getVideoItemsUseCase: GetVideoItemsUseCase,
-    getIsTagFilteredUseCase: GetIsTagFilteredUseCase,
+    getIsVideoFilteredUseCase: GetIsVideoFilteredUseCase,
     getVideoListSortTypeUseCase: GetVideoListSortTypeUseCase,
     private val updateVideoListUseCase: UpdateVideoListUseCase,
     private val formatSizeUseCase: FormatSizeUseCase,
@@ -50,7 +50,7 @@ class VideoListViewModel @Inject constructor(
             initialValue = VideoListUiState.Loading,
         )
 
-    val isTagFiltered = getIsTagFilteredUseCase()
+    val isVideoFiltered = getIsVideoFilteredUseCase()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

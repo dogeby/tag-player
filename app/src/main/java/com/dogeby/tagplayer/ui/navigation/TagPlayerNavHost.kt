@@ -61,7 +61,7 @@ fun TagPlayerNavHost(
         composable(VideoSearchRoute) {
             AppPermissionDeniedByExternalAction(onExit)
             VideoSearchRoute(
-                onNavigateToPlayer = { _, _ -> /*TODO*/ },
+                onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
                 onNavigateUp = { navController.navigateUp() },
             )
         }

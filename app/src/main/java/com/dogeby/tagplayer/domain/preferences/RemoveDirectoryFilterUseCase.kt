@@ -13,4 +13,10 @@ class RemoveDirectoryFilterUseCase @Inject constructor(
         val filteredDirectory = getFilteredDirectoryNameUseCase().first()
         preferencesRepository.setDirectoryFilter(filteredDirectory - directoryName)
     }
+
+    suspend operator fun invoke(directoryNames: List<String>) {
+        if (directoryNames.isEmpty()) return
+        val filteredDirectory = getFilteredDirectoryNameUseCase().first()
+        preferencesRepository.setDirectoryFilter(filteredDirectory - directoryNames.toSet())
+    }
 }

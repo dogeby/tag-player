@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -115,19 +116,23 @@ fun VideoFilterScreen(
                     )
                 }
                 is VideoFilterUiState.Success -> {
-                    Column {
-                        DirectoryFilterList(
-                            directoryFilterUiState = videoFilterUiState.directoryFilterUiState,
-                            onDirectoryFilterAdd = onDirectoryFilterAdd,
-                            onDirectoryFilterRemove = onDirectoryFilterRemove,
-                            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
-                        )
-                        TagFilterList(
-                            tagFilterUiState = videoFilterUiState.tagFilterUiState,
-                            onTagFilterAdd = onTagFilterAdd,
-                            onTagFilterRemove = onTagFilterRemove,
-                            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
-                        )
+                    LazyColumn {
+                        item {
+                            DirectoryFilterList(
+                                directoryFilterUiState = videoFilterUiState.directoryFilterUiState,
+                                onDirectoryFilterAdd = onDirectoryFilterAdd,
+                                onDirectoryFilterRemove = onDirectoryFilterRemove,
+                                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+                            )
+                        }
+                        item {
+                            TagFilterList(
+                                tagFilterUiState = videoFilterUiState.tagFilterUiState,
+                                onTagFilterAdd = onTagFilterAdd,
+                                onTagFilterRemove = onTagFilterRemove,
+                                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+                            )
+                        }
                     }
                 }
             }

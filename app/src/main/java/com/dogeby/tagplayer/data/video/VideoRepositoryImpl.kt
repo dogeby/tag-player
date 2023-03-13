@@ -9,8 +9,10 @@ import com.dogeby.tagplayer.database.model.toVideo
 import com.dogeby.tagplayer.database.model.toVideoWithTags
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 
 @Singleton
 class VideoRepositoryImpl @Inject constructor(
@@ -27,9 +29,14 @@ class VideoRepositoryImpl @Inject constructor(
         videoEntityWithTagEntities.map { it.toVideoWithTags(it.videoEntity.id.toUri()) }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getVideosWithTags(videoIds: List<Long>): Flow<List<VideoWithTags>> {
-        return tagVideoCrossRefDao.getVideosWithTags(videoIds).map { videoEntityWithTagEntities ->
-            videoEntityWithTagEntities.map { it.toVideoWithTags(it.videoEntity.id.toUri()) }
+        return tagVideoCrossRefDao.getVideosWithTags(videoIds).mapLatest { videoEntityWithTagEntities ->
+            val videos = videoEntityWithTagEntities.associateBy(
+                keySelector = { it.videoEntity.id },
+                valueTransform = { it.toVideoWithTags(it.videoEntity.id.toUri()) },
+            )
+            videoIds.mapNotNull { videos[it] }
         }
     }
 

@@ -12,6 +12,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun VideoPlayerRoute(
+    onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: VideoPlayerViewModel = hiltViewModel(),
 ) {
@@ -20,6 +21,7 @@ fun VideoPlayerRoute(
     VideoPlayerScreen(
         videoPlayerPagerUiState = videoPlayerPagerUiState,
         onPlayerSettledPageChanged = viewModel::onPlayerSettledPageChanged,
+        onNavigateUp = onNavigateUp,
         modifier = modifier,
     )
 }
@@ -28,6 +30,7 @@ fun VideoPlayerRoute(
 fun VideoPlayerScreen(
     videoPlayerPagerUiState: VideoPlayerPagerUiState,
     onPlayerSettledPageChanged: (videoId: Long) -> Unit,
+    onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val systemUiController = rememberSystemUiController()
@@ -51,6 +54,7 @@ fun VideoPlayerScreen(
                 currentPageVideoId = videoPlayerPagerUiState.currentVideoId,
                 videoItems = videoPlayerPagerUiState.videoItems,
                 onSettledPageChanged = onPlayerSettledPageChanged,
+                onArrowBackButtonClick = onNavigateUp,
                 modifier = modifier.fillMaxSize()
             )
         }

@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,6 +59,7 @@ fun VideoPlayerController(
     onPlay: () -> Unit,
     onPause: () -> Unit,
     onProgressBarChanged: (Long) -> Unit,
+    onArrowBackButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
@@ -64,9 +68,15 @@ fun VideoPlayerController(
         enter = fadeIn(),
         exit = fadeOut(),
     ) {
-        Column(
-            verticalArrangement = Arrangement.Bottom,
-        ) {
+        Column {
+            IconButton(onClick = onArrowBackButtonClick) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                    tint = PlayerControllerOnColor,
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -245,6 +255,7 @@ fun VideoPlayerControllerPreview() {
                     onPlay = {},
                     onPause = {},
                     onProgressBarChanged = {},
+                    onArrowBackButtonClick = {},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)

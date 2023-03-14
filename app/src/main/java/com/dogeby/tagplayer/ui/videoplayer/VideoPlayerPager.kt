@@ -21,6 +21,7 @@ fun VideoPlayerPager(
     currentPageVideoId: Long,
     videoItems: List<VideoItem>,
     onSettledPageChanged: (videoId: Long) -> Unit,
+    onArrowBackButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(
@@ -48,6 +49,7 @@ fun VideoPlayerPager(
             VideoPlayer(
                 videoItem = videoPlayerItem,
                 isPlayWhenReady = videoPlayerItem.id == settledPageVideoId,
+                onArrowBackButtonClick = onArrowBackButtonClick,
                 modifier = Modifier.fillMaxSize(),
             )
         }

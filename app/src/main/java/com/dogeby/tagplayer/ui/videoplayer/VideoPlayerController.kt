@@ -1,6 +1,7 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.Spring.DampingRatioNoBouncy
 import androidx.compose.animation.core.Spring.StiffnessHigh
 import androidx.compose.animation.core.animateFloatAsState
@@ -12,12 +13,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
-import com.dogeby.tagplayer.ui.theme.PlayerControllerOnColor
+import com.dogeby.tagplayer.ui.theme.PlayerControllerOnBackgroundColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarIndicatorColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarTrackColor
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
@@ -59,24 +57,15 @@ fun VideoPlayerController(
     onPlay: () -> Unit,
     onPause: () -> Unit,
     onProgressBarChanged: (Long) -> Unit,
-    onArrowBackButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(
+    VideoPlayerControllerAnimation(
         visible = isVisible,
         modifier = modifier,
-        enter = fadeIn(),
-        exit = fadeOut(),
     ) {
-        Column {
-            IconButton(onClick = onArrowBackButtonClick) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = null,
-                    tint = PlayerControllerOnColor,
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
+        Column(
+            verticalArrangement = Arrangement.Bottom
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -110,6 +99,22 @@ fun VideoPlayerController(
 }
 
 @Composable
+fun VideoPlayerControllerAnimation(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable AnimatedVisibilityScope.() -> Unit
+) {
+    AnimatedVisibility(
+        visible = visible,
+        modifier = modifier,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        content()
+    }
+}
+
+@Composable
 fun VideoPlayerVideoName(
     name: String,
     modifier: Modifier = Modifier,
@@ -117,7 +122,7 @@ fun VideoPlayerVideoName(
     Text(
         text = name,
         modifier = modifier,
-        color = PlayerControllerOnColor,
+        color = PlayerControllerOnBackgroundColor,
         overflow = TextOverflow.Ellipsis,
         maxLines = 2,
         style = MaterialTheme.typography.titleMedium,
@@ -133,7 +138,7 @@ fun VideoPlayerDuration(
     Text(
         text = "$currentDuration / $totalDuration",
         modifier = modifier,
-        color = PlayerControllerOnColor,
+        color = PlayerControllerOnBackgroundColor,
         style = MaterialTheme.typography.labelMedium,
     )
 }
@@ -211,7 +216,7 @@ fun PlayPauseButton(
             Icon(
                 painter = painterResource(id = R.drawable.ic_pause),
                 contentDescription = null,
-                tint = PlayerControllerOnColor,
+                tint = PlayerControllerOnBackgroundColor,
             )
         }
         return
@@ -223,7 +228,7 @@ fun PlayPauseButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_play),
             contentDescription = null,
-            tint = PlayerControllerOnColor,
+            tint = PlayerControllerOnBackgroundColor,
         )
     }
 }
@@ -255,7 +260,6 @@ fun VideoPlayerControllerPreview() {
                     onPlay = {},
                     onPause = {},
                     onProgressBarChanged = {},
-                    onArrowBackButtonClick = {},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)

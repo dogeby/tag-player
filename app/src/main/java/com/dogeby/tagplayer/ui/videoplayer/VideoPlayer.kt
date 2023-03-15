@@ -32,7 +32,7 @@ private const val POSITION_UPDATE_INTERVAL_MS = 200L
 fun VideoPlayer(
     videoItem: VideoItem,
     isPlayWhenReady: Boolean,
-    onArrowBackButtonClick: () -> Unit,
+    onControllerVisibleChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -87,6 +87,7 @@ fun VideoPlayer(
                 indication = null,
             ) {
                 controllerVisible = controllerVisible.not()
+                onControllerVisibleChanged(controllerVisible)
             },
     ) {
         AndroidView(
@@ -145,7 +146,6 @@ fun VideoPlayer(
             onProgressBarChanged = {
                 videoPlayer.seekTo(it.coerceIn(0, videoItem.duration.value))
             },
-            onArrowBackButtonClick = onArrowBackButtonClick,
             modifier = Modifier.fillMaxSize(),
         )
     }

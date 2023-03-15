@@ -1,13 +1,27 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dogeby.tagplayer.ui.theme.PlayerControllerBackgroundColor
+import com.dogeby.tagplayer.ui.theme.PlayerControllerOnBackgroundColor
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
@@ -26,6 +40,8 @@ fun VideoPlayerRoute(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun VideoPlayerScreen(
     videoPlayerPagerUiState: VideoPlayerPagerUiState,
@@ -44,19 +60,49 @@ fun VideoPlayerScreen(
         }
     }
 
-    when (videoPlayerPagerUiState) {
-        VideoPlayerPagerUiState.Loading -> { /*TODO*/ }
+    var videoPlayerControllerVisible by rememberSaveable {
+        mutableStateOf(true)
+    }
 
-        VideoPlayerPagerUiState.Empty -> { /*TODO*/ }
+    Scaffold(
+        topBar = {
+            VideoPlayerControllerAnimation(visible = videoPlayerControllerVisible) {
+                TopAppBar(
+                    title = {},
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = null,
+                                tint = PlayerControllerOnBackgroundColor,
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = PlayerControllerBackgroundColor,
+                        scrolledContainerColor = PlayerControllerBackgroundColor,
+                        navigationIconContentColor = PlayerControllerOnBackgroundColor,
+                        titleContentColor = PlayerControllerOnBackgroundColor,
+                        actionIconContentColor = PlayerControllerOnBackgroundColor,
+                    )
+                )
+            }
+        },
+    ) {
+        when (videoPlayerPagerUiState) {
+            VideoPlayerPagerUiState.Loading -> { /*TODO*/ }
 
-        is VideoPlayerPagerUiState.Success -> {
-            VideoPlayerPager(
-                currentPageVideoId = videoPlayerPagerUiState.currentVideoId,
-                videoItems = videoPlayerPagerUiState.videoItems,
-                onSettledPageChanged = onPlayerSettledPageChanged,
-                onArrowBackButtonClick = onNavigateUp,
-                modifier = modifier.fillMaxSize()
-            )
+            VideoPlayerPagerUiState.Empty -> { /*TODO*/ }
+
+            is VideoPlayerPagerUiState.Success -> {
+                VideoPlayerPager(
+                    currentPageVideoId = videoPlayerPagerUiState.currentVideoId,
+                    videoItems = videoPlayerPagerUiState.videoItems,
+                    onSettledPageChanged = onPlayerSettledPageChanged,
+                    onControllerVisibleChanged = { videoPlayerControllerVisible = it },
+                    modifier = modifier.fillMaxSize(),
+                )
+            }
         }
     }
 }

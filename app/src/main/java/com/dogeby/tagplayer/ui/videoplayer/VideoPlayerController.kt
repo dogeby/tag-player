@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,8 +55,11 @@ fun VideoPlayerController(
     totalDuration: VideoDuration,
     isPlaying: Boolean,
     isLoading: Boolean,
+    isScreenLockRotation: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
+    onScreenUserRotation: () -> Unit,
+    onScreenLockRotation: () -> Unit,
     onProgressBarChanged: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -81,8 +85,11 @@ fun VideoPlayerController(
                 )
                 VideoPlayerRightController(
                     isPlaying = isPlaying,
+                    isScreenLockRotation = isScreenLockRotation,
                     onPlay = onPlay,
                     onPause = onPause,
+                    onScreenUserRotation = onScreenUserRotation,
+                    onScreenLockRotation = onScreenLockRotation,
                 )
             }
 
@@ -188,11 +195,20 @@ fun VideoPlayerProgressBar(
 @Composable
 fun VideoPlayerRightController(
     isPlaying: Boolean,
+    isScreenLockRotation: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
+    onScreenUserRotation: () -> Unit,
+    onScreenLockRotation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    LocalConfiguration.current.orientation
     Column(modifier = modifier) {
+        ScreenRotationButton(
+            isScreenLockRotation = isScreenLockRotation,
+            onScreenUserRotation = onScreenUserRotation,
+            onScreenLockRotation = onScreenLockRotation,
+        )
         PlayPauseButton(
             isPlaying = isPlaying,
             onPlay = onPlay,
@@ -233,6 +249,38 @@ fun PlayPauseButton(
     }
 }
 
+@Composable
+fun ScreenRotationButton(
+    isScreenLockRotation: Boolean,
+    onScreenUserRotation: () -> Unit,
+    onScreenLockRotation: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (isScreenLockRotation) {
+        IconButton(
+            onClick = onScreenUserRotation,
+            modifier = modifier,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_screen_rotation),
+                contentDescription = null,
+                tint = PlayerControllerOnBackgroundColor,
+            )
+        }
+        return
+    }
+    IconButton(
+        onClick = onScreenLockRotation,
+        modifier = modifier,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_screen_lock_rotation),
+            contentDescription = null,
+            tint = PlayerControllerOnBackgroundColor,
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun VideoPlayerControllerPreview() {
@@ -257,8 +305,11 @@ fun VideoPlayerControllerPreview() {
                     totalDuration = VideoDuration(200000),
                     isPlaying = true,
                     isLoading = false,
+                    isScreenLockRotation = false,
                     onPlay = {},
                     onPause = {},
+                    onScreenUserRotation = {},
+                    onScreenLockRotation = {},
                     onProgressBarChanged = {},
                     modifier = Modifier
                         .fillMaxWidth()

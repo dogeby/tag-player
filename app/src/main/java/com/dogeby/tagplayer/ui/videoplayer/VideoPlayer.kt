@@ -32,6 +32,9 @@ private const val POSITION_UPDATE_INTERVAL_MS = 200L
 fun VideoPlayer(
     videoItem: VideoItem,
     isPlayWhenReady: Boolean,
+    isScreenLockRotation: Boolean,
+    onScreenUserRotation: () -> Unit,
+    onScreenLockRotation: () -> Unit,
     onControllerVisibleChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -137,6 +140,7 @@ fun VideoPlayer(
             totalDuration = videoItem.duration,
             isPlaying = userIsPlaying,
             isLoading = videoPlayer.isLoading,
+            isScreenLockRotation = isScreenLockRotation,
             onPlay = {
                 videoPlayer.play()
                 userIsPlaying = true
@@ -145,6 +149,8 @@ fun VideoPlayer(
                 videoPlayer.pause()
                 userIsPlaying = false
             },
+            onScreenUserRotation = onScreenUserRotation,
+            onScreenLockRotation = onScreenLockRotation,
             onProgressBarChanged = {
                 videoPlayer.seekTo(it.coerceIn(0, videoItem.duration.value))
             },

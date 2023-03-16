@@ -1,6 +1,7 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.Spring.DampingRatioNoBouncy
 import androidx.compose.animation.core.Spring.StiffnessHigh
 import androidx.compose.animation.core.animateFloatAsState
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
-import com.dogeby.tagplayer.ui.theme.PlayerControllerOnColor
+import com.dogeby.tagplayer.ui.theme.PlayerControllerOnBackgroundColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarIndicatorColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarTrackColor
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
@@ -53,19 +55,20 @@ fun VideoPlayerController(
     totalDuration: VideoDuration,
     isPlaying: Boolean,
     isLoading: Boolean,
+    isScreenLockRotation: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
+    onScreenUserRotation: () -> Unit,
+    onScreenLockRotation: () -> Unit,
     onProgressBarChanged: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedVisibility(
+    VideoPlayerControllerAnimation(
         visible = isVisible,
         modifier = modifier,
-        enter = fadeIn(),
-        exit = fadeOut(),
     ) {
         Column(
-            verticalArrangement = Arrangement.Bottom,
+            verticalArrangement = Arrangement.Bottom
         ) {
             Row(
                 modifier = Modifier
@@ -82,8 +85,11 @@ fun VideoPlayerController(
                 )
                 VideoPlayerRightController(
                     isPlaying = isPlaying,
+                    isScreenLockRotation = isScreenLockRotation,
                     onPlay = onPlay,
                     onPause = onPause,
+                    onScreenUserRotation = onScreenUserRotation,
+                    onScreenLockRotation = onScreenLockRotation,
                 )
             }
 
@@ -100,6 +106,22 @@ fun VideoPlayerController(
 }
 
 @Composable
+fun VideoPlayerControllerAnimation(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable AnimatedVisibilityScope.() -> Unit
+) {
+    AnimatedVisibility(
+        visible = visible,
+        modifier = modifier,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        content()
+    }
+}
+
+@Composable
 fun VideoPlayerVideoName(
     name: String,
     modifier: Modifier = Modifier,
@@ -107,7 +129,7 @@ fun VideoPlayerVideoName(
     Text(
         text = name,
         modifier = modifier,
-        color = PlayerControllerOnColor,
+        color = PlayerControllerOnBackgroundColor,
         overflow = TextOverflow.Ellipsis,
         maxLines = 2,
         style = MaterialTheme.typography.titleMedium,
@@ -123,7 +145,7 @@ fun VideoPlayerDuration(
     Text(
         text = "$currentDuration / $totalDuration",
         modifier = modifier,
-        color = PlayerControllerOnColor,
+        color = PlayerControllerOnBackgroundColor,
         style = MaterialTheme.typography.labelMedium,
     )
 }
@@ -173,11 +195,20 @@ fun VideoPlayerProgressBar(
 @Composable
 fun VideoPlayerRightController(
     isPlaying: Boolean,
+    isScreenLockRotation: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
+    onScreenUserRotation: () -> Unit,
+    onScreenLockRotation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    LocalConfiguration.current.orientation
     Column(modifier = modifier) {
+        ScreenRotationButton(
+            isScreenLockRotation = isScreenLockRotation,
+            onScreenUserRotation = onScreenUserRotation,
+            onScreenLockRotation = onScreenLockRotation,
+        )
         PlayPauseButton(
             isPlaying = isPlaying,
             onPlay = onPlay,
@@ -201,7 +232,7 @@ fun PlayPauseButton(
             Icon(
                 painter = painterResource(id = R.drawable.ic_pause),
                 contentDescription = null,
-                tint = PlayerControllerOnColor,
+                tint = PlayerControllerOnBackgroundColor,
             )
         }
         return
@@ -213,7 +244,39 @@ fun PlayPauseButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_play),
             contentDescription = null,
-            tint = PlayerControllerOnColor,
+            tint = PlayerControllerOnBackgroundColor,
+        )
+    }
+}
+
+@Composable
+fun ScreenRotationButton(
+    isScreenLockRotation: Boolean,
+    onScreenUserRotation: () -> Unit,
+    onScreenLockRotation: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (isScreenLockRotation) {
+        IconButton(
+            onClick = onScreenUserRotation,
+            modifier = modifier,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_screen_rotation),
+                contentDescription = null,
+                tint = PlayerControllerOnBackgroundColor,
+            )
+        }
+        return
+    }
+    IconButton(
+        onClick = onScreenLockRotation,
+        modifier = modifier,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_screen_lock_rotation),
+            contentDescription = null,
+            tint = PlayerControllerOnBackgroundColor,
         )
     }
 }
@@ -242,8 +305,11 @@ fun VideoPlayerControllerPreview() {
                     totalDuration = VideoDuration(200000),
                     isPlaying = true,
                     isLoading = false,
+                    isScreenLockRotation = false,
                     onPlay = {},
                     onPause = {},
+                    onScreenUserRotation = {},
+                    onScreenLockRotation = {},
                     onProgressBarChanged = {},
                     modifier = Modifier
                         .fillMaxWidth()

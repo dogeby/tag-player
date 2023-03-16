@@ -1,5 +1,8 @@
 package com.dogeby.tagplayer.ui
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -27,5 +30,13 @@ class TagPlayerActivity : ComponentActivity() {
                 isRequiredPermissionsGranted = isRequiredPermissionsGranted,
             )
         }
+    }
+}
+
+fun Context.findActivity(): Activity? {
+    return when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
     }
 }

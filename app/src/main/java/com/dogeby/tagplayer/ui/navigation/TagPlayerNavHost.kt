@@ -77,7 +77,9 @@ fun TagPlayerNavHost(
                 navArgument(VideoPlayerStartVideoId) { type = NavType.LongType },
             )
         ) {
-            VideoPlayerRoute()
+            VideoPlayerRoute(
+                onNavigateUp = { navController.navigateUp() }
+            )
         }
     }
 }

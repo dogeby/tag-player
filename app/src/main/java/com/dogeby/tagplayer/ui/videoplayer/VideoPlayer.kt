@@ -50,7 +50,9 @@ fun VideoPlayer(
     }
 
     var controllerVisible by rememberSaveable {
-        mutableStateOf(true)
+        mutableStateOf(true).also {
+            onControllerVisibleChanged(it.value)
+        }
     }
 
     var lifecycleEvent by remember {

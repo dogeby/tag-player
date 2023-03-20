@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,6 +28,7 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoTag
 import com.dogeby.tagplayer.ui.component.VideoThumbnail
+import com.dogeby.tagplayer.ui.theme.VideoListThumbnailBackgroundColor
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -56,8 +58,12 @@ fun VideoListItem(
                 uri = videoItem.uri,
                 width = integerResource(id = R.integer.videolist_video_thumbnail_width),
                 height = integerResource(id = R.integer.videolist_video_thumbnail_height),
+                modifier = Modifier.fillMaxWidth(0.5F),
+                imageShape = MaterialTheme.shapes.small,
+                backgroundColor = VideoListThumbnailBackgroundColor,
+                contentScale = ContentScale.Crop,
                 duration = videoItem.duration.toString(),
-                modifier = Modifier.fillMaxWidth(0.5F)
+                durationShape = MaterialTheme.shapes.small,
             )
             Box(
                 modifier = Modifier

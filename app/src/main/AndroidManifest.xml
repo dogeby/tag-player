@@ -20,6 +20,7 @@
         tools:targetApi="33">
         <activity
             android:name=".ui.TagPlayerActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

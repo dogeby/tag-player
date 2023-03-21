@@ -13,7 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.Dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.dogeby.tagplayer.R
@@ -65,6 +67,13 @@ fun VideoThumbnail(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun Dp.toPx(): Int {
+    return LocalDensity.current.run {
+        this@toPx.toPx().toInt()
     }
 }
 

@@ -60,7 +60,7 @@ fun VideoPlayerController(
     onPause: () -> Unit,
     onScreenUserRotation: () -> Unit,
     onScreenLockRotation: () -> Unit,
-    onProgressBarChanged: (Long) -> Unit,
+    onProgressBarChangeFinished: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     VideoPlayerControllerAnimation(
@@ -97,7 +97,7 @@ fun VideoPlayerController(
                 currentDuration = currentDuration,
                 totalDuration = totalDuration,
                 isLoading = isLoading,
-                onScrubbingFinished = { onProgressBarChanged(it.value) },
+                onScrubbingFinished = { onProgressBarChangeFinished(it.value) },
                 modifier = Modifier.fillMaxWidth(),
                 durationTextPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.videoPlayerController_text_horizontal_padding)),
             )
@@ -310,7 +310,7 @@ fun VideoPlayerControllerPreview() {
                     onPause = {},
                     onScreenUserRotation = {},
                     onScreenLockRotation = {},
-                    onProgressBarChanged = {},
+                    onProgressBarChangeFinished = {},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)

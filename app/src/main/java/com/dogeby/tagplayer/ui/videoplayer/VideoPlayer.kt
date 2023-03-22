@@ -1,77 +1,48 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.ui.PlayerView
-import com.dogeby.tagplayer.domain.video.VideoDuration
-import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.theme.PlayerBackgroundColor
 
 private const val POSITION_UPDATE_INTERVAL_MS = 200L
 
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun VideoPlayer(
-    videoItem: VideoItem,
-    isPlayWhenReady: Boolean,
-    isScreenLockRotation: Boolean,
-    onScreenUserRotation: () -> Unit,
-    onScreenLockRotation: () -> Unit,
-    onControllerVisibleChanged: (Boolean) -> Unit,
+    player: Player,
+    uri: String,
+    isPlaying: Boolean,
+    onPositionChanged: (Long) -> Unit,
+    onRenderedFirstFrame: () -> Unit,
     modifier: Modifier = Modifier,
+    @Player.RepeatMode repeatMode: Int = REPEAT_MODE_ONE,
 ) {
-    val context = LocalContext.current
-    val videoPlayer = remember {
-        ExoPlayer
-            .Builder(context)
-            .build()
-            .apply {
-                repeatMode = Player.REPEAT_MODE_ONE
-            }
-    }
-
-    var userIsPlaying by rememberSaveable {
-        mutableStateOf(true)
-    }
-
-    var controllerVisible by rememberSaveable {
-        mutableStateOf(true).also {
-            onControllerVisibleChanged(it.value)
-        }
-    }
-
+    val lifecycleOwner = LocalLifecycleOwner.current
     var lifecycleEvent by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
     }
-    val lifecycleOwner = LocalLifecycleOwner.current
+    player.playWhenReady = isPlaying
 
-    var currentDuration by rememberSaveable {
-        mutableStateOf(0L)
-    }
-
-    DisposableEffect(videoItem.id, lifecycleOwner) {
-        videoPlayer.apply {
-            setMediaItem(MediaItem.fromUri(videoItem.uri))
-            if (currentDuration != 0L) videoPlayer.seekTo(currentDuration)
+    DisposableEffect(player, uri, lifecycleOwner) {
+        player.apply {
+            setMediaItem(MediaItem.fromUri(uri))
             prepare()
+            this.repeatMode = repeatMode
         }
         val observer = LifecycleEventObserver { _, event ->
             lifecycleEvent = event
@@ -80,81 +51,51 @@ fun VideoPlayer(
 
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
-            videoPlayer.release()
+            player.release()
         }
     }
 
-    val playerInteractionSource = remember { MutableInteractionSource() }
-    Box(
-        modifier = modifier
-            .clickable(
-                interactionSource = playerInteractionSource,
-                indication = null,
-            ) {
-                controllerVisible = controllerVisible.not()
-                onControllerVisibleChanged(controllerVisible)
-            },
-    ) {
-        AndroidView(
-            factory = {
-                PlayerView(context).apply {
-                    useController = false
-                    setBackgroundColor(PlayerBackgroundColor.toArgb())
-                    fun getCurrentPosition() {
-                        val currentPosition = videoPlayer.currentPosition
-                        if (currentDuration != currentPosition) currentDuration = currentPosition
-                        if (videoPlayer.isPlaying) this.postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
-                    }
-                    val playerListener = object : Player.Listener {
+    AndroidView(
+        factory = { androidViewContext ->
+            PlayerView(androidViewContext).apply {
+                useController = false
+                setBackgroundColor(PlayerBackgroundColor.toArgb())
 
-                        override fun onIsPlayingChanged(isPlaying: Boolean) {
-                            super.onIsPlayingChanged(isPlaying)
-                            if (isPlaying) postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
-                        }
-                    }
-                    videoPlayer.addListener(playerListener)
-                    player = videoPlayer
+                fun getCurrentPosition() {
+                    onPositionChanged(player.currentPosition)
+                    if (player.isPlaying) this.postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
                 }
-            },
-            update = {
-                when (lifecycleEvent) {
-                    Lifecycle.Event.ON_PAUSE -> {
-                        it.player?.pause()
-                        it.onPause()
+                val playerListener = object : Player.Listener {
+
+                    override fun onIsPlayingChanged(isPlaying: Boolean) {
+                        super.onIsPlayingChanged(isPlaying)
+                        if (isPlaying) postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
                     }
-                    Lifecycle.Event.ON_RESUME -> {
-                        if (isPlayWhenReady) {
-                            it.onResume()
-                            it.player?.playWhenReady = userIsPlaying
-                        }
+
+                    override fun onRenderedFirstFrame() {
+                        super.onRenderedFirstFrame()
+                        onRenderedFirstFrame()
                     }
-                    else -> Unit
                 }
-            },
-            modifier = Modifier.fillMaxSize(),
-        )
-        VideoPlayerController(
-            isVisible = controllerVisible,
-            videoItem = videoItem,
-            currentDuration = VideoDuration(currentDuration),
-            totalDuration = videoItem.duration,
-            isPlaying = userIsPlaying,
-            isLoading = videoPlayer.isLoading,
-            isScreenLockRotation = isScreenLockRotation,
-            onPlay = {
-                videoPlayer.play()
-                userIsPlaying = true
-            },
-            onPause = {
-                videoPlayer.pause()
-                userIsPlaying = false
-            },
-            onScreenUserRotation = onScreenUserRotation,
-            onScreenLockRotation = onScreenLockRotation,
-            onProgressBarChanged = {
-                videoPlayer.seekTo(it.coerceIn(0, videoItem.duration.value))
-            },
-            modifier = Modifier.fillMaxSize(),
-        )
-    }
+                player.addListener(playerListener)
+
+                this.player = player
+            }
+        },
+        update = {
+            if (it.player != player) it.player = player
+            when (lifecycleEvent) {
+                Lifecycle.Event.ON_STOP -> {
+                    it.player?.pause()
+                    it.onPause()
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    it.onResume()
+                    it.player?.playWhenReady = isPlaying
+                }
+                else -> Unit
+            }
+        },
+        modifier = modifier.fillMaxSize(),
+    )
 }

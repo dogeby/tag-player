@@ -26,7 +26,7 @@ private const val POSITION_UPDATE_INTERVAL_MS = 200L
 fun VideoPlayer(
     player: Player,
     uri: String,
-    isPlaying: Boolean,
+    isPlaying: () -> Boolean,
     onPositionChanged: (Long) -> Unit,
     onRenderedFirstFrame: () -> Unit,
     modifier: Modifier = Modifier,
@@ -36,7 +36,7 @@ fun VideoPlayer(
     var lifecycleEvent by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
     }
-    player.playWhenReady = isPlaying
+    player.playWhenReady = isPlaying()
 
     DisposableEffect(player, uri, lifecycleOwner) {
         player.apply {
@@ -91,7 +91,7 @@ fun VideoPlayer(
                 }
                 Lifecycle.Event.ON_RESUME -> {
                     it.onResume()
-                    it.player?.playWhenReady = isPlaying
+                    it.player?.playWhenReady = isPlaying()
                 }
                 else -> Unit
             }

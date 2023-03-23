@@ -112,7 +112,7 @@ fun VideoPlayerPage(
             VideoPlayer(
                 player = player,
                 uri = videoItem.uri,
-                isPlaying = isPlaying,
+                isPlaying = { isPlaying },
                 onPositionChanged = { currentDuration = it },
                 onRenderedFirstFrame = { thumbnailVisible = false },
             )
@@ -133,7 +133,7 @@ fun VideoPlayerPage(
             videoItem = videoItem,
             currentDuration = VideoDuration(currentDuration),
             totalDuration = videoItem.duration,
-            isPlaying = isPlaying,
+            isPlaying = { isPlaying },
             isLoading = player.isLoading,
             onPlay = { isPlaying = true },
             onPause = { isPlaying = false },

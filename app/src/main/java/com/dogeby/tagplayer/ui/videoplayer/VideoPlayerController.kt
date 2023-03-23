@@ -56,7 +56,7 @@ fun VideoPlayerController(
     videoItem: VideoItem,
     currentDuration: VideoDuration,
     totalDuration: VideoDuration,
-    isPlaying: Boolean,
+    isPlaying: () -> Boolean,
     isLoading: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
@@ -191,7 +191,7 @@ fun VideoPlayerProgressBar(
 
 @Composable
 fun VideoPlayerRightController(
-    isPlaying: Boolean,
+    isPlaying: () -> Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
     modifier: Modifier = Modifier,
@@ -209,12 +209,12 @@ fun VideoPlayerRightController(
 
 @Composable
 fun PlayPauseButton(
-    isPlaying: Boolean,
+    isPlaying: () -> Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (isPlaying) {
+    if (isPlaying()) {
         IconButton(
             onClick = onPause,
             modifier = modifier,
@@ -301,7 +301,7 @@ fun VideoPlayerControllerPreview() {
                     ),
                     currentDuration = VideoDuration(20000),
                     totalDuration = VideoDuration(200000),
-                    isPlaying = true,
+                    isPlaying = { true },
                     isLoading = false,
                     onPlay = {},
                     onPause = {},

@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
+import android.content.pm.ActivityInfo
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.Spring.DampingRatioNoBouncy
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
+import com.dogeby.tagplayer.ui.findActivity
 import com.dogeby.tagplayer.ui.theme.PlayerControllerOnBackgroundColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarIndicatorColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarTrackColor
@@ -55,11 +58,8 @@ fun VideoPlayerController(
     totalDuration: VideoDuration,
     isPlaying: Boolean,
     isLoading: Boolean,
-    isScreenLockRotation: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
-    onScreenUserRotation: () -> Unit,
-    onScreenLockRotation: () -> Unit,
     onProgressBarChangeFinished: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -85,11 +85,8 @@ fun VideoPlayerController(
                 )
                 VideoPlayerRightController(
                     isPlaying = isPlaying,
-                    isScreenLockRotation = isScreenLockRotation,
                     onPlay = onPlay,
                     onPause = onPause,
-                    onScreenUserRotation = onScreenUserRotation,
-                    onScreenLockRotation = onScreenLockRotation,
                 )
             }
 
@@ -195,20 +192,13 @@ fun VideoPlayerProgressBar(
 @Composable
 fun VideoPlayerRightController(
     isPlaying: Boolean,
-    isScreenLockRotation: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
-    onScreenUserRotation: () -> Unit,
-    onScreenLockRotation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LocalConfiguration.current.orientation
     Column(modifier = modifier) {
-        ScreenRotationButton(
-            isScreenLockRotation = isScreenLockRotation,
-            onScreenUserRotation = onScreenUserRotation,
-            onScreenLockRotation = onScreenLockRotation,
-        )
+        ScreenRotationButton()
         PlayPauseButton(
             isPlaying = isPlaying,
             onPlay = onPlay,
@@ -222,7 +212,7 @@ fun PlayPauseButton(
     isPlaying: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (isPlaying) {
         IconButton(
@@ -251,14 +241,22 @@ fun PlayPauseButton(
 
 @Composable
 fun ScreenRotationButton(
-    isScreenLockRotation: Boolean,
-    onScreenUserRotation: () -> Unit,
-    onScreenLockRotation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (isScreenLockRotation) {
+    val activity = LocalContext.current.findActivity()
+    var orientation by remember {
+        val orientation = when (activity?.requestedOrientation) {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
+            else -> ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        }
+        mutableStateOf(orientation)
+    }.also {
+        activity?.requestedOrientation = it.value
+    }
+
+    if (orientation == ActivityInfo.SCREEN_ORIENTATION_LOCKED) {
         IconButton(
-            onClick = onScreenUserRotation,
+            onClick = { orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR },
             modifier = modifier,
         ) {
             Icon(
@@ -270,7 +268,7 @@ fun ScreenRotationButton(
         return
     }
     IconButton(
-        onClick = onScreenLockRotation,
+        onClick = { orientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED },
         modifier = modifier,
     ) {
         Icon(
@@ -305,11 +303,8 @@ fun VideoPlayerControllerPreview() {
                     totalDuration = VideoDuration(200000),
                     isPlaying = true,
                     isLoading = false,
-                    isScreenLockRotation = false,
                     onPlay = {},
                     onPause = {},
-                    onScreenUserRotation = {},
-                    onScreenLockRotation = {},
                     onProgressBarChangeFinished = {},
                     modifier = Modifier
                         .fillMaxWidth()

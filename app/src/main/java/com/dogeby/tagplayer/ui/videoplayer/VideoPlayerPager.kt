@@ -1,6 +1,5 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
-import android.content.pm.ActivityInfo
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.clickable
@@ -11,7 +10,6 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +25,6 @@ import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoThumbnail
 import com.dogeby.tagplayer.ui.component.toPx
-import com.dogeby.tagplayer.ui.findActivity
 import com.dogeby.tagplayer.ui.theme.PlayerBackgroundColor
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -52,11 +49,6 @@ fun VideoPlayerPager(
     }
     onSettledPageChanged(settledPageVideoId)
 
-    var orientation by remember {
-        mutableStateOf(ActivityInfo.SCREEN_ORIENTATION_LOCKED)
-    }
-    ScreenRotation(orientation)
-
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
     ) {
@@ -70,9 +62,6 @@ fun VideoPlayerPager(
             VideoPlayerPage(
                 videoItem = videoItem,
                 isSettledPage = videoItem.id == settledPageVideoId,
-                isScreenLockRotation = orientation == ActivityInfo.SCREEN_ORIENTATION_LOCKED,
-                onScreenUserRotation = { orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR },
-                onScreenLockRotation = { orientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED },
                 onControllerVisibleChanged = onControllerVisibleChanged,
                 modifier = Modifier.fillMaxSize(),
             )
@@ -81,23 +70,9 @@ fun VideoPlayerPager(
 }
 
 @Composable
-private fun ScreenRotation(orientation: Int) {
-    val activity = LocalContext.current.findActivity()
-    activity?.requestedOrientation = orientation
-    DisposableEffect(Unit) {
-        onDispose {
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        }
-    }
-}
-
-@Composable
 fun VideoPlayerPage(
     videoItem: VideoItem,
     isSettledPage: Boolean,
-    isScreenLockRotation: Boolean,
-    onScreenUserRotation: () -> Unit,
-    onScreenLockRotation: () -> Unit,
     onControllerVisibleChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -160,11 +135,8 @@ fun VideoPlayerPage(
             totalDuration = videoItem.duration,
             isPlaying = isPlaying,
             isLoading = player.isLoading,
-            isScreenLockRotation = isScreenLockRotation,
             onPlay = { isPlaying = true },
             onPause = { isPlaying = false },
-            onScreenUserRotation = onScreenUserRotation,
-            onScreenLockRotation = onScreenLockRotation,
             onProgressBarChangeFinished = { player.seekTo(it.coerceIn(0, videoItem.duration.value)) },
             modifier = Modifier.fillMaxSize(),
         )

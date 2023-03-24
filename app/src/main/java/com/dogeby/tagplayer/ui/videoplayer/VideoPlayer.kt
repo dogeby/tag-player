@@ -37,13 +37,13 @@ fun VideoPlayer(
     var lifecycleEvent by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
     }
-    player.playWhenReady = isPlaying()
 
     DisposableEffect(player, uri, lifecycleOwner) {
         player.apply {
             setMediaItem(MediaItem.fromUri(uri))
             prepare()
             this.repeatMode = repeatMode
+            playWhenReady = isPlaying()
         }
         val observer = LifecycleEventObserver { _, event ->
             lifecycleEvent = event
@@ -97,8 +97,8 @@ fun VideoPlayer(
                     it.onPause()
                 }
                 Lifecycle.Event.ON_RESUME -> {
-                    it.onResume()
                     it.player?.playWhenReady = isPlaying()
+                    it.onResume()
                 }
                 else -> Unit
             }

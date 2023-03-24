@@ -54,13 +54,13 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 fun VideoPlayerController(
     isVisible: Boolean,
     videoItem: VideoItem,
-    currentDuration: VideoDuration,
+    currentDuration: () -> VideoDuration,
     totalDuration: VideoDuration,
+    isProgressBarExternalUpdate: () -> Boolean,
     isPlaying: () -> Boolean,
-    isLoading: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
-    onProgressBarChangeFinished: (Long) -> Unit,
+    onProgressBarScrubbingFinished: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     VideoPlayerControllerAnimation(
@@ -93,8 +93,8 @@ fun VideoPlayerController(
             VideoPlayerProgressBar(
                 currentDuration = currentDuration,
                 totalDuration = totalDuration,
-                isLoading = isLoading,
-                onScrubbingFinished = { onProgressBarChangeFinished(it.value) },
+                onScrubbingFinished = onProgressBarScrubbingFinished,
+                isExternalUpdate = isProgressBarExternalUpdate,
                 modifier = Modifier.fillMaxWidth(),
                 durationTextPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.videoPlayerController_text_horizontal_padding)),
             )
@@ -150,20 +150,21 @@ fun VideoPlayerDuration(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoPlayerProgressBar(
-    currentDuration: VideoDuration,
+    currentDuration: () -> VideoDuration,
     totalDuration: VideoDuration,
-    isLoading: Boolean,
-    onScrubbingFinished: (VideoDuration) -> Unit,
+    onScrubbingFinished: (Long) -> Unit,
+    isExternalUpdate: () -> Boolean,
     modifier: Modifier = Modifier,
     durationTextPadding: PaddingValues = PaddingValues(),
 ) {
-    var isScrubbing by remember(isLoading) { mutableStateOf(false) }
-    var sliderCurrentProgress by remember { mutableStateOf(currentDuration) }
-    if (isScrubbing.not()) sliderCurrentProgress = currentDuration
+    var isScrubbing by remember { mutableStateOf(false) }
+
+    var sliderCurrentProgress by remember { mutableStateOf(currentDuration()) }
+    if (isScrubbing.not() && isExternalUpdate()) { sliderCurrentProgress = currentDuration() }
 
     val animatedProgress by animateFloatAsState(
         targetValue = sliderCurrentProgress.value.toFloat(),
-        animationSpec = if (isScrubbing) spring(DampingRatioNoBouncy, StiffnessHigh) else ProgressIndicatorDefaults.ProgressAnimationSpec,
+        animationSpec = if (isScrubbing || isExternalUpdate().not()) spring(DampingRatioNoBouncy, StiffnessHigh) else ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
 
     Column(modifier = modifier) {
@@ -183,7 +184,10 @@ fun VideoPlayerProgressBar(
                 activeTrackColor = PlayerProgressBarIndicatorColor,
                 inactiveTrackColor = PlayerProgressBarTrackColor
             ),
-            onValueChangeFinished = { onScrubbingFinished(sliderCurrentProgress) },
+            onValueChangeFinished = {
+                onScrubbingFinished(sliderCurrentProgress.value)
+                isScrubbing = false
+            },
             thumb = {},
         )
     }
@@ -299,13 +303,13 @@ fun VideoPlayerControllerPreview() {
                         parentDirectories = emptyList(),
                         tags = emptyList(),
                     ),
-                    currentDuration = VideoDuration(20000),
+                    currentDuration = { VideoDuration(20000) },
                     totalDuration = VideoDuration(200000),
+                    isProgressBarExternalUpdate = { true },
                     isPlaying = { true },
-                    isLoading = false,
                     onPlay = {},
                     onPause = {},
-                    onProgressBarChangeFinished = {},
+                    onProgressBarScrubbingFinished = {},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
@@ -332,10 +336,10 @@ fun VideoPlayerProgressBarPreview() {
         Surface(color = Color.Black) {
             Box {
                 VideoPlayerProgressBar(
-                    currentDuration = VideoDuration(30),
+                    currentDuration = { VideoDuration(30) },
                     totalDuration = VideoDuration(60),
-                    isLoading = false,
                     onScrubbingFinished = {},
+                    isExternalUpdate = { true },
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter),

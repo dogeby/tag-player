@@ -29,6 +29,7 @@ fun VideoPlayer(
     isPlaying: () -> Boolean,
     onPositionChanged: (Long) -> Unit,
     onRenderedFirstFrame: () -> Unit,
+    onPlaybackStateChanged: (@Player.State Int) -> Unit,
     modifier: Modifier = Modifier,
     @Player.RepeatMode repeatMode: Int = REPEAT_MODE_ONE,
 ) {
@@ -75,6 +76,12 @@ fun VideoPlayer(
                     override fun onRenderedFirstFrame() {
                         super.onRenderedFirstFrame()
                         onRenderedFirstFrame()
+                    }
+
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        super.onPlaybackStateChanged(playbackState)
+                        onPositionChanged(player.currentPosition)
+                        onPlaybackStateChanged(playbackState)
                     }
                 }
                 player.addListener(playerListener)

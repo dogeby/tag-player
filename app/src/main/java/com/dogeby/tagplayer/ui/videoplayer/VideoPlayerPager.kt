@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.dogeby.tagplayer.domain.video.VideoDuration
@@ -96,6 +97,9 @@ fun VideoPlayerPage(
     var thumbnailVisible by remember {
         mutableStateOf(true)
     }
+    var playBackState by remember {
+        mutableStateOf<@Player.State Int>(player.playbackState)
+    }
 
     val playerInteractionSource = remember { MutableInteractionSource() }
     Box(
@@ -115,6 +119,7 @@ fun VideoPlayerPage(
                 isPlaying = { isPlaying },
                 onPositionChanged = { currentDuration = it },
                 onRenderedFirstFrame = { thumbnailVisible = false },
+                onPlaybackStateChanged = { playBackState = it }
             )
         }
         if (thumbnailVisible) {
@@ -131,13 +136,13 @@ fun VideoPlayerPage(
         VideoPlayerController(
             isVisible = controllerVisible,
             videoItem = videoItem,
-            currentDuration = VideoDuration(currentDuration),
+            currentDuration = { VideoDuration(currentDuration) },
             totalDuration = videoItem.duration,
+            isProgressBarExternalUpdate = { playBackState == Player.STATE_READY },
             isPlaying = { isPlaying },
-            isLoading = player.isLoading,
             onPlay = { isPlaying = true },
             onPause = { isPlaying = false },
-            onProgressBarChangeFinished = { player.seekTo(it.coerceIn(0, videoItem.duration.value)) },
+            onProgressBarScrubbingFinished = { player.seekTo(it.coerceIn(0, videoItem.duration.value)) },
             modifier = Modifier.fillMaxSize(),
         )
     }

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.os.postDelayed
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.common.MediaItem
@@ -62,15 +63,21 @@ fun VideoPlayer(
                 useController = false
                 setBackgroundColor(PlayerBackgroundColor.toArgb())
 
+                val actionToken = "get-current-position"
                 fun getCurrentPosition() {
                     onPositionChanged(player.currentPosition)
-                    if (player.isPlaying) this.postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
+                    if (player.isPlaying.not()) return
+                    handler.postDelayed(POSITION_UPDATE_INTERVAL_MS, actionToken) { getCurrentPosition() }
                 }
                 val playerListener = object : Player.Listener {
 
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
                         super.onIsPlayingChanged(isPlaying)
-                        if (isPlaying) postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
+                        if (isPlaying.not()) {
+                            handler.removeCallbacksAndMessages(actionToken)
+                            return
+                        }
+                        handler.postDelayed(POSITION_UPDATE_INTERVAL_MS, actionToken) { getCurrentPosition() }
                     }
 
                     override fun onRenderedFirstFrame() {

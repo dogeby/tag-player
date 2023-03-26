@@ -61,8 +61,8 @@ fun VideoPlayerPager(
         ) { index ->
             val videoItem = videoItems[index]
             VideoPlayerPage(
-                videoItem = videoItem,
-                isSettledPage = videoItem.id == settledPageVideoId,
+                videoItem = { videoItem },
+                isSettledPage = { videoItem.id == settledPageVideoId },
                 onControllerVisibleChanged = onControllerVisibleChanged,
                 modifier = Modifier.fillMaxSize(),
             )
@@ -72,8 +72,8 @@ fun VideoPlayerPager(
 
 @Composable
 fun VideoPlayerPage(
-    videoItem: VideoItem,
-    isSettledPage: Boolean,
+    videoItem: () -> VideoItem,
+    isSettledPage: () -> Boolean,
     onControllerVisibleChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -101,6 +101,7 @@ fun VideoPlayerPage(
         mutableStateOf<@Player.State Int>(player.playbackState)
     }
 
+    val videoItemValue = videoItem()
     val playerInteractionSource = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
@@ -112,10 +113,10 @@ fun VideoPlayerPage(
                 onControllerVisibleChanged(controllerVisible)
             },
     ) {
-        if (isSettledPage) {
+        if (isSettledPage()) {
             VideoPlayer(
                 player = player,
-                uri = videoItem.uri,
+                uri = videoItemValue.uri,
                 isPlaying = { isPlaying },
                 onPositionChanged = { currentDuration = it },
                 onRenderedFirstFrame = { thumbnailVisible = false },
@@ -125,7 +126,7 @@ fun VideoPlayerPage(
         if (thumbnailVisible) {
             val configuration = LocalConfiguration.current
             VideoThumbnail(
-                uri = videoItem.uri,
+                uri = videoItemValue.uri,
                 width = configuration.screenWidthDp.dp.toPx(),
                 height = configuration.screenHeightDp.dp.toPx(),
                 modifier = Modifier.fillMaxSize(),
@@ -135,14 +136,14 @@ fun VideoPlayerPage(
 
         VideoPlayerController(
             isVisible = controllerVisible,
-            videoItem = videoItem,
+            videoItem = videoItemValue,
             currentDuration = { VideoDuration(currentDuration) },
-            totalDuration = videoItem.duration,
+            totalDuration = videoItemValue.duration,
             isProgressBarExternalUpdate = { playBackState == Player.STATE_READY },
             isPlaying = { isPlaying },
             onPlay = { isPlaying = true },
             onPause = { isPlaying = false },
-            onProgressBarScrubbingFinished = { player.seekTo(it.coerceIn(0, videoItem.duration.value)) },
+            onProgressBarScrubbingFinished = { player.seekTo(it.coerceIn(0, videoItemValue.duration.value)) },
             modifier = Modifier.fillMaxSize(),
         )
     }

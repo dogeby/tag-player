@@ -2,8 +2,6 @@ package com.dogeby.tagplayer.ui.videoplayer
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.VerticalPager
@@ -34,8 +32,8 @@ import com.dogeby.tagplayer.ui.theme.PlayerBackgroundColor
 fun VideoPlayerPager(
     currentPageVideoId: Long,
     videoItems: List<VideoItem>,
+    isControllerVisible: () -> Boolean,
     onSettledPageChanged: (videoId: Long) -> Unit,
-    onControllerVisibleChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(
@@ -63,7 +61,7 @@ fun VideoPlayerPager(
             VideoPlayerPage(
                 videoItem = { videoItem },
                 isSettledPage = { videoItem.id == settledPageVideoId },
-                onControllerVisibleChanged = onControllerVisibleChanged,
+                isControllerVisible = isControllerVisible,
                 modifier = Modifier.fillMaxSize(),
             )
         }
@@ -74,7 +72,7 @@ fun VideoPlayerPager(
 fun VideoPlayerPage(
     videoItem: () -> VideoItem,
     isSettledPage: () -> Boolean,
-    onControllerVisibleChanged: (Boolean) -> Unit,
+    isControllerVisible: () -> Boolean,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -85,11 +83,6 @@ fun VideoPlayerPage(
     }
     var isPlaying by remember {
         mutableStateOf(true)
-    }
-    var controllerVisible by remember {
-        mutableStateOf(true).also {
-            onControllerVisibleChanged(it.value)
-        }
     }
     var currentDuration by remember {
         mutableStateOf(0L)
@@ -102,17 +95,7 @@ fun VideoPlayerPage(
     }
 
     val videoItemValue = videoItem()
-    val playerInteractionSource = remember { MutableInteractionSource() }
-    Box(
-        modifier = modifier
-            .clickable(
-                interactionSource = playerInteractionSource,
-                indication = null,
-            ) {
-                controllerVisible = controllerVisible.not()
-                onControllerVisibleChanged(controllerVisible)
-            },
-    ) {
+    Box(modifier = modifier) {
         if (isSettledPage()) {
             VideoPlayer(
                 player = player,
@@ -135,7 +118,7 @@ fun VideoPlayerPage(
         }
 
         VideoPlayerController(
-            isVisible = controllerVisible,
+            isVisible = isControllerVisible,
             videoItem = videoItemValue,
             currentDuration = { VideoDuration(currentDuration) },
             totalDuration = videoItemValue.duration,

@@ -51,7 +51,7 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
 fun VideoPlayerController(
-    isVisible: Boolean,
+    isVisible: () -> Boolean,
     videoItem: VideoItem,
     currentDuration: () -> VideoDuration,
     totalDuration: VideoDuration,
@@ -63,7 +63,7 @@ fun VideoPlayerController(
     modifier: Modifier = Modifier,
 ) {
     VideoPlayerControllerAnimation(
-        visible = isVisible,
+        visible = isVisible(),
         modifier = modifier,
     ) {
         Column(
@@ -288,7 +288,7 @@ fun VideoPlayerControllerPreview() {
         Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
             Box(modifier = Modifier.fillMaxSize()) {
                 VideoPlayerController(
-                    isVisible = true,
+                    isVisible = { true },
                     videoItem = VideoItem(
                         id = 0,
                         uri = "",

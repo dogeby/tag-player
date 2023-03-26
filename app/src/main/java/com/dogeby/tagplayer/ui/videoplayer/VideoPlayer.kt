@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.os.postDelayed
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.common.MediaItem
@@ -26,9 +27,10 @@ private const val POSITION_UPDATE_INTERVAL_MS = 200L
 fun VideoPlayer(
     player: Player,
     uri: String,
-    isPlaying: Boolean,
+    isPlaying: () -> Boolean,
     onPositionChanged: (Long) -> Unit,
     onRenderedFirstFrame: () -> Unit,
+    onPlaybackStateChanged: (@Player.State Int) -> Unit,
     modifier: Modifier = Modifier,
     @Player.RepeatMode repeatMode: Int = REPEAT_MODE_ONE,
 ) {
@@ -36,13 +38,13 @@ fun VideoPlayer(
     var lifecycleEvent by remember {
         mutableStateOf(Lifecycle.Event.ON_CREATE)
     }
-    player.playWhenReady = isPlaying
 
     DisposableEffect(player, uri, lifecycleOwner) {
         player.apply {
             setMediaItem(MediaItem.fromUri(uri))
             prepare()
             this.repeatMode = repeatMode
+            playWhenReady = isPlaying()
         }
         val observer = LifecycleEventObserver { _, event ->
             lifecycleEvent = event
@@ -61,20 +63,32 @@ fun VideoPlayer(
                 useController = false
                 setBackgroundColor(PlayerBackgroundColor.toArgb())
 
+                val actionToken = "get-current-position"
                 fun getCurrentPosition() {
                     onPositionChanged(player.currentPosition)
-                    if (player.isPlaying) this.postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
+                    if (player.isPlaying.not()) return
+                    handler.postDelayed(POSITION_UPDATE_INTERVAL_MS, actionToken) { getCurrentPosition() }
                 }
                 val playerListener = object : Player.Listener {
 
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
                         super.onIsPlayingChanged(isPlaying)
-                        if (isPlaying) postDelayed(::getCurrentPosition, POSITION_UPDATE_INTERVAL_MS)
+                        if (isPlaying.not()) {
+                            handler.removeCallbacksAndMessages(actionToken)
+                            return
+                        }
+                        handler.postDelayed(POSITION_UPDATE_INTERVAL_MS, actionToken) { getCurrentPosition() }
                     }
 
                     override fun onRenderedFirstFrame() {
                         super.onRenderedFirstFrame()
                         onRenderedFirstFrame()
+                    }
+
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        super.onPlaybackStateChanged(playbackState)
+                        onPositionChanged(player.currentPosition)
+                        onPlaybackStateChanged(playbackState)
                     }
                 }
                 player.addListener(playerListener)
@@ -90,8 +104,8 @@ fun VideoPlayer(
                     it.onPause()
                 }
                 Lifecycle.Event.ON_RESUME -> {
+                    it.player?.playWhenReady = isPlaying()
                     it.onResume()
-                    it.player?.playWhenReady = isPlaying
                 }
                 else -> Unit
             }

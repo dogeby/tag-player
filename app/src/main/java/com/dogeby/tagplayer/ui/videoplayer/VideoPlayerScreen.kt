@@ -1,6 +1,9 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
 import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -15,11 +18,13 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dogeby.tagplayer.ui.findActivity
 import com.dogeby.tagplayer.ui.theme.PlayerControllerBackgroundColor
 import com.dogeby.tagplayer.ui.theme.PlayerControllerOnBackgroundColor
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -50,6 +55,8 @@ fun VideoPlayerScreen(
     modifier: Modifier = Modifier,
 ) {
     val systemUiController = rememberSystemUiController()
+    val activity = LocalContext.current.findActivity()
+
     DisposableEffect(systemUiController) {
         systemUiController.isSystemBarsVisible = false
         systemUiController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -57,10 +64,11 @@ fun VideoPlayerScreen(
         onDispose {
             systemUiController.isSystemBarsVisible = true
             systemUiController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_TOUCH
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
     }
 
-    var videoPlayerControllerVisible by rememberSaveable {
+    var videoPlayerControllerVisible by remember {
         mutableStateOf(true)
     }
 
@@ -98,9 +106,16 @@ fun VideoPlayerScreen(
                 VideoPlayerPager(
                     currentPageVideoId = videoPlayerPagerUiState.currentVideoId,
                     videoItems = videoPlayerPagerUiState.videoItems,
+                    isControllerVisible = { videoPlayerControllerVisible },
                     onSettledPageChanged = onPlayerSettledPageChanged,
-                    onControllerVisibleChanged = { videoPlayerControllerVisible = it },
-                    modifier = modifier.fillMaxSize(),
+                    modifier = modifier
+                        .fillMaxSize()
+                        .clickable(
+                            interactionSource = MutableInteractionSource(),
+                            indication = null,
+                        ) {
+                            videoPlayerControllerVisible = videoPlayerControllerVisible.not()
+                        },
                 )
             }
         }

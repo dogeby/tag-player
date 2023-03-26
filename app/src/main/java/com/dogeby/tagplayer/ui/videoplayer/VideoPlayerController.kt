@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
+import android.content.pm.ActivityInfo
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.Spring.DampingRatioNoBouncy
@@ -33,7 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
+import com.dogeby.tagplayer.ui.findActivity
 import com.dogeby.tagplayer.ui.theme.PlayerControllerOnBackgroundColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarIndicatorColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarTrackColor
@@ -49,22 +51,19 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
 fun VideoPlayerController(
-    isVisible: Boolean,
+    isVisible: () -> Boolean,
     videoItem: VideoItem,
-    currentDuration: VideoDuration,
+    currentDuration: () -> VideoDuration,
     totalDuration: VideoDuration,
-    isPlaying: Boolean,
-    isLoading: Boolean,
-    isScreenLockRotation: Boolean,
+    isProgressBarExternalUpdate: () -> Boolean,
+    isPlaying: () -> Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
-    onScreenUserRotation: () -> Unit,
-    onScreenLockRotation: () -> Unit,
-    onProgressBarChangeFinished: (Long) -> Unit,
+    onProgressBarScrubbingFinished: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     VideoPlayerControllerAnimation(
-        visible = isVisible,
+        visible = isVisible(),
         modifier = modifier,
     ) {
         Column(
@@ -85,19 +84,16 @@ fun VideoPlayerController(
                 )
                 VideoPlayerRightController(
                     isPlaying = isPlaying,
-                    isScreenLockRotation = isScreenLockRotation,
                     onPlay = onPlay,
                     onPause = onPause,
-                    onScreenUserRotation = onScreenUserRotation,
-                    onScreenLockRotation = onScreenLockRotation,
                 )
             }
 
             VideoPlayerProgressBar(
                 currentDuration = currentDuration,
                 totalDuration = totalDuration,
-                isLoading = isLoading,
-                onScrubbingFinished = { onProgressBarChangeFinished(it.value) },
+                onScrubbingFinished = onProgressBarScrubbingFinished,
+                isExternalUpdate = isProgressBarExternalUpdate,
                 modifier = Modifier.fillMaxWidth(),
                 durationTextPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.videoPlayerController_text_horizontal_padding)),
             )
@@ -153,20 +149,21 @@ fun VideoPlayerDuration(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoPlayerProgressBar(
-    currentDuration: VideoDuration,
+    currentDuration: () -> VideoDuration,
     totalDuration: VideoDuration,
-    isLoading: Boolean,
-    onScrubbingFinished: (VideoDuration) -> Unit,
+    onScrubbingFinished: (Long) -> Unit,
+    isExternalUpdate: () -> Boolean,
     modifier: Modifier = Modifier,
     durationTextPadding: PaddingValues = PaddingValues(),
 ) {
-    var isScrubbing by remember(isLoading) { mutableStateOf(false) }
-    var sliderCurrentProgress by remember { mutableStateOf(currentDuration) }
-    if (isScrubbing.not()) sliderCurrentProgress = currentDuration
+    var isScrubbing by remember { mutableStateOf(false) }
+
+    var sliderCurrentProgress by remember { mutableStateOf(currentDuration()) }
+    if (isScrubbing.not() && isExternalUpdate()) { sliderCurrentProgress = currentDuration() }
 
     val animatedProgress by animateFloatAsState(
         targetValue = sliderCurrentProgress.value.toFloat(),
-        animationSpec = if (isScrubbing) spring(DampingRatioNoBouncy, StiffnessHigh) else ProgressIndicatorDefaults.ProgressAnimationSpec,
+        animationSpec = if (isScrubbing || isExternalUpdate().not()) spring(DampingRatioNoBouncy, StiffnessHigh) else ProgressIndicatorDefaults.ProgressAnimationSpec,
     )
 
     Column(modifier = modifier) {
@@ -186,7 +183,10 @@ fun VideoPlayerProgressBar(
                 activeTrackColor = PlayerProgressBarIndicatorColor,
                 inactiveTrackColor = PlayerProgressBarTrackColor
             ),
-            onValueChangeFinished = { onScrubbingFinished(sliderCurrentProgress) },
+            onValueChangeFinished = {
+                onScrubbingFinished(sliderCurrentProgress.value)
+                isScrubbing = false
+            },
             thumb = {},
         )
     }
@@ -194,21 +194,13 @@ fun VideoPlayerProgressBar(
 
 @Composable
 fun VideoPlayerRightController(
-    isPlaying: Boolean,
-    isScreenLockRotation: Boolean,
+    isPlaying: () -> Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
-    onScreenUserRotation: () -> Unit,
-    onScreenLockRotation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LocalConfiguration.current.orientation
     Column(modifier = modifier) {
-        ScreenRotationButton(
-            isScreenLockRotation = isScreenLockRotation,
-            onScreenUserRotation = onScreenUserRotation,
-            onScreenLockRotation = onScreenLockRotation,
-        )
+        ScreenRotationButton()
         PlayPauseButton(
             isPlaying = isPlaying,
             onPlay = onPlay,
@@ -219,12 +211,12 @@ fun VideoPlayerRightController(
 
 @Composable
 fun PlayPauseButton(
-    isPlaying: Boolean,
+    isPlaying: () -> Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    if (isPlaying) {
+    if (isPlaying()) {
         IconButton(
             onClick = onPause,
             modifier = modifier,
@@ -251,14 +243,22 @@ fun PlayPauseButton(
 
 @Composable
 fun ScreenRotationButton(
-    isScreenLockRotation: Boolean,
-    onScreenUserRotation: () -> Unit,
-    onScreenLockRotation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (isScreenLockRotation) {
+    val activity = LocalContext.current.findActivity()
+    var orientation by remember {
+        val orientation = when (activity?.requestedOrientation) {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
+            else -> ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        }
+        mutableStateOf(orientation)
+    }.also {
+        activity?.requestedOrientation = it.value
+    }
+
+    if (orientation == ActivityInfo.SCREEN_ORIENTATION_LOCKED) {
         IconButton(
-            onClick = onScreenUserRotation,
+            onClick = { orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR },
             modifier = modifier,
         ) {
             Icon(
@@ -270,7 +270,7 @@ fun ScreenRotationButton(
         return
     }
     IconButton(
-        onClick = onScreenLockRotation,
+        onClick = { orientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED },
         modifier = modifier,
     ) {
         Icon(
@@ -288,7 +288,7 @@ fun VideoPlayerControllerPreview() {
         Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
             Box(modifier = Modifier.fillMaxSize()) {
                 VideoPlayerController(
-                    isVisible = true,
+                    isVisible = { true },
                     videoItem = VideoItem(
                         id = 0,
                         uri = "",
@@ -301,16 +301,13 @@ fun VideoPlayerControllerPreview() {
                         parentDirectories = emptyList(),
                         tags = emptyList(),
                     ),
-                    currentDuration = VideoDuration(20000),
+                    currentDuration = { VideoDuration(20000) },
                     totalDuration = VideoDuration(200000),
-                    isPlaying = true,
-                    isLoading = false,
-                    isScreenLockRotation = false,
+                    isProgressBarExternalUpdate = { true },
+                    isPlaying = { true },
                     onPlay = {},
                     onPause = {},
-                    onScreenUserRotation = {},
-                    onScreenLockRotation = {},
-                    onProgressBarChangeFinished = {},
+                    onProgressBarScrubbingFinished = {},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
@@ -337,10 +334,10 @@ fun VideoPlayerProgressBarPreview() {
         Surface(color = Color.Black) {
             Box {
                 VideoPlayerProgressBar(
-                    currentDuration = VideoDuration(30),
+                    currentDuration = { VideoDuration(30) },
                     totalDuration = VideoDuration(60),
-                    isLoading = false,
                     onScrubbingFinished = {},
+                    isExternalUpdate = { true },
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter),

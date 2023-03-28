@@ -8,7 +8,7 @@ interface VideoRepository {
 
     val videosWithTags: Flow<List<VideoWithTags>>
 
-    suspend fun updateVideos(): Result<Unit>
+    suspend fun updateVideos(): Result<VideoUpdateResult>
 
     fun getVideosWithTags(videoIds: List<Long>): Flow<List<VideoWithTags>>
 

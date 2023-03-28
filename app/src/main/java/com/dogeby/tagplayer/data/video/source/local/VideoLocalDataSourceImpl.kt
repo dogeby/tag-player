@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 
 @Singleton
 class VideoLocalDataSourceImpl @Inject constructor(
-    @ApplicationContext appContext: Context,
+    @ApplicationContext private val appContext: Context,
 ) : VideoLocalDataSource {
 
     private val contextResolver = appContext.contentResolver
@@ -22,6 +22,8 @@ class VideoLocalDataSourceImpl @Inject constructor(
         } else {
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         }.toString()
+
+    private var prevGeneration: Long? = null
 
     override suspend fun getVideoDataList() = runCatching {
         val tmpVideoDataList = mutableListOf<VideoData>()
@@ -73,6 +75,17 @@ class VideoLocalDataSourceImpl @Inject constructor(
                 }
             }
             tmpVideoDataList
+        }
+    }
+
+    override fun isSameGeneration(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val currentGeneration = MediaStore.getGeneration(appContext, MediaStore.VOLUME_EXTERNAL)
+            (prevGeneration == currentGeneration).also {
+                if (it.not()) prevGeneration = currentGeneration
+            }
+        } else {
+            false
         }
     }
 }

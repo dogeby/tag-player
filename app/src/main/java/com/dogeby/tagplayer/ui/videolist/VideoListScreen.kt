@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.videolist
 
+import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,9 +32,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
@@ -52,6 +56,7 @@ fun VideoListRoute(
     onNavigateToVideoSearch: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: VideoListViewModel = hiltViewModel(),
+    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
 ) {
     val videoListUiState: VideoListUiState by viewModel.videoListUiState.collectAsState()
     val isVideoFiltered: Boolean by viewModel.isVideoFiltered.collectAsState()
@@ -61,11 +66,7 @@ fun VideoListRoute(
     val videoListSortTypeUiState: VideoListSortTypeUiState by viewModel.videoListSortTypeUiState.collectAsState()
 
     val permissionState: PermissionState = rememberPermissionState(AppRequiredPermission)
-    if (permissionState.status.isGranted) {
-        LaunchedEffect(Unit) {
-            viewModel.updateVideoList()
-        }
-    }
+    if (permissionState.status.isGranted) viewModel.updateVideoList()
 
     VideoListScreen(
         videoListUiState = videoListUiState,
@@ -85,6 +86,8 @@ fun VideoListRoute(
         isVideoFiltered = isVideoFiltered,
         modifier = modifier.fillMaxWidth(),
         onNavigateToFilterSetting = onNavigateToFilterSetting,
+        setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+        updateVideo = viewModel::updateVideoList
     )
 }
 
@@ -108,11 +111,35 @@ fun VideoListScreen(
     isVideoFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
+    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
+    updateVideo: (() -> Unit)? = null
 ) {
     var progressIndicatorState by rememberSaveable { mutableStateOf(videoListUiState is VideoListUiState.Loading) }
     var isShowBottomAppBarIconAnimation by remember { mutableStateOf(false) }
     var bottomBarShown by rememberSaveable { mutableStateOf(true) }.apply {
         if (isSelectMode) this.value = isSelectMode
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && setTopResumedActivityChangedListener != null) {
+
+            setTopResumedActivityChangedListener { isTopResumedActivity: Boolean ->
+                if (isTopResumedActivity && updateVideo != null) updateVideo()
+            }
+            return@DisposableEffect onDispose {
+                setTopResumedActivityChangedListener(null)
+            }
+        }
+
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME && updateVideo != null) updateVideo()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     val nestedScrollConnection = object : NestedScrollConnection {

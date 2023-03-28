@@ -73,7 +73,11 @@ class VideoListViewModel @Inject constructor(
             initialValue = VideoListSortTypeUiState(emptyList())
         )
 
-    suspend fun updateVideoList() = updateVideoListUseCase()
+    fun updateVideoList() {
+        viewModelScope.launch {
+            updateVideoListUseCase()
+        }
+    }
 
     fun toggleIsSelectedVideoItems(id: Long) {
         _isSelectedVideoItems.compute(id) { _, v ->

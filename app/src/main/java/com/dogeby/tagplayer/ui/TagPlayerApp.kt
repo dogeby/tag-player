@@ -10,10 +10,12 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 fun TagPlayerApp(
     onExit: () -> Unit = {},
     isRequiredPermissionsGranted: Boolean,
+    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
 ) {
     TagPlayerTheme {
         TagPlayerNavHost(
             onExit = onExit,
+            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
             startDestination = if (isRequiredPermissionsGranted) VideoListRoute else PermissionRoute,
         )
     }

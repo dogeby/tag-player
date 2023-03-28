@@ -5,4 +5,6 @@ interface VideoLocalDataSource {
     val contentUri: String
 
     suspend fun getVideoDataList(): Result<List<VideoData>>
+
+    fun isSameGeneration(): Boolean
 }

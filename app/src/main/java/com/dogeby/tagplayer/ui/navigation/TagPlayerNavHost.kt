@@ -23,6 +23,7 @@ fun TagPlayerNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = PermissionRoute,
+    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
 ) {
     NavHost(
         navController = navController,
@@ -46,7 +47,8 @@ fun TagPlayerNavHost(
                 onNavigateToTagSetting = { videoIds ->
                     navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
                 },
-                onNavigateToVideoSearch = { navController.navigate(VideoSearchRoute) }
+                onNavigateToVideoSearch = { navController.navigate(VideoSearchRoute) },
+                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener
             )
         }
         composable(

@@ -1,6 +1,7 @@
 package com.dogeby.tagplayer.domain.video
 
 import com.dogeby.tagplayer.data.video.VideoRepository
+import com.dogeby.tagplayer.data.video.VideoUpdateResult
 import com.dogeby.tagplayer.domain.preferences.GetFilteredDirectoryNameUseCase
 import com.dogeby.tagplayer.domain.preferences.RemoveDirectoryFilterUseCase
 import javax.inject.Inject
@@ -14,10 +15,15 @@ class UpdateVideoListUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(): Result<Unit> {
-        return videoRepository.updateVideos().onSuccess {
-            val allDirectories = getAllDirectoriesUseCase().first()
-            val filteredDirectoryNames = getFilteredDirectoryNameUseCase().first()
-            removeDirectoryFilterUseCase(filteredDirectoryNames - allDirectories)
-        }
+        return videoRepository.updateVideos().onSuccess { videoUpdateResult ->
+            when (videoUpdateResult) {
+                VideoUpdateResult.Nothing -> Unit
+                VideoUpdateResult.Cached -> {
+                    val allDirectories = getAllDirectoriesUseCase().first()
+                    val filteredDirectoryNames = getFilteredDirectoryNameUseCase().first()
+                    removeDirectoryFilterUseCase(filteredDirectoryNames - allDirectories)
+                }
+            }
+        }.map {}
     }
 }

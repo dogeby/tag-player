@@ -46,10 +46,12 @@ class VideoRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateVideos(): Result<Unit> = runCatching {
+    override suspend fun updateVideos(): Result<VideoUpdateResult> = runCatching {
+        if (videoLocalDataSource.isSameGeneration()) return@runCatching VideoUpdateResult.Nothing
         videoLocalDataSource.getVideoDataList().onSuccess { videoDataList ->
             videoDao.cacheVideos(videoDataList.map { it.toVideoEntity() })
         }
+        VideoUpdateResult.Cached
     }
 
     override fun getVideosWithTagsFilteredByTag(tagIds: List<Long>): Flow<List<VideoWithTags>> {

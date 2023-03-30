@@ -1,6 +1,9 @@
 package com.dogeby.tagplayer.data.tag
 
 import com.dogeby.tagplayer.database.dao.TagDao
+import com.dogeby.tagplayer.database.dao.TagVideoCrossRefDao
+import com.dogeby.tagplayer.database.model.TagEntityWithVideoEntities
+import com.dogeby.tagplayer.database.model.VideoEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -19,11 +22,13 @@ class TagRepositoryTest {
 
     @Mock private lateinit var tagDao: TagDao
 
+    @Mock private lateinit var tagVideoCrossRefDao: TagVideoCrossRefDao
+
     private lateinit var tagRepository: TagRepository
 
     @Before
     fun setUp() {
-        tagRepository = TagRepositoryImpl(tagDao)
+        tagRepository = TagRepositoryImpl(tagVideoCrossRefDao, tagDao)
     }
 
     @Test
@@ -45,5 +50,45 @@ class TagRepositoryTest {
 
         Assert.assertEquals(fakeTagIds, addTagsResult.getOrNull())
         Assert.assertEquals(tags.map { it.name }, allTags.map { it.name })
+    }
+
+    @Test
+    fun getTagsWithVideoIds() = runTest {
+        val tags = List(5) { Tag(it.toLong(), it.toString()) }
+        val videoEntities = List(3) {
+            VideoEntity(
+                id = it.toLong(),
+                name = "",
+                extension = "",
+                duration = 0L,
+                path = "",
+                size = 0L
+            )
+        }
+        val tagEntitiesWithVideoEntities = tags.take(tags.size - 1).map { tag ->
+            TagEntityWithVideoEntities(
+                tagEntity = tag.toTagEntity(),
+                videoEntities = videoEntities
+            )
+        }
+
+        val expectedTagsWithVideoIds = tags.mapIndexed { index, tag ->
+            TagWithVideoIds(tag, if (index < tags.size - 1) videoEntities.map { it.id } else emptyList())
+        }
+
+        `when`(tagDao.getTagEntities()).then {
+            flow {
+                emit(tags.map { it.toTagEntity() })
+            }
+        }
+        `when`(tagVideoCrossRefDao.getTagsWithVideos()).then {
+            flow {
+                emit(tagEntitiesWithVideoEntities)
+            }
+        }
+
+        val tagsWithVideoIds = tagRepository.tagsWithVideoIds.first()
+
+        Assert.assertEquals(expectedTagsWithVideoIds, tagsWithVideoIds)
     }
 }

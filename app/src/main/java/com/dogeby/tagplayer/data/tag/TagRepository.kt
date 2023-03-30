@@ -6,6 +6,8 @@ interface TagRepository {
 
     val allTags: Flow<List<Tag>>
 
+    val tagsWithVideoIds: Flow<List<TagWithVideoIds>>
+
     suspend fun addTags(tags: List<Tag>): Result<List<Long>>
 
     suspend fun updateTags(tags: List<Tag>): Result<Int>

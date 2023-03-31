@@ -56,4 +56,6 @@
     </string-array>
 
     <string name="videoPlayer_videoEmpty">동영상을 찾지 못했습니다.</string>
+
+    <string name="video_count">%1$d 동영상</string>
 </resources>

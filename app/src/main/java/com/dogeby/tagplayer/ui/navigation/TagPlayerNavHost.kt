@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
 import com.dogeby.tagplayer.ui.permission.PermissionScreen
+import com.dogeby.tagplayer.ui.taglist.TagListRoute
 import com.dogeby.tagplayer.ui.tagsetting.TagSettingRoute
 import com.dogeby.tagplayer.ui.videofilter.VideoFilterRoute
 import com.dogeby.tagplayer.ui.videolist.VideoListRoute
@@ -81,6 +82,11 @@ fun TagPlayerNavHost(
         ) {
             VideoPlayerRoute(
                 onNavigateUp = { navController.navigateUp() }
+            )
+        }
+        composable(TagListRoute) {
+            TagListRoute(
+                onNavigateToTagDetail = { /*TODO*/ },
             )
         }
     }

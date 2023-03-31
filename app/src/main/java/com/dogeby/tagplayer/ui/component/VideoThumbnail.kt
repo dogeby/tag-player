@@ -71,7 +71,34 @@ fun VideoThumbnail(
 }
 
 @Composable
-fun Dp.toPx(): Int {
+fun VideoThumbnail(
+    uri: String,
+    width: Dp,
+    height: Dp,
+    modifier: Modifier = Modifier,
+    imageShape: Shape = RectangleShape,
+    backgroundColor: Color = Color.Black,
+    contentScale: ContentScale = ContentScale.Fit,
+    imageContentDescription: String? = null,
+    duration: String? = null,
+    durationShape: Shape = RectangleShape,
+) {
+    VideoThumbnail(
+        uri = uri,
+        width = width.toPx(),
+        height = height.toPx(),
+        modifier = modifier,
+        imageShape = imageShape,
+        backgroundColor = backgroundColor,
+        contentScale = contentScale,
+        imageContentDescription = imageContentDescription,
+        duration = duration,
+        durationShape = durationShape,
+    )
+}
+
+@Composable
+private fun Dp.toPx(): Int {
     return LocalDensity.current.run {
         this@toPx.toPx().toInt()
     }

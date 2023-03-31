@@ -23,7 +23,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoThumbnail
-import com.dogeby.tagplayer.ui.component.toPx
 import com.dogeby.tagplayer.ui.theme.PlayerBackgroundColor
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -110,8 +109,8 @@ fun VideoPlayerPage(
             val configuration = LocalConfiguration.current
             VideoThumbnail(
                 uri = videoItemValue.uri,
-                width = configuration.screenWidthDp.dp.toPx(),
-                height = configuration.screenHeightDp.dp.toPx(),
+                width = configuration.screenWidthDp.dp,
+                height = configuration.screenHeightDp.dp,
                 modifier = Modifier.fillMaxSize(),
                 backgroundColor = PlayerBackgroundColor,
             )

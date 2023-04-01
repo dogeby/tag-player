@@ -87,7 +87,7 @@ fun VideoFilterScreen(
             onActiveChange = {
                 if (it.not()) onNavigateUp()
             },
-            modifier = Modifier.padding(contentPadding),
+            modifier = Modifier.padding(bottom = contentPadding.calculateBottomPadding()),
             leadingIcon = {
                 IconButton(onClick = onNavigateUp) {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)

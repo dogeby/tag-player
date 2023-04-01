@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,6 +19,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -25,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -41,15 +44,20 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
+import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
+import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun VideoListRoute(
+    tagPlayerDrawerItems: List<TagPlayerDrawerItem>,
+    onNavigateToRoute: (TagPlayerDrawerItem) -> Unit,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onNavigateToFilterSetting: () -> Unit,
     onNavigateToTagSetting: (List<Long>) -> Unit,
@@ -68,30 +76,41 @@ fun VideoListRoute(
     val permissionState: PermissionState = rememberPermissionState(AppRequiredPermission)
     if (permissionState.status.isGranted) viewModel.updateVideoList()
 
-    VideoListScreen(
-        videoListUiState = videoListUiState,
-        isSelectMode = isSelectMode,
-        isSelectedVideoItems = isSelectedVideoItems.toMap(),
-        videoInfoDialogUiState = videoInfoDialogUiState,
-        videoListSortTypeUiState = videoListSortTypeUiState,
-        onNavigateToPlayer = onNavigateToPlayer,
-        onNavigateToTagSetting = { onNavigateToTagSetting(isSelectedVideoItems.filterValues { it }.keys.toList()) },
-        onNavigateToVideoSearch = onNavigateToVideoSearch,
-        onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
-        onSelectAllVideoItem = viewModel::selectAllVideoItems,
-        onClearSelectedVideoItems = viewModel::clearIsSelectedVideoItems,
-        onShowVideoInfoDialog = viewModel::showVideoInfoDialog,
-        onHideVideoInfoDialog = viewModel::hideVideoInfoDialog,
-        onSortTypeSet = viewModel::setSortType,
-        isVideoFiltered = isVideoFiltered,
-        modifier = modifier.fillMaxWidth(),
-        onNavigateToFilterSetting = onNavigateToFilterSetting,
-        setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-        updateVideo = viewModel::updateVideoList
-    )
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    TagPlayerNavigationDrawer(
+        startRoute = com.dogeby.tagplayer.ui.navigation.VideoListRoute,
+        tagPlayerDrawerItems = tagPlayerDrawerItems,
+        onItemClick = { onNavigateToRoute(it) },
+        drawerState = drawerState,
+    ) {
+        VideoListScreen(
+            videoListUiState = videoListUiState,
+            isSelectMode = isSelectMode,
+            isSelectedVideoItems = isSelectedVideoItems.toMap(),
+            videoInfoDialogUiState = videoInfoDialogUiState,
+            videoListSortTypeUiState = videoListSortTypeUiState,
+            onNavigateToPlayer = onNavigateToPlayer,
+            onNavigateToTagSetting = { onNavigateToTagSetting(isSelectedVideoItems.filterValues { it }.keys.toList()) },
+            onNavigateToVideoSearch = onNavigateToVideoSearch,
+            onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
+            onSelectAllVideoItem = viewModel::selectAllVideoItems,
+            onClearSelectedVideoItems = viewModel::clearIsSelectedVideoItems,
+            onShowVideoInfoDialog = viewModel::showVideoInfoDialog,
+            onHideVideoInfoDialog = viewModel::hideVideoInfoDialog,
+            onSortTypeSet = viewModel::setSortType,
+            onMenuClick = { scope.launch { drawerState.open() } },
+            isVideoFiltered = isVideoFiltered,
+            modifier = modifier.fillMaxWidth(),
+            onNavigateToFilterSetting = onNavigateToFilterSetting,
+            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+            updateVideo = viewModel::updateVideoList
+        )
+    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VideoListScreen(
     videoListUiState: VideoListUiState,
@@ -108,6 +127,7 @@ fun VideoListScreen(
     onShowVideoInfoDialog: () -> Unit,
     onHideVideoInfoDialog: () -> Unit,
     onSortTypeSet: (VideoListSortType) -> Unit,
+    onMenuClick: () -> Unit,
     isVideoFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
@@ -154,7 +174,7 @@ fun VideoListScreen(
     ) {
         Scaffold(
             modifier = modifier.nestedScroll(nestedScrollConnection),
-            topBar = { VideoListTopAppBar() },
+            topBar = { VideoListTopAppBar(onMenuClick = onMenuClick) },
             bottomBar = {
                 if (isSelectMode) {
                     VideoItemBottomAppBar(
@@ -238,13 +258,14 @@ fun VideoListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoListTopAppBar(
+    onMenuClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         modifier = modifier,
         title = { Text(text = stringResource(id = R.string.videoList_topAppBar_title)) },
         navigationIcon = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = onMenuClick) {
                 Icon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = null,

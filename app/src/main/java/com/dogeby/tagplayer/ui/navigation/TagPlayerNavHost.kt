@@ -76,7 +76,6 @@ fun TagPlayerNavHost(
             arguments = listOf(navArgument(TagSettingVideoIdsArgument) { type = NavType.StringType }),
         ) {
             TagSettingRoute(
-                modifier = modifier,
                 onNavigateUp = { navController.navigateUp() }
             )
         }

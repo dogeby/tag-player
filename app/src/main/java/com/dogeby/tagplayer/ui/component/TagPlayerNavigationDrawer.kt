@@ -58,6 +58,8 @@ fun TagPlayerNavigationDrawer(
                         selected = item.route == selectedItem,
                         onClick = {
                             scope.launch { drawerState.close() }
+                            if (selectedItem == item.route) return@NavigationDrawerItem
+
                             selectedItem = item.route
                             onItemClick(item)
                         },

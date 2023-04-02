@@ -2,6 +2,7 @@ package com.dogeby.tagplayer.ui.taglist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -11,6 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -86,7 +88,6 @@ fun TagListScreen(
             },
         ) { contentPadding ->
             when (tagListUiState) {
-                TagListUiState.Loading -> { /*TODO*/ }
                 is TagListUiState.Success -> {
                     TagList(
                         tagItems = tagListUiState.tagItems,
@@ -94,6 +95,13 @@ fun TagListScreen(
                         modifier = Modifier
                             .padding(contentPadding)
                             .padding(8.dp)
+                    )
+                }
+                TagListUiState.Loading -> {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(contentPadding),
                     )
                 }
                 TagListUiState.Empty -> {

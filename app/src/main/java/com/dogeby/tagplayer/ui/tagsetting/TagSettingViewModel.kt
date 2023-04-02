@@ -144,7 +144,7 @@ class TagSettingViewModel @Inject constructor(
             if (name.isBlank()) {
                 _tagNameEditDialogUiState.value = tagNameEditDialogUiStateValue.copy(
                     isError = true,
-                    supportingTextResId = R.string.tagNameModifyDialog_blankError,
+                    supportingTextResId = R.string.tagNameBlankError,
                 )
                 return
             }
@@ -154,7 +154,7 @@ class TagSettingViewModel @Inject constructor(
                 } else {
                     _tagNameEditDialogUiState.value = tagNameEditDialogUiStateValue.copy(
                         isError = true,
-                        supportingTextResId = R.string.tagNameModifyDialog_duplicateNameError,
+                        supportingTextResId = R.string.tagNameDuplicateNameError,
                     )
                 }
             }

@@ -2,13 +2,17 @@ package com.dogeby.tagplayer.ui.taglist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -23,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
+import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
 import kotlinx.coroutines.launch
@@ -36,6 +41,7 @@ fun TagListRoute(
     viewModel: TagListViewModel = hiltViewModel(),
 ) {
     val tagListUiState by viewModel.tagListUiState.collectAsState()
+    val tagCreateDialogUiState by viewModel.tagCreateDialogUiState.collectAsState()
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -48,6 +54,9 @@ fun TagListRoute(
     ) {
         TagListScreen(
             tagListUiState = tagListUiState,
+            tagCreateDialogUiState = tagCreateDialogUiState,
+            onCreateDialogVisibilitySet = viewModel::setTagCreateDialogVisibility,
+            onCreateTag = viewModel::createTag,
             onNavigateToTagDetail = onNavigateToTagDetail,
             onMenuClick = { scope.launch { drawerState.open() } },
             modifier = modifier,
@@ -59,6 +68,9 @@ fun TagListRoute(
 @Composable
 fun TagListScreen(
     tagListUiState: TagListUiState,
+    tagCreateDialogUiState: TagCreateDialogUiState,
+    onCreateDialogVisibilitySet: (visibility: Boolean) -> Unit,
+    onCreateTag: (String) -> Unit,
     onNavigateToTagDetail: (Long) -> Unit,
     onMenuClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -69,10 +81,13 @@ fun TagListScreen(
         Scaffold(
             modifier = modifier,
             topBar = { TagListTopAppBar(onMenuClick = onMenuClick) },
+            floatingActionButton = {
+                FloatingActionButton(onClick = { onCreateDialogVisibilitySet(true) }) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                }
+            },
         ) { contentPadding ->
             when (tagListUiState) {
-                TagListUiState.Empty -> { /*TODO*/ }
-                TagListUiState.Loading -> { /*TODO*/ }
                 is TagListUiState.Success -> {
                     TagList(
                         tagItems = tagListUiState.tagItems,
@@ -82,6 +97,30 @@ fun TagListScreen(
                             .padding(8.dp)
                     )
                 }
+                TagListUiState.Loading -> {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(contentPadding),
+                    )
+                }
+                TagListUiState.Empty -> {
+                    MaxSizeCenterText(
+                        text = stringResource(id = R.string.tagList_empty),
+                    )
+                }
+            }
+            when (tagCreateDialogUiState) {
+                is TagCreateDialogUiState.Show -> {
+                    val supportingText = tagCreateDialogUiState.supportingTextResId?.let { stringResource(id = it) }
+                    TagCreateDialog(
+                        isError = { tagCreateDialogUiState.isError },
+                        supportingText = { supportingText.orEmpty() },
+                        onCreateButtonClick = onCreateTag,
+                        onCancelButtonClick = { onCreateDialogVisibilitySet(false) },
+                    )
+                }
+                TagCreateDialogUiState.Hide -> Unit
             }
         }
     }

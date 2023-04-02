@@ -35,8 +35,8 @@
     <string name="tagInputChipTextField_searchHint">태그 검색 또는 생성</string>
 
     <string name="tagNameModifyDialog_dialogTitle">태그 이름 수정</string>
-    <string name="tagNameModifyDialog_duplicateNameError">중복된 태그가 있습니다.</string>
-    <string name="tagNameModifyDialog_blankError">이름을 입력해주세요.</string>
+    <string name="tagNameDuplicateNameError">중복된 태그가 있습니다.</string>
+    <string name="tagNameBlankError">이름을 입력해주세요.</string>
 
     <string name="videoInfoDialog_title">상세 정보</string>
     <string name="multiVideoInfoDialog_name">%1$s 외 %2$d개</string>
@@ -58,5 +58,8 @@
     <string name="videoPlayer_videoEmpty">동영상을 찾지 못했습니다.</string>
 
     <string name="tagList_topAppBar_title">태그 목록</string>
+    <string name="tagList_empty">태그를 찾지 못했습니다.</string>
     <string name="video_count">%1$d 동영상</string>
+
+    <string name="tagCreateDialog_title">태그 생성</string>
 </resources>

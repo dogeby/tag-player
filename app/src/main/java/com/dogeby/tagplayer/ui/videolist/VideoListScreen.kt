@@ -1,6 +1,11 @@
 package com.dogeby.tagplayer.ui.videolist
 
 import android.os.Build
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,6 +53,8 @@ import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
+import com.dogeby.tagplayer.ui.theme.EmphasizedDecelerateEasing
+import com.dogeby.tagplayer.ui.theme.MediumDuration4
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -100,7 +108,7 @@ fun VideoListRoute(
             onShowVideoInfoDialog = viewModel::showVideoInfoDialog,
             onHideVideoInfoDialog = viewModel::hideVideoInfoDialog,
             onSortTypeSet = viewModel::setSortType,
-            onMenuClick = { scope.launch { drawerState.open() } },
+            onMenuButtonClick = { scope.launch { drawerState.open() } },
             isVideoFiltered = isVideoFiltered,
             modifier = modifier.fillMaxWidth(),
             onNavigateToFilterSetting = onNavigateToFilterSetting,
@@ -127,7 +135,7 @@ fun VideoListScreen(
     onShowVideoInfoDialog: () -> Unit,
     onHideVideoInfoDialog: () -> Unit,
     onSortTypeSet: (VideoListSortType) -> Unit,
-    onMenuClick: () -> Unit,
+    onMenuButtonClick: () -> Unit,
     isVideoFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
@@ -174,7 +182,13 @@ fun VideoListScreen(
     ) {
         Scaffold(
             modifier = modifier.nestedScroll(nestedScrollConnection),
-            topBar = { VideoListTopAppBar(onMenuClick = onMenuClick) },
+            topBar = {
+                VideoListTopAppBar(
+                    isSelectMode = isSelectMode,
+                    onMenuButtonClick = onMenuButtonClick,
+                    onClearButtonClick = onClearSelectedVideoItems,
+                )
+            },
             bottomBar = {
                 if (isSelectMode) {
                     VideoItemBottomAppBar(
@@ -258,20 +272,59 @@ fun VideoListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoListTopAppBar(
-    onMenuClick: () -> Unit,
+    isSelectMode: Boolean,
+    onMenuButtonClick: () -> Unit,
+    onClearButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         modifier = modifier,
         title = { Text(text = stringResource(id = R.string.videoList_topAppBar_title)) },
         navigationIcon = {
-            IconButton(onClick = onMenuClick) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = null,
-                )
+            if (isSelectMode) {
+                VideoListTopAppBarIconButtonAnimation(visible = true) {
+                    IconButton(onClick = onClearButtonClick) {
+                        Icon(
+                            imageVector = Icons.Filled.Clear,
+                            contentDescription = null,
+                        )
+                    }
+                }
+                return@TopAppBar
+            }
+            VideoListTopAppBarIconButtonAnimation(visible = true) {
+                IconButton(onClick = onMenuButtonClick) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = null,
+                    )
+                }
             }
         },
+    )
+}
+
+@Composable
+private fun VideoListTopAppBarIconButtonAnimation(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable AnimatedVisibilityScope.() -> Unit,
+) {
+    val transitionState = remember {
+        MutableTransitionState(visible.not()).apply {
+            targetState = true
+        }
+    }
+    AnimatedVisibility(
+        visibleState = transitionState,
+        modifier = modifier,
+        enter = fadeIn(
+            tween(
+                durationMillis = MediumDuration4,
+                easing = EmphasizedDecelerateEasing,
+            )
+        ),
+        content = content,
     )
 }
 

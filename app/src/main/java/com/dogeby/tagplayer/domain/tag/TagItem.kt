@@ -1,19 +1,9 @@
 package com.dogeby.tagplayer.domain.tag
 
-import com.dogeby.tagplayer.data.tag.TagWithVideoIds
+import com.dogeby.tagplayer.domain.video.VideoItem
 
 data class TagItem(
     val id: Long,
     val name: String,
-    val imgUri: String?,
-    val videoIds: List<Long>,
+    val videoItems: List<VideoItem>,
 )
-
-fun TagWithVideoIds.toTagItem(imgUri: String?): TagItem {
-    return TagItem(
-        id = tag.id,
-        name = tag.name,
-        imgUri = imgUri,
-        videoIds = videoIds,
-    )
-}

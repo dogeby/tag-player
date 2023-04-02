@@ -16,13 +16,12 @@ class GetTagItemsUseCase @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(): Flow<List<TagItem>> {
         return tagRepository.tagsWithVideoIds.mapLatest { tagsWithVideoIds ->
-            tagsWithVideoIds.map { tagWithVideoIds ->
-                val imgUri = try {
-                    getVideoItemByIdsUseCase(tagWithVideoIds.videoIds).first().first().uri
-                } catch (e: Exception) {
-                    null
-                }
-                tagWithVideoIds.toTagItem(imgUri)
+            tagsWithVideoIds.map {
+                TagItem(
+                    id = it.tag.id,
+                    name = it.tag.name,
+                    videoItems = getVideoItemByIdsUseCase(it.videoIds).first()
+                )
             }
         }
     }

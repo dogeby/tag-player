@@ -58,6 +58,7 @@
     <string name="videoPlayer_videoEmpty">동영상을 찾지 못했습니다.</string>
 
     <string name="tagList_topAppBar_title">태그 목록</string>
+    <string name="tagList_empty">태그를 찾지 못했습니다.</string>
     <string name="video_count">%1$d 동영상</string>
 
     <string name="tagCreateDialog_title">태그 생성</string>

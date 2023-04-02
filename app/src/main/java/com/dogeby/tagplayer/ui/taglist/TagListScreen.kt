@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
+import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
 import kotlinx.coroutines.launch
@@ -85,7 +86,6 @@ fun TagListScreen(
             },
         ) { contentPadding ->
             when (tagListUiState) {
-                TagListUiState.Empty -> { /*TODO*/ }
                 TagListUiState.Loading -> { /*TODO*/ }
                 is TagListUiState.Success -> {
                     TagList(
@@ -94,6 +94,11 @@ fun TagListScreen(
                         modifier = Modifier
                             .padding(contentPadding)
                             .padding(8.dp)
+                    )
+                }
+                TagListUiState.Empty -> {
+                    MaxSizeCenterText(
+                        text = stringResource(id = R.string.tagList_empty),
                     )
                 }
             }

@@ -4,9 +4,11 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -36,6 +38,7 @@ fun TagListRoute(
     viewModel: TagListViewModel = hiltViewModel(),
 ) {
     val tagListUiState by viewModel.tagListUiState.collectAsState()
+    val tagCreateDialogUiState by viewModel.tagCreateDialogUiState.collectAsState()
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -48,6 +51,9 @@ fun TagListRoute(
     ) {
         TagListScreen(
             tagListUiState = tagListUiState,
+            tagCreateDialogUiState = tagCreateDialogUiState,
+            onCreateDialogVisibilitySet = viewModel::setTagCreateDialogVisibility,
+            onCreateTag = viewModel::createTag,
             onNavigateToTagDetail = onNavigateToTagDetail,
             onMenuClick = { scope.launch { drawerState.open() } },
             modifier = modifier,
@@ -59,6 +65,9 @@ fun TagListRoute(
 @Composable
 fun TagListScreen(
     tagListUiState: TagListUiState,
+    tagCreateDialogUiState: TagCreateDialogUiState,
+    onCreateDialogVisibilitySet: (visibility: Boolean) -> Unit,
+    onCreateTag: (String) -> Unit,
     onNavigateToTagDetail: (Long) -> Unit,
     onMenuClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -69,6 +78,11 @@ fun TagListScreen(
         Scaffold(
             modifier = modifier,
             topBar = { TagListTopAppBar(onMenuClick = onMenuClick) },
+            floatingActionButton = {
+                FloatingActionButton(onClick = { onCreateDialogVisibilitySet(true) }) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                }
+            },
         ) { contentPadding ->
             when (tagListUiState) {
                 TagListUiState.Empty -> { /*TODO*/ }
@@ -82,6 +96,18 @@ fun TagListScreen(
                             .padding(8.dp)
                     )
                 }
+            }
+            when (tagCreateDialogUiState) {
+                is TagCreateDialogUiState.Show -> {
+                    val supportingText = tagCreateDialogUiState.supportingTextResId?.let { stringResource(id = it) }
+                    TagCreateDialog(
+                        isError = { tagCreateDialogUiState.isError },
+                        supportingText = { supportingText.orEmpty() },
+                        onCreateButtonClick = onCreateTag,
+                        onCancelButtonClick = { onCreateDialogVisibilitySet(false) },
+                    )
+                }
+                TagCreateDialogUiState.Hide -> Unit
             }
         }
     }

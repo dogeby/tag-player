@@ -21,4 +21,6 @@ interface TagRepository {
     fun findTags(nameKeyword: String): Flow<List<Tag>>
 
     suspend fun modifyTagName(id: Long, name: String): Result<Unit>
+
+    fun getTagWithVideoIds(id: Long): Flow<TagWithVideoIds>
 }

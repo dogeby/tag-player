@@ -62,4 +62,16 @@ class TagRepositoryImpl @Inject constructor(
     override suspend fun modifyTagName(id: Long, name: String): Result<Unit> = runCatching {
         tagDao.modifyTagName(id, name)
     }
+
+    override fun getTagWithVideoIds(id: Long): Flow<TagWithVideoIds> {
+        val idList = listOf(id)
+        return tagDao.getTagEntities(idList)
+            .map { tagEntities ->
+                tagEntities.map { it.toTag() }.first()
+            }
+            .combine(tagVideoCrossRefDao.getTagsWithVideos(idList)) { tag, tagEntitiesWithVideoEntities ->
+                val tagEntityWithVideoEntities = tagEntitiesWithVideoEntities.firstOrNull()
+                TagWithVideoIds(tag, tagEntityWithVideoEntities?.videoEntities?.map { it.id }.orEmpty())
+            }
+    }
 }

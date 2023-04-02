@@ -91,4 +91,57 @@ class TagRepositoryTest {
 
         Assert.assertEquals(expectedTagsWithVideoIds, tagsWithVideoIds)
     }
+
+    @Test
+    fun getTagWithVideoIds() = runTest {
+        val tag = Tag(0, "tag0")
+        val videoEntities = List(3) {
+            VideoEntity(
+                id = it.toLong(),
+                name = "",
+                extension = "",
+                duration = 0L,
+                path = "",
+                size = 0L
+            )
+        }
+        val tagEntitiesWithVideoEntities = TagEntityWithVideoEntities(tag.toTagEntity(), videoEntities)
+        val expectedTagWithVideoIds = TagWithVideoIds(tag, videoEntities.map { it.id })
+
+        `when`(tagDao.getTagEntities(listOf(tag.id))).then {
+            flow {
+                emit(listOf(tag.toTagEntity()))
+            }
+        }
+        `when`(tagVideoCrossRefDao.getTagsWithVideos(listOf(tag.id))).then {
+            flow {
+                emit(listOf(tagEntitiesWithVideoEntities))
+            }
+        }
+
+        val tagWithVideoIds = tagRepository.getTagWithVideoIds(tag.id).first()
+
+        Assert.assertEquals(expectedTagWithVideoIds, tagWithVideoIds)
+    }
+
+    @Test
+    fun getTagWithVideoIds_videoEmpty() = runTest {
+        val tag = Tag(0, "tag0")
+        val expectedTagWithVideoIds = TagWithVideoIds(tag, emptyList(),)
+
+        `when`(tagDao.getTagEntities(listOf(tag.id))).then {
+            flow {
+                emit(listOf(tag.toTagEntity()))
+            }
+        }
+        `when`(tagVideoCrossRefDao.getTagsWithVideos(listOf(tag.id))).then {
+            flow<List<TagEntityWithVideoEntities>> {
+                emit(emptyList())
+            }
+        }
+
+        val tagWithVideoIds = tagRepository.getTagWithVideoIds(tag.id).first()
+
+        Assert.assertEquals(expectedTagWithVideoIds, tagWithVideoIds)
+    }
 }

@@ -94,7 +94,7 @@ fun VideoSearchScreen(
                             .padding(dimensionResource(id = R.dimen.padding_small)),
                     )
                     VideoList(
-                        videoListUiState = videoSearchViewUiState.videoListUiState,
+                        videoItems = videoSearchViewUiState.videoListUiState.videoItems,
                         isSelectMode = false,
                         isSelectedVideoItems = emptyMap(),
                         onNavigateToPlayer = onVideoClick,

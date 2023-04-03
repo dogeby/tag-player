@@ -49,6 +49,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
+import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
@@ -257,7 +258,7 @@ fun VideoListScreen(
                     progressIndicatorState = false
                     VideoList(
                         modifier = Modifier.padding(contentPadding),
-                        videoListUiState = videoListUiState,
+                        videoItems = videoListUiState.videoItems,
                         isSelectMode = isSelectMode,
                         isSelectedVideoItems = isSelectedVideoItems,
                         onNavigateToPlayer = onNavigateToPlayer,
@@ -330,8 +331,8 @@ private fun VideoListTopAppBarIconButtonAnimation(
 
 @Composable
 fun VideoList(
-    videoListUiState: VideoListUiState.Success,
-    isSelectedVideoItems: Map<Long, Boolean>,
+    videoItems: List<VideoItem>,
+    isSelectedVideoItems: Map<Long, Boolean>?,
     isSelectMode: Boolean,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onToggleVideoItem: (Long) -> Unit,
@@ -344,15 +345,15 @@ fun VideoList(
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     ) {
-        items(videoListUiState.videoItems) { videoItem ->
+        items(videoItems) { videoItem ->
             VideoListItem(
                 videoItem = videoItem,
-                isSelected = isSelectedVideoItems.getOrDefault(videoItem.id, false),
+                isSelected = isSelectedVideoItems?.getOrDefault(videoItem.id, false) ?: false,
                 onClick = {
                     if (isSelectMode) {
                         onToggleVideoItem(videoItem.id)
                     } else {
-                        onNavigateToPlayer(videoListUiState.videoItems.map { it.id }, videoItem.id)
+                        onNavigateToPlayer(videoItems.map { it.id }, videoItem.id)
                     }
                 },
                 onLongClick = { onToggleVideoItem(videoItem.id) },

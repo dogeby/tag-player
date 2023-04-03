@@ -65,7 +65,6 @@ fun TagSettingRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TagSettingScreen(
     tagInputChipTextFieldUiState: TagInputChipTextFieldUiState,
@@ -99,7 +98,6 @@ fun TagSettingScreen(
                             isError = isError,
                             onEditButtonClick = { onTagNameEdit(tagId, it) },
                             onCancelButtonClick = onHideTagNameEditDialog,
-                            onDismissRequest = onHideTagNameEditDialog,
                             supportingText = if (supportingTextResId != null) stringResource(id = supportingTextResId) else "",
                         )
                     }

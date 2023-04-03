@@ -34,7 +34,6 @@ fun TagNameEditDialog(
     onEditButtonClick: (String) -> Unit,
     onCancelButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit = {},
     supportingText: String = ""
 ) {
     var name by rememberSaveable {
@@ -42,7 +41,7 @@ fun TagNameEditDialog(
     }
 
     AlertDialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onCancelButtonClick,
     ) {
         Surface(
             modifier = modifier,

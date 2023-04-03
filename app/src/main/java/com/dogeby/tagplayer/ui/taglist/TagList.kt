@@ -63,9 +63,9 @@ fun TagListItem(
         onClick = { onClick(tagItem.id) },
         modifier = modifier
     ) {
-        if (tagItem.imgUri != null) {
+        if (tagItem.videoItems.isNotEmpty()) {
             VideoThumbnail(
-                uri = tagItem.imgUri,
+                uri = tagItem.videoItems.first().uri,
                 width = thumbnailSize.width,
                 height = thumbnailSize.height,
                 contentScale = ContentScale.Crop,
@@ -82,7 +82,7 @@ fun TagListItem(
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                text = stringResource(R.string.video_count, tagItem.videoIds.size),
+                text = stringResource(R.string.video_count, tagItem.videoItems.size),
                 maxLines = 1,
                 style = MaterialTheme.typography.labelSmall,
             )
@@ -95,7 +95,7 @@ fun TagListItem(
 private fun TagListPreview() {
     TagPlayerTheme {
         TagList(
-            tagItems = List(3) { TagItem(it.toLong(), "tag", null, listOf(0, 1, 2)) },
+            tagItems = List(3) { TagItem(it.toLong(), "tag", emptyList()) },
             onTagItemClick = {},
         )
     }
@@ -109,8 +109,7 @@ private fun TagListItemPreview() {
             tagItem = TagItem(
                 id = 0,
                 name = "태그",
-                imgUri = null,
-                videoIds = listOf(0, 1, 2)
+                videoItems = emptyList()
             ),
             thumbnailSize = DpSize(165.dp, 100.dp),
             onClick = {},

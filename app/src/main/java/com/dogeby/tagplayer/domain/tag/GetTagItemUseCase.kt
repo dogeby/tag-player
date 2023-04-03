@@ -8,15 +8,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
 
-class GetTagItemsUseCase @Inject constructor(
+class GetTagItemUseCase @Inject constructor(
     private val tagRepository: TagRepository,
     private val getVideoItemByIdsUseCase: GetVideoItemByIdsUseCase,
 ) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(): Flow<List<TagItem>> {
-        return tagRepository.tagsWithVideoIds.mapLatest { tagsWithVideoIds ->
-            tagsWithVideoIds.map {
+    operator fun invoke(id: Long): Flow<Result<TagItem>> {
+        return tagRepository.getTagWithVideoIds(id).mapLatest { result ->
+            result.mapCatching {
                 TagItem(
                     id = it.tag.id,
                     name = it.tag.name,

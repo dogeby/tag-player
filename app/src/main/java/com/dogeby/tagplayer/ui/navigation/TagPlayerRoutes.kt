@@ -14,3 +14,6 @@ const val VideoPlayerVideoIdsArgument = "VideoPlayerVideoIds"
 const val VideoPlayerStartVideoId = "VideoPlayerVideoStartVideoId"
 
 const val TagListRoute = "tagList"
+
+const val TagDetailRoute = "tagDetail"
+const val TagDetailTagIdArgument = "TagDetailTagId"

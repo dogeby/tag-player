@@ -15,6 +15,7 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
 import com.dogeby.tagplayer.ui.permission.PermissionScreen
+import com.dogeby.tagplayer.ui.tagdetail.TagDetailRoute
 import com.dogeby.tagplayer.ui.taglist.TagListRoute
 import com.dogeby.tagplayer.ui.tagsetting.TagSettingRoute
 import com.dogeby.tagplayer.ui.videofilter.VideoFilterRoute
@@ -110,7 +111,16 @@ fun TagPlayerNavHost(
                         popUpTo(VideoListRoute) { inclusive = true }
                     }
                 },
-                onNavigateToTagDetail = { /*TODO*/ },
+                onNavigateToTagDetail = { navController.navigate("$TagDetailRoute/$it") },
+            )
+        }
+        composable(
+            route = "$TagDetailRoute/{$TagDetailTagIdArgument}",
+            arguments = listOf(navArgument(TagDetailTagIdArgument) { type = NavType.LongType }),
+        ) {
+            TagDetailRoute(
+                onNavigateUp = { navController.navigateUp() },
+                onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
             )
         }
     }

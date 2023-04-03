@@ -22,5 +22,5 @@ interface TagRepository {
 
     suspend fun modifyTagName(id: Long, name: String): Result<Unit>
 
-    fun getTagWithVideoIds(id: Long): Flow<TagWithVideoIds>
+    fun getTagWithVideoIds(id: Long): Flow<Result<TagWithVideoIds>>
 }

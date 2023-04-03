@@ -121,7 +121,7 @@ class TagRepositoryTest {
 
         val tagWithVideoIds = tagRepository.getTagWithVideoIds(tag.id).first()
 
-        Assert.assertEquals(expectedTagWithVideoIds, tagWithVideoIds)
+        Assert.assertEquals(expectedTagWithVideoIds, tagWithVideoIds.getOrNull())
     }
 
     @Test
@@ -142,6 +142,6 @@ class TagRepositoryTest {
 
         val tagWithVideoIds = tagRepository.getTagWithVideoIds(tag.id).first()
 
-        Assert.assertEquals(expectedTagWithVideoIds, tagWithVideoIds)
+        Assert.assertEquals(expectedTagWithVideoIds, tagWithVideoIds.getOrNull())
     }
 }

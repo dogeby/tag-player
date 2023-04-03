@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -43,26 +44,43 @@ fun VideoList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(dimensionResource(id = R.dimen.padding_small))
 ) {
-
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     ) {
-        items(videoItems) { videoItem ->
-            VideoListItem(
-                videoItem = videoItem,
-                isSelected = isSelectedVideoItems?.getOrDefault(videoItem.id, false) ?: false,
-                onClick = {
-                    if (isSelectMode) {
-                        onToggleVideoItem(videoItem.id)
-                    } else {
-                        onNavigateToPlayer(videoItems.map { it.id }, videoItem.id)
-                    }
-                },
-                onLongClick = { onToggleVideoItem(videoItem.id) },
-            )
-        }
+        videoList(
+            videoItems = videoItems,
+            isSelectedVideoItems = isSelectedVideoItems,
+            isSelectMode = isSelectMode,
+            onNavigateToPlayer = onNavigateToPlayer,
+            onToggleVideoItem = onToggleVideoItem,
+        )
+    }
+}
+
+fun LazyListScope.videoList(
+    videoItems: List<VideoItem>,
+    isSelectedVideoItems: Map<Long, Boolean>?,
+    isSelectMode: Boolean,
+    onNavigateToPlayer: (List<Long>, Long) -> Unit,
+    onToggleVideoItem: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    items(videoItems) { videoItem ->
+        VideoListItem(
+            videoItem = videoItem,
+            isSelected = isSelectedVideoItems?.getOrDefault(videoItem.id, false) ?: false,
+            onClick = {
+                if (isSelectMode) {
+                    onToggleVideoItem(videoItem.id)
+                } else {
+                    onNavigateToPlayer(videoItems.map { it.id }, videoItem.id)
+                }
+            },
+            onLongClick = { onToggleVideoItem(videoItem.id) },
+            modifier = modifier,
+        )
     }
 }
 

@@ -2,13 +2,16 @@ package com.dogeby.tagplayer.ui.videolist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -29,6 +32,39 @@ import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoTag
 import com.dogeby.tagplayer.ui.component.VideoThumbnail
 import com.dogeby.tagplayer.ui.theme.VideoListThumbnailBackgroundColor
+
+@Composable
+fun VideoList(
+    videoItems: List<VideoItem>,
+    isSelectedVideoItems: Map<Long, Boolean>?,
+    isSelectMode: Boolean,
+    onNavigateToPlayer: (List<Long>, Long) -> Unit,
+    onToggleVideoItem: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(dimensionResource(id = R.dimen.padding_small))
+) {
+
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = contentPadding,
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
+    ) {
+        items(videoItems) { videoItem ->
+            VideoListItem(
+                videoItem = videoItem,
+                isSelected = isSelectedVideoItems?.getOrDefault(videoItem.id, false) ?: false,
+                onClick = {
+                    if (isSelectMode) {
+                        onToggleVideoItem(videoItem.id)
+                    } else {
+                        onNavigateToPlayer(videoItems.map { it.id }, videoItem.id)
+                    }
+                },
+                onLongClick = { onToggleVideoItem(videoItem.id) },
+            )
+        }
+    }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

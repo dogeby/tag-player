@@ -8,12 +8,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
@@ -42,14 +38,12 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
-import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
@@ -327,37 +321,4 @@ private fun VideoListTopAppBarIconButtonAnimation(
         ),
         content = content,
     )
-}
-
-@Composable
-fun VideoList(
-    videoItems: List<VideoItem>,
-    isSelectedVideoItems: Map<Long, Boolean>?,
-    isSelectMode: Boolean,
-    onNavigateToPlayer: (List<Long>, Long) -> Unit,
-    onToggleVideoItem: (Long) -> Unit,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(dimensionResource(id = R.dimen.padding_small))
-) {
-
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
-    ) {
-        items(videoItems) { videoItem ->
-            VideoListItem(
-                videoItem = videoItem,
-                isSelected = isSelectedVideoItems?.getOrDefault(videoItem.id, false) ?: false,
-                onClick = {
-                    if (isSelectMode) {
-                        onToggleVideoItem(videoItem.id)
-                    } else {
-                        onNavigateToPlayer(videoItems.map { it.id }, videoItem.id)
-                    }
-                },
-                onLongClick = { onToggleVideoItem(videoItem.id) },
-            )
-        }
-    }
 }

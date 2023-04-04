@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -24,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -76,6 +79,7 @@ fun VideoFilterScreen(
     val focusManager = LocalFocusManager.current
 
     Scaffold(modifier = modifier) { contentPadding ->
+        val layoutDirection = LocalLayoutDirection.current
         SearchBar(
             query = query,
             onQueryChange = onQueryChange,
@@ -87,7 +91,11 @@ fun VideoFilterScreen(
             onActiveChange = {
                 if (it.not()) onNavigateUp()
             },
-            modifier = Modifier.padding(bottom = contentPadding.calculateBottomPadding()),
+            modifier = Modifier.padding(
+                start = contentPadding.calculateStartPadding(layoutDirection),
+                end = contentPadding.calculateEndPadding(layoutDirection),
+                bottom = contentPadding.calculateBottomPadding(),
+            ),
             leadingIcon = {
                 IconButton(onClick = onNavigateUp) {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)

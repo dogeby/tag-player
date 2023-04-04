@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
@@ -23,7 +24,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
@@ -82,7 +86,19 @@ fun TagListScreen(
             modifier = modifier,
             topBar = { TagListTopAppBar(onMenuClick = onMenuClick) },
             floatingActionButton = {
-                FloatingActionButton(onClick = { onCreateDialogVisibilitySet(true) }) {
+                val density = LocalDensity.current
+                val layoutDirection = LocalLayoutDirection.current
+                val windowInsets = ScaffoldDefaults.contentWindowInsets
+                val leftWindowInsets = density.run { windowInsets.getLeft(density, layoutDirection).toDp() }
+                val rightWindowInsets = density.run { windowInsets.getRight(density, layoutDirection).toDp() }
+
+                FloatingActionButton(
+                    onClick = { onCreateDialogVisibilitySet(true) },
+                    modifier = Modifier.padding(
+                        start = if (layoutDirection == LayoutDirection.Ltr) leftWindowInsets else rightWindowInsets,
+                        end = if (layoutDirection == LayoutDirection.Ltr) rightWindowInsets else leftWindowInsets
+                    ),
+                ) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = null)
                 }
             },

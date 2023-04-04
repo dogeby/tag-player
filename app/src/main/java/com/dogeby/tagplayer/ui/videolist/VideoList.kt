@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
@@ -67,6 +68,19 @@ fun LazyListScope.videoList(
     onToggleVideoItem: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    if (videoItems.isEmpty()) {
+        item {
+            Box(
+                modifier = modifier.fillParentMaxHeight(0.5f).fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = stringResource(id = R.string.videoList_listEmpty),
+                )
+            }
+        }
+        return
+    }
     items(videoItems) { videoItem ->
         VideoListItem(
             videoItem = videoItem,

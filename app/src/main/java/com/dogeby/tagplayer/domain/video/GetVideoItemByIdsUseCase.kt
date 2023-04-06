@@ -9,14 +9,13 @@ import kotlinx.coroutines.flow.mapLatest
 
 class GetVideoItemByIdsUseCase @Inject constructor(
     private val videoRepository: VideoRepository,
-    private val formatSizeUseCase: FormatSizeUseCase,
 ) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(videoIds: List<Long>): Flow<List<VideoItem>> {
         return videoRepository.getVideosWithTags(videoIds).mapLatest { videos ->
             videos.map {
-                it.toVideoItem(formattedSize = formatSizeUseCase(it.video.size),)
+                it.toVideoItem()
             }
         }
     }

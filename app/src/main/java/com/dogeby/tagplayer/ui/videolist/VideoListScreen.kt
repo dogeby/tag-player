@@ -46,7 +46,7 @@ import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
-import com.dogeby.tagplayer.ui.component.formatFileSize
+import com.dogeby.tagplayer.ui.component.formatToSimpleSize
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.theme.EmphasizedDecelerateEasing
 import com.dogeby.tagplayer.ui.theme.MediumDuration4
@@ -240,9 +240,7 @@ fun VideoListScreen(
                                 MultiVideoInfoDialog(
                                     representativeName = videoItems.first().name,
                                     count = videoItems.count(),
-                                    totalSize = formatFileSize(
-                                        videoItems.fold(0L) { acc: Long, videoItem: VideoItem -> acc + videoItem.size }
-                                    ),
+                                    totalSize = videoItems.fold(0L) { acc: Long, videoItem: VideoItem -> acc + videoItem.size }.formatToSimpleSize(),
                                     onDismissRequest = { isShowVideoInfoDialog = false },
                                     onConfirmButtonClick = { isShowVideoInfoDialog = false },
                                 )

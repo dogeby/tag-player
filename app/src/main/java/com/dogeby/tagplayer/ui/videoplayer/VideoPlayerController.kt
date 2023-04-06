@@ -295,7 +295,6 @@ fun VideoPlayerControllerPreview() {
                         name = "video",
                         extension = "mp4",
                         duration = VideoDuration(10000),
-                        formattedSize = "",
                         size = 0,
                         path = "",
                         parentDirectories = emptyList(),

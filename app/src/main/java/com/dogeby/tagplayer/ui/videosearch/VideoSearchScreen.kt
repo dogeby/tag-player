@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.videosearch
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
@@ -103,10 +104,10 @@ fun VideoSearchScreen(
                     )
                     VideoList(
                         videoItems = videoSearchViewUiState.videoListUiState.videoItems,
-                        isSelectMode = false,
+                        isSelectMode = { false },
                         isSelectedVideoItems = emptyMap(),
                         onNavigateToPlayer = onVideoClick,
-                        onToggleVideoItem = {},
+                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
                     )
                 }
                 VideoSearchViewUiState.QueryBlank -> {

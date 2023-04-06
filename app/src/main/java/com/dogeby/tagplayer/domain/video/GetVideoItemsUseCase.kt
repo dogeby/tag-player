@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.mapLatest
 class GetVideoItemsUseCase @Inject constructor(
     private val videoRepository: VideoRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val formatSizeUseCase: FormatSizeUseCase,
 ) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,7 +31,7 @@ class GetVideoItemsUseCase @Inject constructor(
                 videos
                     .sorted(sortType)
                     .map {
-                        it.toVideoItem(formatSizeUseCase(it.video.size))
+                        it.toVideoItem()
                     }
                     .filterDirectoryFilter(videoListPreferencesData.filteredDirectoryNames.toSet())
             }

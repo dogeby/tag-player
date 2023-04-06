@@ -1,6 +1,5 @@
 package com.dogeby.tagplayer.ui.videolist
 
-import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.MutableTransitionState
@@ -8,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -24,9 +24,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,16 +37,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
+import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
+import com.dogeby.tagplayer.ui.component.formatFileSize
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.theme.EmphasizedDecelerateEasing
 import com.dogeby.tagplayer.ui.theme.MediumDuration4
@@ -71,9 +71,6 @@ fun VideoListRoute(
 ) {
     val videoListUiState: VideoListUiState by viewModel.videoListUiState.collectAsState()
     val isVideoFiltered: Boolean by viewModel.isVideoFiltered.collectAsState()
-    val isSelectMode: Boolean by viewModel.isSelectMode.collectAsState()
-    val isSelectedVideoItems: Map<Long, Boolean> = viewModel.isSelectedVideoItems
-    val videoInfoDialogUiState: VideoInfoDialogUiState by viewModel.videoInfoDialogUiState.collectAsState()
     val videoListSortTypeUiState: VideoListSortTypeUiState by viewModel.videoListSortTypeUiState.collectAsState()
 
     val permissionState: PermissionState = rememberPermissionState(AppRequiredPermission)
@@ -90,18 +87,10 @@ fun VideoListRoute(
     ) {
         VideoListScreen(
             videoListUiState = videoListUiState,
-            isSelectMode = isSelectMode,
-            isSelectedVideoItems = isSelectedVideoItems.toMap(),
-            videoInfoDialogUiState = videoInfoDialogUiState,
             videoListSortTypeUiState = videoListSortTypeUiState,
             onNavigateToPlayer = onNavigateToPlayer,
-            onNavigateToTagSetting = { onNavigateToTagSetting(isSelectedVideoItems.filterValues { it }.keys.toList()) },
+            onNavigateToTagSetting = onNavigateToTagSetting,
             onNavigateToVideoSearch = onNavigateToVideoSearch,
-            onToggleVideoItem = { id -> viewModel.toggleIsSelectedVideoItems(id) },
-            onSelectAllVideoItem = viewModel::selectAllVideoItems,
-            onClearSelectedVideoItems = viewModel::clearIsSelectedVideoItems,
-            onShowVideoInfoDialog = viewModel::showVideoInfoDialog,
-            onHideVideoInfoDialog = viewModel::hideVideoInfoDialog,
             onSortTypeSet = viewModel::setSortType,
             onMenuButtonClick = { scope.launch { drawerState.open() } },
             isVideoFiltered = isVideoFiltered,
@@ -117,18 +106,10 @@ fun VideoListRoute(
 @Composable
 fun VideoListScreen(
     videoListUiState: VideoListUiState,
-    isSelectMode: Boolean,
-    isSelectedVideoItems: Map<Long, Boolean>,
-    videoInfoDialogUiState: VideoInfoDialogUiState,
     videoListSortTypeUiState: VideoListSortTypeUiState,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
-    onNavigateToTagSetting: () -> Unit,
+    onNavigateToTagSetting: (List<Long>) -> Unit,
     onNavigateToVideoSearch: () -> Unit,
-    onToggleVideoItem: (Long) -> Unit,
-    onSelectAllVideoItem: () -> Unit,
-    onClearSelectedVideoItems: () -> Unit,
-    onShowVideoInfoDialog: () -> Unit,
-    onHideVideoInfoDialog: () -> Unit,
     onSortTypeSet: (VideoListSortType) -> Unit,
     onMenuButtonClick: () -> Unit,
     isVideoFiltered: Boolean,
@@ -137,32 +118,29 @@ fun VideoListScreen(
     setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
     updateVideo: (() -> Unit)? = null
 ) {
+    var isSelectMode by remember(videoListUiState) {
+        mutableStateOf(false)
+    }
+    val isSelectedVideoItems = remember(videoListUiState) {
+        mutableStateMapOf<Long, Boolean>()
+    }
+    val toggleVideoSelection = remember(videoListUiState) {
+        { videoItem: VideoItem ->
+            isSelectedVideoItems.compute(videoItem.id) { _, v ->
+                v?.not() ?: true
+            }
+            isSelectMode = isSelectedVideoItems.all { it.value.not() }.not()
+        }
+    }
+
+    var isShowVideoInfoDialog by remember {
+        mutableStateOf(false)
+    }
+
     var progressIndicatorState by rememberSaveable { mutableStateOf(videoListUiState is VideoListUiState.Loading) }
     var isShowBottomAppBarIconAnimation by remember { mutableStateOf(false) }
     var bottomBarShown by rememberSaveable { mutableStateOf(true) }.apply {
         if (isSelectMode) this.value = isSelectMode
-    }
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && setTopResumedActivityChangedListener != null) {
-
-            setTopResumedActivityChangedListener { isTopResumedActivity: Boolean ->
-                if (isTopResumedActivity && updateVideo != null) updateVideo()
-            }
-            return@DisposableEffect onDispose {
-                setTopResumedActivityChangedListener(null)
-            }
-        }
-
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME && updateVideo != null) updateVideo()
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
     }
 
     val nestedScrollConnection = object : NestedScrollConnection {
@@ -181,17 +159,32 @@ fun VideoListScreen(
                 VideoListTopAppBar(
                     isSelectMode = isSelectMode,
                     onMenuButtonClick = onMenuButtonClick,
-                    onClearButtonClick = onClearSelectedVideoItems,
+                    onClearButtonClick = {
+                        isSelectMode = false
+                        isSelectedVideoItems.clear()
+                    },
                 )
             },
             bottomBar = {
                 if (isSelectMode) {
                     VideoItemBottomAppBar(
                         shown = bottomBarShown,
-                        onAllItemSelectButtonClick = onSelectAllVideoItem,
-                        onTagSettingButtonClick = onNavigateToTagSetting,
-                        onInfoButtonClick = onShowVideoInfoDialog,
-                        onClearSelectedVideoItems = onClearSelectedVideoItems,
+                        onAllItemSelectButtonClick = {
+                            (videoListUiState as? VideoListUiState.Success)?.videoItems?.let { videoItems ->
+                                isSelectedVideoItems.putAll(
+                                    videoItems.associateBy(
+                                        keySelector = { it.id },
+                                        valueTransform = { true }
+                                    )
+                                )
+                            }
+                        },
+                        onTagSettingButtonClick = { onNavigateToTagSetting(isSelectedVideoItems.filterValues { it }.keys.toList()) },
+                        onInfoButtonClick = { isShowVideoInfoDialog = true },
+                        onClearSelectedVideoItems = {
+                            isSelectMode = false
+                            isSelectedVideoItems.clear()
+                        },
                         isShowActionIconAnimation = isShowBottomAppBarIconAnimation,
                     )
                 } else {
@@ -217,26 +210,6 @@ fun VideoListScreen(
                 )
             }
 
-            when (videoInfoDialogUiState) {
-                VideoInfoDialogUiState.Hide -> {}
-                is VideoInfoDialogUiState.ShowSingleInfo -> {
-                    VideoInfoDialog(
-                        videoItem = videoInfoDialogUiState.videoItem,
-                        onDismissRequest = onHideVideoInfoDialog,
-                        onConfirmButtonClick = onHideVideoInfoDialog,
-                    )
-                }
-                is VideoInfoDialogUiState.ShowMultiInfo -> {
-                    MultiVideoInfoDialog(
-                        representativeName = videoInfoDialogUiState.representativeName,
-                        count = videoInfoDialogUiState.count,
-                        totalSize = videoInfoDialogUiState.totalSize,
-                        onDismissRequest = onHideVideoInfoDialog,
-                        onConfirmButtonClick = onHideVideoInfoDialog,
-                    )
-                }
-            }
-
             when (videoListUiState) {
                 VideoListUiState.Loading -> {
                     progressIndicatorState = true
@@ -249,14 +222,44 @@ fun VideoListScreen(
                     )
                 }
                 is VideoListUiState.Success -> {
+                    if (isShowVideoInfoDialog) {
+                        val selectedVideoItemIds = isSelectedVideoItems.filterValues { it }.keys
+                        when (selectedVideoItemIds.count()) {
+                            0 -> { isShowVideoInfoDialog = false }
+                            1 -> {
+                                videoListUiState.videoItems.find { it.id == selectedVideoItemIds.first() }?.let { videoItem ->
+                                    VideoInfoDialog(
+                                        videoItem = videoItem,
+                                        onDismissRequest = { isShowVideoInfoDialog = false },
+                                        onConfirmButtonClick = { isShowVideoInfoDialog = false },
+                                    )
+                                }
+                            }
+                            else -> {
+                                val videoItems = videoListUiState.videoItems.filter { selectedVideoItemIds.contains(it.id) }
+                                MultiVideoInfoDialog(
+                                    representativeName = videoItems.first().name,
+                                    count = videoItems.count(),
+                                    totalSize = formatFileSize(
+                                        videoItems.fold(0L) { acc: Long, videoItem: VideoItem -> acc + videoItem.size }
+                                    ),
+                                    onDismissRequest = { isShowVideoInfoDialog = false },
+                                    onConfirmButtonClick = { isShowVideoInfoDialog = false },
+                                )
+                            }
+                        }
+                    }
                     progressIndicatorState = false
                     VideoList(
-                        modifier = Modifier.padding(contentPadding),
                         videoItems = videoListUiState.videoItems,
-                        isSelectMode = isSelectMode,
+                        isSelectMode = { isSelectMode },
                         isSelectedVideoItems = isSelectedVideoItems,
                         onNavigateToPlayer = onNavigateToPlayer,
-                        onToggleVideoItem = onToggleVideoItem,
+                        modifier = Modifier.padding(contentPadding),
+                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                        setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                        updateVideo = updateVideo,
+                        onToggleVideoSelection = toggleVideoSelection,
                     )
                 }
             }

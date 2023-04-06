@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.videolist
 
+import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,15 +21,19 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoTag
@@ -38,63 +43,76 @@ import com.dogeby.tagplayer.ui.theme.VideoListThumbnailBackgroundColor
 @Composable
 fun VideoList(
     videoItems: List<VideoItem>,
-    isSelectedVideoItems: Map<Long, Boolean>?,
-    isSelectMode: Boolean,
+    isSelectMode: () -> Boolean,
+    isSelectedVideoItems: Map<Long, Boolean>,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
-    onToggleVideoItem: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(dimensionResource(id = R.dimen.padding_small))
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
+    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
+    updateVideo: (() -> Unit)? = null,
+    header: LazyListScope.() -> Unit = {},
+    footer: LazyListScope.() -> Unit = {},
+    onToggleVideoSelection: (VideoItem) -> Unit = {},
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && setTopResumedActivityChangedListener != null) {
+
+            setTopResumedActivityChangedListener { isTopResumedActivity: Boolean ->
+                if (isTopResumedActivity && updateVideo != null) updateVideo()
+            }
+            return@DisposableEffect onDispose {
+                setTopResumedActivityChangedListener(null)
+            }
+        }
+
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME && updateVideo != null) updateVideo()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     ) {
-        videoList(
-            videoItems = videoItems,
-            isSelectedVideoItems = isSelectedVideoItems,
-            isSelectMode = isSelectMode,
-            onNavigateToPlayer = onNavigateToPlayer,
-            onToggleVideoItem = onToggleVideoItem,
-        )
-    }
-}
-
-fun LazyListScope.videoList(
-    videoItems: List<VideoItem>,
-    isSelectedVideoItems: Map<Long, Boolean>?,
-    isSelectMode: Boolean,
-    onNavigateToPlayer: (List<Long>, Long) -> Unit,
-    onToggleVideoItem: (Long) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    if (videoItems.isEmpty()) {
-        item {
-            Box(
-                modifier = modifier.fillParentMaxHeight(0.5f).fillMaxWidth(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = stringResource(id = R.string.videoList_listEmpty),
-                )
+        header()
+        if (videoItems.isEmpty()) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillParentMaxHeight(0.5f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.videoList_listEmpty),
+                    )
+                }
             }
         }
-        return
-    }
-    items(videoItems) { videoItem ->
-        VideoListItem(
-            videoItem = videoItem,
-            isSelected = isSelectedVideoItems?.getOrDefault(videoItem.id, false) ?: false,
-            onClick = {
-                if (isSelectMode) {
-                    onToggleVideoItem(videoItem.id)
-                } else {
+        items(videoItems) { item ->
+            VideoListItem(
+                videoItem = item,
+                isSelected = isSelectedVideoItems.getOrDefault(item.id, false),
+                onClick = { videoItem ->
+                    if (isSelectMode()) {
+                        onToggleVideoSelection(videoItem)
+                        return@VideoListItem
+                    }
                     onNavigateToPlayer(videoItems.map { it.id }, videoItem.id)
-                }
-            },
-            onLongClick = { onToggleVideoItem(videoItem.id) },
-            modifier = modifier,
-        )
+                },
+                onLongClick = onToggleVideoSelection,
+                modifier = Modifier.padding(videoItemContentPadding),
+            )
+        }
+        footer()
     }
 }
 

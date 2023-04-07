@@ -48,6 +48,11 @@ fun TagDetailCard(
     onDeleteButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = RectangleShape,
+    isSelectMode: () -> Boolean = { false },
+    isSelectedVideoItems: Map<Long, Boolean> = emptyMap(),
+    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
+    updateVideo: (() -> Unit)? = null,
+    onToggleVideoSelection: (VideoItem) -> Unit = {},
 ) {
     Card(
         modifier = modifier,
@@ -58,8 +63,8 @@ fun TagDetailCard(
         ) {
             VideoList(
                 videoItems = videoItems(),
-                isSelectMode = { false },
-                isSelectedVideoItems = emptyMap(),
+                isSelectMode = isSelectMode,
+                isSelectedVideoItems = isSelectedVideoItems,
                 onNavigateToPlayer = onPlayButtonClick,
                 contentPadding = PaddingValues(bottom = dimensionResource(id = R.dimen.padding_small)),
                 videoItemContentPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.padding_small)),
@@ -77,53 +82,75 @@ fun TagDetailCard(
                         }
                     }
                     stickyHeader {
-                        Surface(
-                            color = MaterialTheme.colorScheme.surfaceVariant
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Spacer(modifier = Modifier.width(48.dp))
-                                Text(
-                                    text = tagName(),
-                                    modifier = Modifier.weight(1f),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 2,
-                                    minLines = 1,
-                                    style = MaterialTheme.typography.titleLarge,
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Surface(
-                                    shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.secondary,
-                                ) {
-                                    TagManageMenuMoreHorizButton(
-                                        onEditButtonClick = onEditButtonClick,
-                                        onDeleteButtonClick = onDeleteButtonClick,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Button(
-                                    onClick = {
-                                        val videoIds = videoItems().map { it.id }
-                                        onPlayButtonClick(videoIds, videoIds.first())
-                                    },
-                                    enabled = videoItems().isNotEmpty(),
-                                ) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_play),
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                }
-                            }
-                        }
+                        TagDetailCardHeader(
+                            tagName = tagName,
+                            videoItems = videoItems,
+                            onPlayButtonClick = onPlayButtonClick,
+                            onEditButtonClick = onEditButtonClick,
+                            onDeleteButtonClick = onDeleteButtonClick,
+                        )
                     }
                 },
+                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                updateVideo = updateVideo,
+                onToggleVideoSelection = onToggleVideoSelection,
             )
+        }
+    }
+}
+
+@Composable
+fun TagDetailCardHeader(
+    tagName: () -> String,
+    videoItems: () -> List<VideoItem>,
+    onPlayButtonClick: (List<Long>, Long) -> Unit,
+    onEditButtonClick: () -> Unit,
+    onDeleteButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.surfaceVariant
+    ) {
+        Row(
+            modifier = Modifier.padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Spacer(modifier = Modifier.width(48.dp))
+            Text(
+                text = tagName(),
+                modifier = Modifier.weight(1f),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
+                minLines = 1,
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.secondary,
+            ) {
+                TagManageMenuMoreHorizButton(
+                    onEditButtonClick = onEditButtonClick,
+                    onDeleteButtonClick = onDeleteButtonClick,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = {
+                    val videoIds = videoItems().map { it.id }
+                    onPlayButtonClick(videoIds, videoIds.first())
+                },
+                enabled = videoItems().isNotEmpty(),
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_play),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
         }
     }
 }
@@ -136,6 +163,20 @@ fun TagDetailCardPreview() {
             tagName = { "Tag Name" },
             videoItems = { emptyList() },
             thumbnailSize = DpSize(165.dp, 100.dp),
+            onPlayButtonClick = { _, _ -> },
+            onEditButtonClick = {},
+            onDeleteButtonClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TagDetailCardHeaderPreview() {
+    TagPlayerTheme {
+        TagDetailCardHeader(
+            tagName = { "태그 이름" },
+            videoItems = { emptyList() },
             onPlayButtonClick = { _, _ -> },
             onEditButtonClick = {},
             onDeleteButtonClick = {},

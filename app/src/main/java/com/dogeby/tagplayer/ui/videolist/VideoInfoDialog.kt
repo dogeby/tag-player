@@ -26,6 +26,36 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
 fun VideoInfoDialog(
+    videoItems: List<VideoItem>,
+    onDismissRequest: () -> Unit,
+    onConfirmButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (videoItems.count()) {
+        0 -> { onDismissRequest() }
+        1 -> {
+            SingleVideoInfoDialog(
+                videoItem = videoItems.first(),
+                onDismissRequest = onDismissRequest,
+                onConfirmButtonClick = onConfirmButtonClick,
+                modifier = modifier,
+            )
+        }
+        else -> {
+            MultiVideoInfoDialog(
+                representativeName = videoItems.first().name,
+                count = videoItems.count(),
+                totalSize = videoItems.fold(0L) { acc: Long, videoItem: VideoItem -> acc + videoItem.size }.formatToSimpleSize(),
+                onDismissRequest = onDismissRequest,
+                onConfirmButtonClick = onConfirmButtonClick,
+                modifier = modifier,
+            )
+        }
+    }
+}
+
+@Composable
+fun SingleVideoInfoDialog(
     videoItem: VideoItem,
     onDismissRequest: () -> Unit,
     onConfirmButtonClick: () -> Unit,
@@ -152,9 +182,9 @@ fun MultiVideoInfoDialog(
 
 @Preview(showBackground = true)
 @Composable
-fun VideoInfoDialogPreview() {
+fun SingleVideoInfoDialogPreview() {
     TagPlayerTheme {
-        VideoInfoDialog(
+        SingleVideoInfoDialog(
             videoItem = VideoItem(
                 0, "", "동영상1", "MP4", VideoDuration(100), 1023000000, "/movie/", listOf("movie"),
                 List(1) { Tag(name = "tag$it") },

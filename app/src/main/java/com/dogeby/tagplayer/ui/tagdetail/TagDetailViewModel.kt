@@ -7,6 +7,7 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.tag.DeleteTagsUseCase
 import com.dogeby.tagplayer.domain.tag.GetTagItemUseCase
 import com.dogeby.tagplayer.domain.tag.ModifyTagNameUseCase
+import com.dogeby.tagplayer.domain.video.UpdateVideoListUseCase
 import com.dogeby.tagplayer.ui.navigation.TagDetailTagIdArgument
 import com.dogeby.tagplayer.ui.tagsetting.TagNameEditDialogUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,7 @@ class TagDetailViewModel @Inject constructor(
     getTagItemUseCase: GetTagItemUseCase,
     private val deleteTagsUseCase: DeleteTagsUseCase,
     private val modifyTagNameUseCase: ModifyTagNameUseCase,
+    private val updateVideoListUseCase: UpdateVideoListUseCase,
 ) : ViewModel() {
 
     private val tagId: Long = checkNotNull(savedStateHandle[TagDetailTagIdArgument])
@@ -88,6 +90,12 @@ class TagDetailViewModel @Inject constructor(
             } else {
                 TagNameEditDialogUiState.Hide
             }
+        }
+    }
+
+    fun updateVideoList() {
+        viewModelScope.launch {
+            updateVideoListUseCase()
         }
     }
 }

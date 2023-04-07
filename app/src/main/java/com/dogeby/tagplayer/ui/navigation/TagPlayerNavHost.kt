@@ -125,6 +125,10 @@ fun TagPlayerNavHost(
             TagDetailRoute(
                 onNavigateUp = { navController.navigateUp() },
                 onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
+                onNavigateToTagSetting = { videoIds ->
+                    navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
+                },
+                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener
             )
         }
     }

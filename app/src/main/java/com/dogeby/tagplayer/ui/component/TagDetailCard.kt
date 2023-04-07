@@ -48,6 +48,11 @@ fun TagDetailCard(
     onDeleteButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = RectangleShape,
+    isSelectMode: () -> Boolean = { false },
+    isSelectedVideoItems: Map<Long, Boolean> = emptyMap(),
+    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
+    updateVideo: (() -> Unit)? = null,
+    onToggleVideoSelection: (VideoItem) -> Unit = {},
 ) {
     Card(
         modifier = modifier,
@@ -58,8 +63,8 @@ fun TagDetailCard(
         ) {
             VideoList(
                 videoItems = videoItems(),
-                isSelectMode = { false },
-                isSelectedVideoItems = emptyMap(),
+                isSelectMode = isSelectMode,
+                isSelectedVideoItems = isSelectedVideoItems,
                 onNavigateToPlayer = onPlayButtonClick,
                 contentPadding = PaddingValues(bottom = dimensionResource(id = R.dimen.padding_small)),
                 videoItemContentPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.padding_small)),
@@ -123,6 +128,9 @@ fun TagDetailCard(
                         }
                     }
                 },
+                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                updateVideo = updateVideo,
+                onToggleVideoSelection = onToggleVideoSelection,
             )
         }
     }

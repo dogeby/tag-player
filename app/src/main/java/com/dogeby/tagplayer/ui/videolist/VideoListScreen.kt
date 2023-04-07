@@ -46,7 +46,6 @@ import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
-import com.dogeby.tagplayer.ui.component.formatToSimpleSize
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.theme.EmphasizedDecelerateEasing
 import com.dogeby.tagplayer.ui.theme.MediumDuration4
@@ -224,28 +223,11 @@ fun VideoListScreen(
                 is VideoListUiState.Success -> {
                     if (isShowVideoInfoDialog) {
                         val selectedVideoItemIds = isSelectedVideoItems.filterValues { it }.keys
-                        when (selectedVideoItemIds.count()) {
-                            0 -> { isShowVideoInfoDialog = false }
-                            1 -> {
-                                videoListUiState.videoItems.find { it.id == selectedVideoItemIds.first() }?.let { videoItem ->
-                                    VideoInfoDialog(
-                                        videoItem = videoItem,
-                                        onDismissRequest = { isShowVideoInfoDialog = false },
-                                        onConfirmButtonClick = { isShowVideoInfoDialog = false },
-                                    )
-                                }
-                            }
-                            else -> {
-                                val videoItems = videoListUiState.videoItems.filter { selectedVideoItemIds.contains(it.id) }
-                                MultiVideoInfoDialog(
-                                    representativeName = videoItems.first().name,
-                                    count = videoItems.count(),
-                                    totalSize = videoItems.fold(0L) { acc: Long, videoItem: VideoItem -> acc + videoItem.size }.formatToSimpleSize(),
-                                    onDismissRequest = { isShowVideoInfoDialog = false },
-                                    onConfirmButtonClick = { isShowVideoInfoDialog = false },
-                                )
-                            }
-                        }
+                        VideoInfoDialog(
+                            videoItems = videoListUiState.videoItems.filter { selectedVideoItemIds.contains(it.id) },
+                            onDismissRequest = { isShowVideoInfoDialog = false },
+                            onConfirmButtonClick = { isShowVideoInfoDialog = false },
+                        )
                     }
                     progressIndicatorState = false
                     VideoList(

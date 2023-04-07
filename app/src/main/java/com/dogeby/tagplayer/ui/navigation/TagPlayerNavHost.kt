@@ -85,6 +85,10 @@ fun TagPlayerNavHost(
             VideoSearchRoute(
                 onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
                 onNavigateUp = { navController.navigateUp() },
+                onNavigateToTagSetting = { videoIds ->
+                    navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
+                },
+                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener
             )
         }
         composable(VideoFilterRoute) {

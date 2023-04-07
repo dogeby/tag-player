@@ -3,6 +3,7 @@ package com.dogeby.tagplayer.ui.videosearch
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.domain.video.FindVideoUseCase
+import com.dogeby.tagplayer.domain.video.UpdateVideoListUseCase
 import com.dogeby.tagplayer.ui.videolist.VideoListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -17,10 +18,12 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class VideoSearchViewModel @Inject constructor(
     findVideoUseCase: FindVideoUseCase,
+    private val updateVideoListUseCase: UpdateVideoListUseCase,
 ) : ViewModel() {
 
     private val _query: MutableStateFlow<String> = MutableStateFlow("")
@@ -53,6 +56,12 @@ class VideoSearchViewModel @Inject constructor(
 
     fun clearQuery() {
         setQuery("")
+    }
+
+    fun updateVideoList() {
+        viewModelScope.launch {
+            updateVideoListUseCase()
+        }
     }
 
     companion object {

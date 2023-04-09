@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="videolist_video_thumbnail_width">480</integer>
-    <integer name="videolist_video_thumbnail_height">360</integer>
+    <integer name="videolist_video_thumbnail_width">1280</integer>
+    <integer name="videolist_video_thumbnail_height">720</integer>
 </resources>

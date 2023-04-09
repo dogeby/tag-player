@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
-import com.dogeby.tagplayer.ui.videolist.VideoList
+import com.dogeby.tagplayer.ui.videolist.CompactVideoList
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -61,7 +61,7 @@ fun TagDetailCard(
         CompositionLocalProvider(
             LocalOverscrollConfiguration provides null,
         ) {
-            VideoList(
+            CompactVideoList(
                 videoItems = videoItems(),
                 isSelectMode = isSelectMode,
                 isSelectedVideoItems = isSelectedVideoItems,

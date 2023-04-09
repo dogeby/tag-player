@@ -46,6 +46,8 @@ import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
+import com.dogeby.tagplayer.ui.component.WindowInfo
+import com.dogeby.tagplayer.ui.component.rememberWindowInfo
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.theme.EmphasizedDecelerateEasing
 import com.dogeby.tagplayer.ui.theme.MediumDuration4
@@ -230,17 +232,36 @@ fun VideoListScreen(
                         )
                     }
                     progressIndicatorState = false
-                    VideoList(
-                        videoItems = videoListUiState.videoItems,
-                        isSelectMode = { isSelectMode },
-                        isSelectedVideoItems = isSelectedVideoItems,
-                        onNavigateToPlayer = onNavigateToPlayer,
-                        modifier = Modifier.padding(contentPadding),
-                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
-                        setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                        updateVideo = updateVideo,
-                        onToggleVideoSelection = toggleVideoSelection,
-                    )
+
+                    val windowInfo = rememberWindowInfo()
+                    when (windowInfo.screenWidthInfo) {
+                        WindowInfo.WindowType.Compact -> {
+                            CompactVideoList(
+                                videoItems = videoListUiState.videoItems,
+                                isSelectMode = { isSelectMode },
+                                isSelectedVideoItems = isSelectedVideoItems,
+                                onNavigateToPlayer = onNavigateToPlayer,
+                                modifier = Modifier.padding(contentPadding),
+                                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                                updateVideo = updateVideo,
+                                onToggleVideoSelection = toggleVideoSelection,
+                            )
+                        }
+                        else -> {
+                            ExpandedVideoList(
+                                videoItems = videoListUiState.videoItems,
+                                isSelectMode = { isSelectMode },
+                                isSelectedVideoItems = isSelectedVideoItems,
+                                onNavigateToPlayer = onNavigateToPlayer,
+                                modifier = Modifier.padding(contentPadding),
+                                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                                updateVideo = updateVideo,
+                                onToggleVideoSelection = toggleVideoSelection,
+                            )
+                        }
+                    }
                 }
             }
         }

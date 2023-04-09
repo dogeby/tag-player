@@ -42,19 +42,9 @@ import com.dogeby.tagplayer.ui.component.VideoThumbnail
 import com.dogeby.tagplayer.ui.theme.VideoListThumbnailBackgroundColor
 
 @Composable
-fun VideoList(
-    videoItems: List<VideoItem>,
-    isSelectMode: () -> Boolean,
-    isSelectedVideoItems: Map<Long, Boolean>,
-    onNavigateToPlayer: (List<Long>, Long) -> Unit,
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
-    videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
+private fun VideoListUpdate(
     setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
     updateVideo: (() -> Unit)? = null,
-    header: LazyListScope.() -> Unit = {},
-    footer: LazyListScope.() -> Unit = {},
-    onToggleVideoSelection: (VideoItem) -> Unit = {},
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
@@ -77,6 +67,24 @@ fun VideoList(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+}
+
+@Composable
+fun CompactVideoList(
+    videoItems: List<VideoItem>,
+    isSelectMode: () -> Boolean,
+    isSelectedVideoItems: Map<Long, Boolean>,
+    onNavigateToPlayer: (List<Long>, Long) -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
+    header: LazyListScope.() -> Unit = {},
+    footer: LazyListScope.() -> Unit = {},
+    onToggleVideoSelection: (VideoItem) -> Unit = {},
+    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
+    updateVideo: (() -> Unit)? = null,
+) {
+    VideoListUpdate(setTopResumedActivityChangedListener, updateVideo)
 
     LazyColumn(
         modifier = modifier,
@@ -99,13 +107,13 @@ fun VideoList(
             }
         }
         items(videoItems) { item ->
-            VideoListItem(
+            CompactVideoCard(
                 videoItem = item,
                 isSelected = isSelectedVideoItems.getOrDefault(item.id, false),
                 onClick = { videoItem ->
                     if (isSelectMode()) {
                         onToggleVideoSelection(videoItem)
-                        return@VideoListItem
+                        return@CompactVideoCard
                     }
                     onNavigateToPlayer(videoItems.map { it.id }, videoItem.id)
                 },
@@ -119,7 +127,7 @@ fun VideoList(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun VideoListItem(
+private fun CompactVideoCard(
     videoItem: VideoItem,
     isSelected: Boolean,
     onClick: (VideoItem) -> Unit,

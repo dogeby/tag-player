@@ -31,9 +31,9 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
+import com.dogeby.tagplayer.ui.videolist.CompactVideoList
 import com.dogeby.tagplayer.ui.videolist.VideoInfoDialog
 import com.dogeby.tagplayer.ui.videolist.VideoItemBottomAppBar
-import com.dogeby.tagplayer.ui.videolist.VideoList
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -184,7 +184,7 @@ fun VideoSearchScreen(
                             onConfirmButtonClick = { isShowVideoInfoDialog = false },
                         )
                     }
-                    VideoList(
+                    CompactVideoList(
                         videoItems = videoSearchViewUiState.videoListUiState.videoItems,
                         isSelectMode = { isSelectMode },
                         isSelectedVideoItems = isSelectedVideoItems,

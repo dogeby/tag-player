@@ -230,7 +230,7 @@ fun VideoListScreen(
                         )
                     }
                     progressIndicatorState = false
-                    VideoList(
+                    CompactVideoList(
                         videoItems = videoListUiState.videoItems,
                         isSelectMode = { isSelectMode },
                         isSelectedVideoItems = isSelectedVideoItems,

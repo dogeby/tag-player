@@ -1,5 +1,7 @@
 package com.dogeby.tagplayer.ui.tagdetail
 
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -19,13 +21,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.domain.video.VideoItem
+import com.dogeby.tagplayer.ui.component.ExpandedTagDetailCard
 import com.dogeby.tagplayer.ui.component.TagDetailCard
 import com.dogeby.tagplayer.ui.component.TagNameEditDialog
+import com.dogeby.tagplayer.ui.component.WindowInfo
+import com.dogeby.tagplayer.ui.component.rememberWindowInfo
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.tagsetting.TagNameEditDialogUiState
 import com.dogeby.tagplayer.ui.videolist.VideoInfoDialog
@@ -137,32 +143,65 @@ fun TagDetailScreen(
                         onConfirmButtonClick = { isShowVideoInfoDialog = false },
                     )
                 }
-                TagDetailCard(
-                    tagName = { tagDetailUiState.tagName },
-                    videoItems = { tagDetailUiState.videoItems },
-                    thumbnailSize = DpSize(165.dp, 100.dp),
-                    onPlayButtonClick = onNavigateToPlayer,
-                    onEditButtonClick = { onTagNameEditDialogVisibilitySet(true) },
-                    onDeleteButtonClick = {
-                        onDeleteTag()
-                        onNavigateUp()
-                    },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(contentPadding),
-                    isSelectMode = { isSelectMode },
-                    isSelectedVideoItems = isSelectedVideoItems,
-                    setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                    updateVideo = updateVideo,
-                    onToggleVideoSelection = toggleVideoSelection,
-                )
+
+                val windowInfo = rememberWindowInfo()
+                when (windowInfo.screenWidthInfo) {
+                    WindowInfo.WindowType.Compact -> {
+                        TagDetailCard(
+                            tagName = { tagDetailUiState.tagName },
+                            videoItems = { tagDetailUiState.videoItems },
+                            thumbnailSize = DpSize(165.dp, 100.dp),
+                            onPlayButtonClick = onNavigateToPlayer,
+                            onEditButtonClick = { onTagNameEditDialogVisibilitySet(true) },
+                            onDeleteButtonClick = {
+                                onDeleteTag()
+                                onNavigateUp()
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(contentPadding),
+                            isSelectMode = { isSelectMode },
+                            isSelectedVideoItems = isSelectedVideoItems,
+                            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                            updateVideo = updateVideo,
+                            onToggleVideoSelection = toggleVideoSelection,
+                        )
+                    }
+                    else -> {
+                        val layoutDirection = LocalLayoutDirection.current
+                        ExpandedTagDetailCard(
+                            tagName = { tagDetailUiState.tagName },
+                            videoItems = { tagDetailUiState.videoItems },
+                            onPlayButtonClick = onNavigateToPlayer,
+                            onEditButtonClick = { onTagNameEditDialogVisibilitySet(true) },
+                            onDeleteButtonClick = {
+                                onDeleteTag()
+                                onNavigateUp()
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(
+                                    start = contentPadding.calculateStartPadding(layoutDirection),
+                                    bottom = contentPadding.calculateBottomPadding(),
+                                    end = contentPadding.calculateEndPadding(layoutDirection)
+                                ),
+                            isSelectMode = { isSelectMode },
+                            isSelectedVideoItems = isSelectedVideoItems,
+                            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                            updateVideo = updateVideo,
+                            onToggleVideoSelection = toggleVideoSelection,
+                        )
+                    }
+                }
             }
             TagDetailUiState.Loading -> { /*TODO*/ }
             TagDetailUiState.Empty -> { /*TODO*/ }
         }
         IconButton(
             onClick = onNavigateUp,
-            modifier = Modifier.padding(contentPadding).padding(top = 8.dp),
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(top = 8.dp),
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant,

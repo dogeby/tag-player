@@ -28,4 +28,7 @@
     <dimen name="videoInfoDialog_infoItemTitleContentPadding">2dp</dimen>
 
     <dimen name="videoPlayerController_text_horizontal_padding">8dp</dimen>
+
+    <dimen name="tagdetailcard_expanded_width">660dp</dimen>
+    <dimen name="tagdetailcard_expanded_header_thumbnail_width">320dp</dimen>
 </resources>

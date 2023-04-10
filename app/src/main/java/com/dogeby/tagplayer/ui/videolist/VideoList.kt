@@ -37,6 +37,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -83,6 +84,8 @@ fun CompactVideoList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     header: LazyListScope.() -> Unit = {},
     footer: LazyListScope.() -> Unit = {},
     onToggleVideoSelection: (VideoItem) -> Unit = {},
@@ -94,7 +97,8 @@ fun CompactVideoList(
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
+        verticalArrangement = verticalArrangement,
+        horizontalAlignment = horizontalAlignment,
     ) {
         header()
         if (videoItems.isEmpty()) {
@@ -208,7 +212,8 @@ fun ExpandedVideoList(
     isSelectedVideoItems: Map<Long, Boolean>,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
+    verticalItemSpacing: Dp = dimensionResource(id = R.dimen.padding_small),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
     onToggleVideoSelection: (VideoItem) -> Unit = {},
     setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
@@ -231,9 +236,8 @@ fun ExpandedVideoList(
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(dimensionResource(id = R.dimen.videolist_expanded_video_item_width)),
         modifier = modifier,
-        contentPadding = contentPadding,
-        verticalItemSpacing = dimensionResource(id = R.dimen.padding_small),
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
+        verticalItemSpacing = verticalItemSpacing,
+        horizontalArrangement = horizontalArrangement,
     ) {
         items(videoItems) { item ->
             ExpandedVideoCard(

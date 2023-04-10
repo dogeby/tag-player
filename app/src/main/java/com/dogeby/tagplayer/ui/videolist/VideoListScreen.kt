@@ -39,6 +39,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
@@ -254,8 +255,9 @@ fun VideoListScreen(
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
                                 onNavigateToPlayer = onNavigateToPlayer,
-                                modifier = Modifier.padding(contentPadding),
-                                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                                modifier = Modifier.padding(contentPadding).padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
+                                verticalItemSpacing = 0.dp,
+                                videoItemContentPadding = PaddingValues(vertical = dimensionResource(id = R.dimen.padding_small) / 2),
                                 setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
                                 updateVideo = updateVideo,
                                 onToggleVideoSelection = toggleVideoSelection,

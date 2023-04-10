@@ -1,7 +1,5 @@
 package com.dogeby.tagplayer.ui.tagdetail
 
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -180,11 +178,7 @@ fun TagDetailScreen(
                             },
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(
-                                    start = contentPadding.calculateStartPadding(layoutDirection),
-                                    bottom = contentPadding.calculateBottomPadding(),
-                                    end = contentPadding.calculateEndPadding(layoutDirection)
-                                ),
+                                .padding(contentPadding),
                             isSelectMode = { isSelectMode },
                             isSelectedVideoItems = isSelectedVideoItems,
                             setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,

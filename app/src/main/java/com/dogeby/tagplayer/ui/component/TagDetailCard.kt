@@ -220,7 +220,7 @@ fun ExpandedTagDetailCard(
                                 onDeleteButtonClick = onDeleteButtonClick,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(dimensionResource(id = R.dimen.padding_small)),
+                                    .padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
                             )
                         }
                     },

@@ -83,6 +83,8 @@ fun CompactVideoList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     header: LazyListScope.() -> Unit = {},
     footer: LazyListScope.() -> Unit = {},
     onToggleVideoSelection: (VideoItem) -> Unit = {},
@@ -94,7 +96,8 @@ fun CompactVideoList(
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
+        verticalArrangement = verticalArrangement,
+        horizontalAlignment = horizontalAlignment,
     ) {
         header()
         if (videoItems.isEmpty()) {

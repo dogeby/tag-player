@@ -168,6 +168,7 @@ private fun CompactVideoCard(
                 contentScale = ContentScale.Crop,
                 duration = videoItem.duration.toString(),
                 durationShape = MaterialTheme.shapes.small,
+                frameTimeMicrosecond = integerResource(id = R.integer.videolist_video_thumbnail_frameTimeMicrosecond).toLong(),
             )
             Box(
                 modifier = Modifier
@@ -289,6 +290,7 @@ private fun ExpandedVideoCard(
             contentScale = ContentScale.Crop,
             duration = videoItem.duration.toString(),
             durationShape = MaterialTheme.shapes.small,
+            frameTimeMicrosecond = integerResource(id = R.integer.videolist_video_thumbnail_frameTimeMicrosecond).toLong(),
         )
 
         Column(

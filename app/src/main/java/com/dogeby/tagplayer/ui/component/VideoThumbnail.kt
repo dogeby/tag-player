@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.component
 
+import androidx.annotation.IntRange
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -33,6 +34,7 @@ fun VideoThumbnail(
     imageContentDescription: String? = null,
     duration: String? = null,
     durationShape: Shape = RectangleShape,
+    @IntRange(from = 0) frameTimeMicrosecond: Long = 0,
 ) {
     Surface(
         shape = imageShape,
@@ -51,6 +53,7 @@ fun VideoThumbnail(
                     .placeholder(R.drawable.loading_animation)
                     .error(R.drawable.ic_broken_image)
                     .fallback(R.drawable.ic_broken_image)
+                    .frame(frameTimeMicrosecond)
             }
 
             if (duration != null) {
@@ -82,6 +85,7 @@ fun VideoThumbnail(
     imageContentDescription: String? = null,
     duration: String? = null,
     durationShape: Shape = RectangleShape,
+    @IntRange(from = 0) frameTimeMicrosecond: Long = 0,
 ) {
     VideoThumbnail(
         uri = uri,
@@ -94,6 +98,7 @@ fun VideoThumbnail(
         imageContentDescription = imageContentDescription,
         duration = duration,
         durationShape = durationShape,
+        frameTimeMicrosecond = frameTimeMicrosecond,
     )
 }
 

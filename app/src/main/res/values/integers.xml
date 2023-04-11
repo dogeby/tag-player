@@ -2,4 +2,5 @@
 <resources>
     <integer name="videolist_video_thumbnail_width">1280</integer>
     <integer name="videolist_video_thumbnail_height">720</integer>
+    <integer name="videolist_video_thumbnail_frameTimeMicrosecond">10000000</integer>
 </resources>

@@ -1,7 +1,7 @@
 package com.dogeby.tagplayer.domain.tag
 
 import com.dogeby.tagplayer.data.tag.TagRepository
-import com.dogeby.tagplayer.domain.preferences.RemoveTagFilterUseCase
+import com.dogeby.tagplayer.domain.preferences.videolist.RemoveTagFilterUseCase
 import javax.inject.Inject
 
 class DeleteTagsUseCase @Inject constructor(

@@ -3,9 +3,9 @@ package com.dogeby.tagplayer.ui.videolist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
-import com.dogeby.tagplayer.domain.preferences.GetIsVideoFilteredUseCase
-import com.dogeby.tagplayer.domain.preferences.GetVideoListSortTypeUseCase
-import com.dogeby.tagplayer.domain.preferences.SetVideoListSortTypeUseCase
+import com.dogeby.tagplayer.domain.preferences.videolist.GetIsVideoFilteredUseCase
+import com.dogeby.tagplayer.domain.preferences.videolist.GetVideoListSortTypeUseCase
+import com.dogeby.tagplayer.domain.preferences.videolist.SetVideoListSortTypeUseCase
 import com.dogeby.tagplayer.domain.video.GetVideoItemsUseCase
 import com.dogeby.tagplayer.domain.video.UpdateVideoListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

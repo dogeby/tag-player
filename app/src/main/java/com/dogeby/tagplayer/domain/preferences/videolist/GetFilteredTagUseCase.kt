@@ -1,4 +1,4 @@
-package com.dogeby.tagplayer.domain.preferences
+package com.dogeby.tagplayer.domain.preferences.videolist
 
 import com.dogeby.tagplayer.data.preferences.PreferencesRepository
 import com.dogeby.tagplayer.data.tag.Tag

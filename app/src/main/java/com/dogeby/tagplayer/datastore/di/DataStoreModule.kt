@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
+import com.dogeby.tagplayer.AppPreferences
 import com.dogeby.tagplayer.VideoListPreferences
+import com.dogeby.tagplayer.datastore.app.AppPreferencesSerializer
 import com.dogeby.tagplayer.datastore.videolist.VideoListPreferencesSerializer
 import dagger.Module
 import dagger.Provides
@@ -31,5 +33,18 @@ object DataStoreModule {
             scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
         ) {
             appContext.dataStoreFile("video_list_preferences.pb")
+        }
+
+    @Provides
+    @Singleton
+    fun providesAppPreferencesDataStore(
+        @ApplicationContext appContext: Context,
+        appPreferencesSerializer: AppPreferencesSerializer,
+    ): DataStore<AppPreferences> =
+        DataStoreFactory.create(
+            serializer = appPreferencesSerializer,
+            scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+        ) {
+            appContext.dataStoreFile("app_preferences.pb")
         }
 }

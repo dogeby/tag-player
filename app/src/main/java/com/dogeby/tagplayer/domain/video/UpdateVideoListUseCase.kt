@@ -2,8 +2,8 @@ package com.dogeby.tagplayer.domain.video
 
 import com.dogeby.tagplayer.data.video.VideoRepository
 import com.dogeby.tagplayer.data.video.VideoUpdateResult
-import com.dogeby.tagplayer.domain.preferences.GetFilteredDirectoryNameUseCase
-import com.dogeby.tagplayer.domain.preferences.RemoveDirectoryFilterUseCase
+import com.dogeby.tagplayer.domain.preferences.videolist.GetFilteredDirectoryNameUseCase
+import com.dogeby.tagplayer.domain.preferences.videolist.RemoveDirectoryFilterUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 

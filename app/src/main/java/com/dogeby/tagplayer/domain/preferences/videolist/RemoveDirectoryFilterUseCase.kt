@@ -1,4 +1,4 @@
-package com.dogeby.tagplayer.domain.preferences
+package com.dogeby.tagplayer.domain.preferences.videolist
 
 import com.dogeby.tagplayer.data.preferences.PreferencesRepository
 import javax.inject.Inject

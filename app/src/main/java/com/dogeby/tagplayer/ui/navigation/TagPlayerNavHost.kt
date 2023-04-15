@@ -1,5 +1,7 @@
 package com.dogeby.tagplayer.ui.navigation
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -12,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.dogeby.tagplayer.R
+import com.dogeby.tagplayer.ui.apppreferences.AppPreferencesRoute
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
 import com.dogeby.tagplayer.ui.permission.PermissionScreen
@@ -42,6 +45,11 @@ fun TagPlayerNavHost(
             route = TagListRoute,
             name = stringResource(id = R.string.tagList_topAppBar_title),
             icon = ImageVector.vectorResource(id = R.drawable.ic_tag),
+        ),
+        TagPlayerDrawerItem(
+            route = AppPreferencesRoute,
+            name = stringResource(id = R.string.appPreferences_topAppBar_title),
+            icon = Icons.Default.Settings
         ),
     )
     NavHost(
@@ -129,6 +137,11 @@ fun TagPlayerNavHost(
                     navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
                 },
                 setTopResumedActivityChangedListener = setTopResumedActivityChangedListener
+            )
+        }
+        composable(AppPreferencesRoute) {
+            AppPreferencesRoute(
+                onNavigateUp = { navController.navigateUp() },
             )
         }
     }

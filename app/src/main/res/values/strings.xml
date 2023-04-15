@@ -62,4 +62,10 @@
     <string name="video_count">%1$d 동영상</string>
 
     <string name="tagCreateDialog_title">태그 생성</string>
+
+    <string name="appPreferences_topAppBar_title">설정</string>
+    <string name="appPreferences_theme_title">테마</string>
+    <string name="appPreferences_theme_body_systemSetting">시스템 설정 모드</string>
+    <string name="appPreferences_theme_body_light">라이트 모드</string>
+    <string name="appPreferences_theme_body_dark">다크 모드</string>
 </resources>

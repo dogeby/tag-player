@@ -19,7 +19,7 @@
         android:theme="@style/Theme.TagPlayer.Splash"
         tools:targetApi="33">
         <activity
-            android:name=".ui.TagPlayerActivity"
+            android:name=".ui.activity.TagPlayerActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:exported="true">
             <intent-filter>

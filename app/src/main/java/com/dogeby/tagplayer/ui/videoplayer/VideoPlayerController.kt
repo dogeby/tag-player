@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
-import com.dogeby.tagplayer.ui.findActivity
+import com.dogeby.tagplayer.ui.activity.findActivity
 import com.dogeby.tagplayer.ui.theme.PlayerControllerOnBackgroundColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarIndicatorColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarTrackColor

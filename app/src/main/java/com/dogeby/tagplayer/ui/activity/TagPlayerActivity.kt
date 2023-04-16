@@ -1,4 +1,4 @@
-package com.dogeby.tagplayer.ui
+package com.dogeby.tagplayer.ui.activity
 
 import android.app.Activity
 import android.content.Context
@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.dogeby.tagplayer.ui.TagPlayerApp
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import dagger.hilt.android.AndroidEntryPoint
 

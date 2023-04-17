@@ -79,6 +79,7 @@ data class TagPlayerDrawerItem(
     val route: String,
     val name: String,
     val icon: ImageVector,
+    val onClick: () -> Unit,
     val contentDescription: String? = null,
 )
 
@@ -87,7 +88,7 @@ data class TagPlayerDrawerItem(
 fun TagPlayerNavigationDrawerPreview() {
     TagPlayerTheme {
         val items = List(3) {
-            TagPlayerDrawerItem(it.toString(), it.toString(), Icons.Default.Favorite)
+            TagPlayerDrawerItem(it.toString(), it.toString(), Icons.Default.Favorite, {})
         }
         TagPlayerNavigationDrawer(
             startRoute = items.first().route,

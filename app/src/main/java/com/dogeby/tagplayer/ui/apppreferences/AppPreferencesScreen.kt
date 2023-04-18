@@ -76,6 +76,7 @@ fun AppPreferencesScreen(
                         onSetAppThemeMode = onSetAppThemeMode,
                         modifier = Modifier.fillMaxWidth(),
                     )
+                    OssLicensesPreferenceItem(Modifier.fillMaxWidth())
                 }
             }
         }

@@ -8,20 +8,21 @@
 
     <application
         android:name=".TagPlayerHiltApp"
-        android:largeHeap="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TagPlayer.Splash"
+        android:theme="@style/Theme.AppCompat.DayNight"
         tools:targetApi="33">
         <activity
             android:name=".ui.activity.TagPlayerActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.TagPlayer.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -39,7 +39,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun TagListRoute(
     tagPlayerDrawerItems: List<TagPlayerDrawerItem>,
-    onNavigateToRoute: (String) -> Unit,
     onNavigateToTagDetail: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TagListViewModel = hiltViewModel(),
@@ -53,7 +52,7 @@ fun TagListRoute(
     TagPlayerNavigationDrawer(
         startRoute = com.dogeby.tagplayer.ui.navigation.TagListRoute,
         tagPlayerDrawerItems = tagPlayerDrawerItems,
-        onItemClick = { onNavigateToRoute(it.route) },
+        onItemClick = { it.onClick() },
         drawerState = drawerState,
     ) {
         TagListScreen(

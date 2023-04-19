@@ -40,16 +40,23 @@ fun TagPlayerNavHost(
             route = VideoListRoute,
             name = stringResource(id = R.string.videoList_topAppBar_title),
             icon = ImageVector.vectorResource(id = R.drawable.ic_movie),
+            onClick = {
+                navController.navigate(VideoListRoute) {
+                    popUpTo(VideoListRoute) { inclusive = true }
+                }
+            }
         ),
         TagPlayerDrawerItem(
             route = TagListRoute,
             name = stringResource(id = R.string.tagList_topAppBar_title),
             icon = ImageVector.vectorResource(id = R.drawable.ic_tag),
+            onClick = { navController.navigate(TagListRoute) },
         ),
         TagPlayerDrawerItem(
             route = AppPreferencesRoute,
             name = stringResource(id = R.string.appPreferences_topAppBar_title),
-            icon = Icons.Default.Settings
+            icon = Icons.Default.Settings,
+            onClick = { navController.navigate(AppPreferencesRoute) },
         ),
     )
     NavHost(
@@ -70,7 +77,6 @@ fun TagPlayerNavHost(
             AppPermissionDeniedByExternalAction(onExit)
             VideoListRoute(
                 tagPlayerDrawerItems = drawerItems,
-                onNavigateToRoute = { navController.navigate(it.route) },
                 onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
                 onNavigateToFilterSetting = { navController.navigate(VideoFilterRoute) },
                 onNavigateToTagSetting = { videoIds ->
@@ -118,11 +124,6 @@ fun TagPlayerNavHost(
         composable(TagListRoute) {
             TagListRoute(
                 tagPlayerDrawerItems = drawerItems,
-                onNavigateToRoute = {
-                    navController.navigate(it) {
-                        popUpTo(VideoListRoute) { inclusive = true }
-                    }
-                },
                 onNavigateToTagDetail = { navController.navigate("$TagDetailRoute/$it") },
             )
         }

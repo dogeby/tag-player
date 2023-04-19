@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
-import com.dogeby.tagplayer.ui.findActivity
+import com.dogeby.tagplayer.ui.activity.findActivity
 import com.dogeby.tagplayer.ui.theme.PlayerBackgroundColor
 import com.dogeby.tagplayer.ui.theme.PlayerControllerBackgroundColor
 import com.dogeby.tagplayer.ui.theme.PlayerControllerOnBackgroundColor

@@ -62,7 +62,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun VideoListRoute(
     tagPlayerDrawerItems: List<TagPlayerDrawerItem>,
-    onNavigateToRoute: (TagPlayerDrawerItem) -> Unit,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onNavigateToFilterSetting: () -> Unit,
     onNavigateToTagSetting: (List<Long>) -> Unit,
@@ -84,7 +83,7 @@ fun VideoListRoute(
     TagPlayerNavigationDrawer(
         startRoute = com.dogeby.tagplayer.ui.navigation.VideoListRoute,
         tagPlayerDrawerItems = tagPlayerDrawerItems,
-        onItemClick = { onNavigateToRoute(it) },
+        onItemClick = { it.onClick() },
         drawerState = drawerState,
     ) {
         VideoListScreen(

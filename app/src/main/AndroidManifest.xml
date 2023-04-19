@@ -16,7 +16,7 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.DayNight"
+        android:theme="@style/Theme.TagPlayer"
         tools:targetApi="33">
         <activity
             android:name=".ui.activity.TagPlayerActivity"

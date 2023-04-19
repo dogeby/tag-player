@@ -13,11 +13,13 @@ fun OssLicensesPreferenceItem(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val title = stringResource(id = R.string.appPreferences_ossLicenses_title)
 
     PreferencesItem(
-        title = stringResource(id = R.string.appPreferences_ossLicenses_title),
+        title = title,
         body = stringResource(id = R.string.appPreferences_ossLicenses_body),
         onItemClick = {
+            OssLicensesMenuActivity.setActivityTitle(title)
             context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
         },
         modifier = modifier,

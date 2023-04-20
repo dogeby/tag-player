@@ -24,6 +24,7 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.tag.TagItem
 import com.dogeby.tagplayer.ui.component.VideoThumbnail
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
+import com.dogeby.tagplayer.ui.theme.VideoListThumbnailBackgroundColor
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -68,7 +69,8 @@ fun TagListItem(
                 uri = tagItem.videoItems.first().uri,
                 width = thumbnailSize.width,
                 height = thumbnailSize.height,
-                contentScale = ContentScale.Crop,
+                backgroundColor = VideoListThumbnailBackgroundColor,
+                contentScale = ContentScale.FillHeight,
                 modifier = Modifier.heightIn(max = thumbnailSize.height)
             )
         }

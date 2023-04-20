@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.dogeby.tagplayer.R
+import com.dogeby.tagplayer.ui.theme.VideoThumbnailBackgroundColor
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -29,7 +30,7 @@ fun VideoThumbnail(
     height: Int,
     modifier: Modifier = Modifier,
     imageShape: Shape = RectangleShape,
-    backgroundColor: Color = Color.Black,
+    backgroundColor: Color = VideoThumbnailBackgroundColor,
     contentScale: ContentScale = ContentScale.Fit,
     imageContentDescription: String? = null,
     duration: String? = null,
@@ -80,7 +81,7 @@ fun VideoThumbnail(
     height: Dp,
     modifier: Modifier = Modifier,
     imageShape: Shape = RectangleShape,
-    backgroundColor: Color = Color.Black,
+    backgroundColor: Color = VideoThumbnailBackgroundColor,
     contentScale: ContentScale = ContentScale.Fit,
     imageContentDescription: String? = null,
     duration: String? = null,

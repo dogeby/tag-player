@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
-import com.dogeby.tagplayer.ui.theme.VideoListThumbnailBackgroundColor
 import com.dogeby.tagplayer.ui.videolist.CompactVideoList
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -85,7 +84,6 @@ fun TagDetailCard(
                                 height = thumbnailSize.height,
                                 modifier = Modifier.fillMaxWidth().aspectRatio(16 / 9f),
                                 imageShape = RoundedCornerShape(0, 0, 4, 4),
-                                backgroundColor = VideoListThumbnailBackgroundColor,
                                 contentScale = ContentScale.FillHeight,
                             )
                         }
@@ -257,7 +255,6 @@ private fun ExpandedTagDetailCardHeader(
                         .width(dimensionResource(id = R.dimen.tagdetailcard_expanded_header_thumbnail_width))
                         .aspectRatio(16 / 9f),
                     imageShape = RoundedCornerShape(0, 0, 4, 4),
-                    backgroundColor = VideoListThumbnailBackgroundColor,
                     contentScale = ContentScale.FillHeight,
                 )
             }

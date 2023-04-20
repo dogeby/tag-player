@@ -45,7 +45,6 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoTag
 import com.dogeby.tagplayer.ui.component.VideoThumbnail
-import com.dogeby.tagplayer.ui.theme.VideoListThumbnailBackgroundColor
 
 @Composable
 private fun VideoListUpdate(
@@ -318,7 +317,6 @@ private fun VideoListVideoThumbnail(
         height = integerResource(id = R.integer.videolist_video_thumbnail_height),
         modifier = modifier.aspectRatio(16 / 9f),
         imageShape = MaterialTheme.shapes.small,
-        backgroundColor = VideoListThumbnailBackgroundColor,
         contentScale = ContentScale.FillHeight,
         duration = duration,
         durationShape = MaterialTheme.shapes.small,

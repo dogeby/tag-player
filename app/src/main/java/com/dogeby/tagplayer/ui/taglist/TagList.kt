@@ -3,7 +3,7 @@ package com.dogeby.tagplayer.ui.taglist
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -71,7 +71,7 @@ fun TagListItem(
                 height = thumbnailSize.height,
                 backgroundColor = VideoListThumbnailBackgroundColor,
                 contentScale = ContentScale.FillHeight,
-                modifier = Modifier.heightIn(max = thumbnailSize.height)
+                modifier = Modifier.aspectRatio(16 / 9f)
             )
         }
         Column(

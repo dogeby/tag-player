@@ -79,6 +79,7 @@ fun TagDetailCard(
                                 uri = videoItems().first().uri,
                                 modifier = Modifier.fillMaxWidth().aspectRatio(16 / 9f),
                                 imageShape = RoundedCornerShape(0, 0, 4, 4),
+                                applyContentBasedColorToBackgroundColor = true,
                                 contentScale = ContentScale.FillHeight,
                             )
                         }
@@ -248,6 +249,7 @@ private fun ExpandedTagDetailCardHeader(
                         .width(dimensionResource(id = R.dimen.tagdetailcard_expanded_header_thumbnail_width))
                         .aspectRatio(16 / 9f),
                     imageShape = RoundedCornerShape(0, 0, 4, 4),
+                    applyContentBasedColorToBackgroundColor = true,
                     contentScale = ContentScale.FillHeight,
                 )
             }

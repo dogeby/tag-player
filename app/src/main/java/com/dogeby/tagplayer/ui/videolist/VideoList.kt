@@ -315,6 +315,7 @@ private fun VideoListVideoThumbnail(
         uri = uri,
         modifier = modifier.aspectRatio(16 / 9f),
         imageShape = MaterialTheme.shapes.small,
+        applyContentBasedColorToBackgroundColor = true,
         contentScale = ContentScale.FillHeight,
         duration = duration,
         durationShape = MaterialTheme.shapes.small,

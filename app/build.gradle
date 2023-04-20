@@ -116,6 +116,9 @@ dependencies {
     //play services open source licenses
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
     implementation "androidx.appcompat:appcompat:1.6.1"
+
+    //palette api
+    implementation "androidx.palette:palette-ktx:1.0.0"
 }
 
 kapt {

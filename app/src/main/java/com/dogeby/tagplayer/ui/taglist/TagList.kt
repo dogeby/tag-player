@@ -72,8 +72,9 @@ fun TagListItem(
                 uri = tagItem.videoItems.first().uri,
                 width = thumbnailSize.width,
                 height = thumbnailSize.height,
+                modifier = Modifier.aspectRatio(16 / 9f),
+                applyContentBasedColorToBackgroundColor = true,
                 contentScale = ContentScale.FillHeight,
-                modifier = Modifier.aspectRatio(16 / 9f)
             )
         }
         Column(

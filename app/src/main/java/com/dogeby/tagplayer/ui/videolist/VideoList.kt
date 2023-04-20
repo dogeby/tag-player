@@ -313,8 +313,6 @@ private fun VideoListVideoThumbnail(
 ) {
     VideoThumbnail(
         uri = uri,
-        width = integerResource(id = R.integer.videolist_video_thumbnail_width),
-        height = integerResource(id = R.integer.videolist_video_thumbnail_height),
         modifier = modifier.aspectRatio(16 / 9f),
         imageShape = MaterialTheme.shapes.small,
         contentScale = ContentScale.FillHeight,

@@ -77,9 +77,9 @@ fun VideoThumbnail(
 @Composable
 fun VideoThumbnail(
     uri: String,
-    width: Dp,
-    height: Dp,
     modifier: Modifier = Modifier,
+    width: Dp = dimensionResource(id = R.dimen.videoSmallThumbnail_width),
+    height: Dp = dimensionResource(id = R.dimen.videoSmallThumbnail_height),
     imageShape: Shape = RectangleShape,
     backgroundColor: Color = VideoThumbnailBackgroundColor,
     contentScale: ContentScale = ContentScale.Fit,

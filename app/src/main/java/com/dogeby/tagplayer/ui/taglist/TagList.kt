@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,10 +34,10 @@ fun TagList(
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(minSize = 165.dp),
+        columns = StaggeredGridCells.Adaptive(dimensionResource(id = R.dimen.tagListItem_Width)),
         modifier = modifier,
         verticalItemSpacing = 4.dp,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(
             items = tagItems,
@@ -44,7 +45,10 @@ fun TagList(
         ) { tagItem ->
             TagListItem(
                 tagItem = tagItem,
-                thumbnailSize = DpSize(165.dp, 100.dp),
+                thumbnailSize = DpSize(
+                    dimensionResource(id = R.dimen.videoSmallThumbnail_width),
+                    dimensionResource(id = R.dimen.videoSmallThumbnail_height)
+                ),
                 onClick = onTagItemClick,
             )
         }

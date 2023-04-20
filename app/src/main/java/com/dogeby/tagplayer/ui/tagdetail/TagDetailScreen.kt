@@ -20,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.domain.video.VideoItem
@@ -147,7 +146,6 @@ fun TagDetailScreen(
                         TagDetailCard(
                             tagName = { tagDetailUiState.tagName },
                             videoItems = { tagDetailUiState.videoItems },
-                            thumbnailSize = DpSize(165.dp, 100.dp),
                             onPlayButtonClick = onNavigateToPlayer,
                             onEditButtonClick = { onTagNameEditDialogVisibilitySet(true) },
                             onDeleteButtonClick = {

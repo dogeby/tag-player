@@ -62,4 +62,4 @@ val PlayerProgressBarTrackColor = Color.Gray.copy(alpha = 0.1f)
 val PlayerControllerBackgroundColor = Color.Transparent
 val PlayerControllerOnBackgroundColor = Color.White
 
-val VideoListThumbnailBackgroundColor = Color(0xFFEBEBEB)
+val VideoThumbnailBackgroundColor = Color(0xFFEBEBEB)

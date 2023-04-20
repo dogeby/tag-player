@@ -32,4 +32,9 @@
 
     <dimen name="tagdetailcard_expanded_width">660dp</dimen>
     <dimen name="tagdetailcard_expanded_header_thumbnail_width">320dp</dimen>
+
+    <dimen name="videoSmallThumbnail_width">320dp</dimen>
+    <dimen name="videoSmallThumbnail_height">180dp</dimen>
+
+    <dimen name="tagListItem_Width">165dp</dimen>
 </resources>

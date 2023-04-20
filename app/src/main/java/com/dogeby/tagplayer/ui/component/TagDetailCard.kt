@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,11 +33,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
@@ -50,7 +47,6 @@ import com.dogeby.tagplayer.ui.videolist.CompactVideoList
 fun TagDetailCard(
     tagName: () -> String,
     videoItems: () -> List<VideoItem>,
-    thumbnailSize: DpSize,
     onPlayButtonClick: (List<Long>, Long) -> Unit,
     onEditButtonClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
@@ -81,11 +77,9 @@ fun TagDetailCard(
                         item {
                             VideoThumbnail(
                                 uri = videoItems().first().uri,
-                                width = thumbnailSize.width,
-                                height = thumbnailSize.height,
-                                modifier = Modifier.fillMaxHeight(0.3f),
+                                modifier = Modifier.fillMaxWidth().aspectRatio(16 / 9f),
                                 imageShape = RoundedCornerShape(0, 0, 4, 4),
-                                contentScale = ContentScale.Crop,
+                                contentScale = ContentScale.FillHeight,
                             )
                         }
                     }
@@ -250,13 +244,11 @@ private fun ExpandedTagDetailCardHeader(
             if (videoItems().isNotEmpty()) {
                 VideoThumbnail(
                     uri = videoItems().first().uri,
-                    width = integerResource(id = R.integer.videolist_video_thumbnail_width),
-                    height = integerResource(id = R.integer.videolist_video_thumbnail_height),
                     modifier = Modifier
                         .width(dimensionResource(id = R.dimen.tagdetailcard_expanded_header_thumbnail_width))
                         .aspectRatio(16 / 9f),
                     imageShape = RoundedCornerShape(0, 0, 4, 4),
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillHeight,
                 )
             }
             Column(
@@ -312,7 +304,6 @@ fun TagDetailCardPreview() {
         TagDetailCard(
             tagName = { "Tag Name" },
             videoItems = { emptyList() },
-            thumbnailSize = DpSize(165.dp, 100.dp),
             onPlayButtonClick = { _, _ -> },
             onEditButtonClick = {},
             onDeleteButtonClick = {},

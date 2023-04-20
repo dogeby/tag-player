@@ -45,7 +45,6 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoTag
 import com.dogeby.tagplayer.ui.component.VideoThumbnail
-import com.dogeby.tagplayer.ui.theme.VideoListThumbnailBackgroundColor
 
 @Composable
 private fun VideoListUpdate(
@@ -158,17 +157,9 @@ private fun CompactVideoCard(
             ),
     ) {
         Row {
-            VideoThumbnail(
+            VideoListVideoThumbnail(
                 uri = videoItem.uri,
-                width = integerResource(id = R.integer.videolist_video_thumbnail_width),
-                height = integerResource(id = R.integer.videolist_video_thumbnail_height),
-                modifier = Modifier.aspectRatio(16 / 9f),
-                imageShape = MaterialTheme.shapes.small,
-                backgroundColor = VideoListThumbnailBackgroundColor,
-                contentScale = ContentScale.Crop,
-                duration = videoItem.duration.toString(),
-                durationShape = MaterialTheme.shapes.small,
-                frameTimeMicrosecond = integerResource(id = R.integer.videolist_video_thumbnail_frameTimeMicrosecond).toLong(),
+                duration = videoItem.duration.toString()
             )
             Box(
                 modifier = Modifier
@@ -280,19 +271,10 @@ private fun ExpandedVideoCard(
                 onLongClick = { onLongClick(videoItem) },
             ),
     ) {
-        VideoThumbnail(
+        VideoListVideoThumbnail(
             uri = videoItem.uri,
-            width = integerResource(id = R.integer.videolist_video_thumbnail_width),
-            height = integerResource(id = R.integer.videolist_video_thumbnail_height),
-            modifier = Modifier.aspectRatio(16 / 9f),
-            imageShape = MaterialTheme.shapes.small,
-            backgroundColor = VideoListThumbnailBackgroundColor,
-            contentScale = ContentScale.Crop,
-            duration = videoItem.duration.toString(),
-            durationShape = MaterialTheme.shapes.small,
-            frameTimeMicrosecond = integerResource(id = R.integer.videolist_video_thumbnail_frameTimeMicrosecond).toLong(),
+            duration = videoItem.duration.toString()
         )
-
         Column(
             modifier = Modifier.padding(dimensionResource(id = R.dimen.videolist_video_item_info_padding)),
         ) {
@@ -321,4 +303,21 @@ private fun ExpandedVideoCard(
             }
         }
     }
+}
+
+@Composable
+private fun VideoListVideoThumbnail(
+    uri: String,
+    duration: String,
+    modifier: Modifier = Modifier,
+) {
+    VideoThumbnail(
+        uri = uri,
+        modifier = modifier.aspectRatio(16 / 9f),
+        imageShape = MaterialTheme.shapes.small,
+        contentScale = ContentScale.FillHeight,
+        duration = duration,
+        durationShape = MaterialTheme.shapes.small,
+        frameTimeMicrosecond = integerResource(id = R.integer.videolist_video_thumbnail_frameTimeMicrosecond).toLong(),
+    )
 }

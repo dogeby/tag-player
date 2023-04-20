@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -84,7 +83,7 @@ fun TagDetailCard(
                                 uri = videoItems().first().uri,
                                 width = thumbnailSize.width,
                                 height = thumbnailSize.height,
-                                modifier = Modifier.fillMaxHeight(0.3f),
+                                modifier = Modifier.fillMaxWidth().aspectRatio(16 / 9f),
                                 imageShape = RoundedCornerShape(0, 0, 4, 4),
                                 backgroundColor = VideoListThumbnailBackgroundColor,
                                 contentScale = ContentScale.FillHeight,

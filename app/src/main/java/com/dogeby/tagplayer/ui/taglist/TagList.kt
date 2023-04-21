@@ -3,17 +3,22 @@ package com.dogeby.tagplayer.ui.taglist
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -23,7 +28,11 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.tag.TagItem
+import com.dogeby.tagplayer.ui.component.RippleLoadingText
+import com.dogeby.tagplayer.ui.component.RippleLoadingVideoThumbnail
 import com.dogeby.tagplayer.ui.component.VideoThumbnail
+import com.dogeby.tagplayer.ui.component.rememberRippleLoadingEffectAlpha
+import com.dogeby.tagplayer.ui.theme.RippleLoadingColor
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -95,6 +104,68 @@ fun TagListItem(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun RippleLoadingTagList(
+    count: Int,
+    modifier: Modifier = Modifier,
+    containerRippleColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentRippleColor: Color = RippleLoadingColor,
+    rippleAlpha: Float = rememberRippleLoadingEffectAlpha(),
+) {
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(dimensionResource(id = R.dimen.tagListItem_Width)),
+        modifier = modifier,
+        verticalItemSpacing = 4.dp,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        userScrollEnabled = false,
+    ) {
+        items(count) {
+            RippleLoadingTagListItem(
+                containerRippleColor = containerRippleColor,
+                contentRippleColor = contentRippleColor,
+                rippleAlpha = rippleAlpha,
+            )
+        }
+    }
+}
+
+@Composable
+fun RippleLoadingTagListItem(
+    modifier: Modifier = Modifier,
+    containerRippleColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentRippleColor: Color = RippleLoadingColor,
+    rippleAlpha: Float = rememberRippleLoadingEffectAlpha(),
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = containerRippleColor.copy(alpha = rippleAlpha)
+        ),
+    ) {
+        RippleLoadingVideoThumbnail(
+            modifier = Modifier
+                .aspectRatio(16 / 9f),
+            alpha = rippleAlpha,
+        )
+        Column(
+            modifier = Modifier.padding(8.dp),
+        ) {
+            RippleLoadingText(
+                modifier = Modifier.fillMaxWidth(0.8f),
+                color = contentRippleColor,
+                textStyle = MaterialTheme.typography.bodyLarge,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            RippleLoadingText(
+                modifier = Modifier.fillMaxWidth(0.3f),
+                color = contentRippleColor,
+                textStyle = MaterialTheme.typography.labelSmall,
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun TagListPreview() {
@@ -119,5 +190,21 @@ private fun TagListItemPreview() {
             thumbnailSize = DpSize(165.dp, 100.dp),
             onClick = {},
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RippleLoadingTagListPreview() {
+    MaterialTheme {
+        RippleLoadingTagList(4)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RippleLoadingTagListItemPreview() {
+    MaterialTheme {
+        RippleLoadingTagListItem()
     }
 }

@@ -236,6 +236,7 @@ private fun CompactRippleLoadingVideoCard(
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.videolist_video_item_info_padding)),
                 ) {
                     RippleLoadingText(
+                        modifier = Modifier.fillMaxWidth(0.8f),
                         color = contentRippleColor,
                         rippleAlpha = rippleAlpha,
                     )

@@ -63,3 +63,5 @@ val PlayerControllerBackgroundColor = Color.Transparent
 val PlayerControllerOnBackgroundColor = Color.White
 
 val VideoThumbnailBackgroundColor = Color(0xFFEBEBEB)
+
+val RippleLoadingColor = Color.LightGray

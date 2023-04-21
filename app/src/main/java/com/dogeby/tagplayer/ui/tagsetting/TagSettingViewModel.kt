@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -95,6 +96,9 @@ class TagSettingViewModel @Inject constructor(
                 keyword = keyword,
                 isShowTagCreateText = keyword.isNotBlank() && foundTags.find { it.name == keyword } == null,
             )
+        }
+        .onStart {
+            TagSearchResultUiState.Loading
         }
         .stateIn(
             scope = viewModelScope,

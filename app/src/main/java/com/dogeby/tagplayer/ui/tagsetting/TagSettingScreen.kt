@@ -1,11 +1,14 @@
 package com.dogeby.tagplayer.ui.tagsetting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,18 +27,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.data.tag.Tag
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
+import com.dogeby.tagplayer.ui.component.RippleLoadingVideoTag
 import com.dogeby.tagplayer.ui.component.TagInputChipTextField
 import com.dogeby.tagplayer.ui.component.TagManageMenuMoreHorizButton
 import com.dogeby.tagplayer.ui.component.TagNameEditDialog
 import com.dogeby.tagplayer.ui.component.VideoTag
 import com.dogeby.tagplayer.ui.component.clearFocusWhenTap
+import com.dogeby.tagplayer.ui.component.rememberRippleLoadingEffectAlpha
+import com.dogeby.tagplayer.ui.theme.RippleLoadingColor
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
@@ -153,7 +162,15 @@ fun TagSettingScreen(
                         )
                     }
                 }
-                TagSearchResultUiState.Loading -> {}
+                TagSearchResultUiState.Loading -> {
+                    items(7) {
+                        RippleLoadingTagSettingSelectionItem(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(dimensionResource(id = R.dimen.padding_small)),
+                        )
+                    }
+                }
             }
         }
     }
@@ -207,6 +224,34 @@ fun TagSettingSelectionItem(
         TagManageMenuMoreHorizButton(
             onEditButtonClick = { onEditButtonClick(tag.id, tag.name) },
             onDeleteButtonClick = { onDeleteButtonClick(tag.id) },
+        )
+    }
+}
+
+@Composable
+fun RippleLoadingTagSettingSelectionItem(
+    modifier: Modifier = Modifier,
+    rippleColor: Color = RippleLoadingColor,
+    rippleAlpha: Float = rememberRippleLoadingEffectAlpha(),
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        RippleLoadingVideoTag(
+            modifier = Modifier
+                .fillMaxWidth(0.3f)
+                .align(Alignment.CenterVertically),
+            color = rippleColor,
+            shape = MaterialTheme.shapes.extraSmall,
+            alpha = rippleAlpha,
+            textStyle = MaterialTheme.typography.bodyLarge,
+        )
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .clip(MaterialTheme.shapes.extraSmall)
+                .background(color = rippleColor.copy(alpha = rippleAlpha))
         )
     }
 }
@@ -267,5 +312,17 @@ fun TagSettingScreenPreview() {
 fun TagCreateTextPreview() {
     TagPlayerTheme {
         TagCreateText(keyword = "Tag")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RippleLoadingTagSettingSelectionItemPreview() {
+    TagPlayerTheme {
+        RippleLoadingTagSettingSelectionItem(
+            modifier = Modifier
+                .padding(dimensionResource(id = R.dimen.padding_small))
+                .fillMaxWidth(),
+        )
     }
 }

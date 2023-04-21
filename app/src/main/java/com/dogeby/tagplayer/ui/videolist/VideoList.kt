@@ -181,8 +181,8 @@ fun CompactRippleLoadingVideoList(
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     header: LazyListScope.() -> Unit = {},
     footer: LazyListScope.() -> Unit = {},
-    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    contentColor: Color = RippleLoadingColor,
+    containerRippleColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentRippleColor: Color = RippleLoadingColor,
     rippleAlpha: Float = rememberRippleLoadingEffectAlpha(),
 ) {
     LazyColumn(
@@ -196,8 +196,8 @@ fun CompactRippleLoadingVideoList(
         items(count) {
             CompactRippleLoadingVideoCard(
                 modifier = Modifier.padding(videoItemContentPadding),
-                containerColor = containerColor,
-                contentColor = contentColor,
+                containerRippleColor = containerRippleColor,
+                contentRippleColor = contentRippleColor,
                 rippleAlpha = rippleAlpha,
             )
         }
@@ -208,8 +208,8 @@ fun CompactRippleLoadingVideoList(
 @Composable
 private fun CompactRippleLoadingVideoCard(
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    contentColor: Color = RippleLoadingColor,
+    containerRippleColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentRippleColor: Color = RippleLoadingColor,
     rippleAlpha: Float = rememberRippleLoadingEffectAlpha(),
 ) {
     Card(
@@ -218,7 +218,7 @@ private fun CompactRippleLoadingVideoCard(
             .height(dimensionResource(id = R.dimen.videolist_compact_video_item_height))
             .clip(CardDefaults.shape),
         colors = CardDefaults.cardColors(
-            containerColor = containerColor.copy(alpha = rippleAlpha)
+            containerColor = containerRippleColor.copy(alpha = rippleAlpha)
         ),
     ) {
         Row {
@@ -236,7 +236,7 @@ private fun CompactRippleLoadingVideoCard(
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.videolist_video_item_info_padding)),
                 ) {
                     RippleLoadingText(
-                        color = contentColor,
+                        color = contentRippleColor,
                         rippleAlpha = rippleAlpha,
                     )
 
@@ -248,7 +248,7 @@ private fun CompactRippleLoadingVideoCard(
                         repeat(2) {
                             RippleLoadingVideoTag(
                                 modifier = tagListItemModifier,
-                                color = contentColor,
+                                color = contentRippleColor,
                                 alpha = rippleAlpha,
                             )
                         }
@@ -256,7 +256,7 @@ private fun CompactRippleLoadingVideoCard(
                     Row(modifier = Modifier.padding(top = 4.dp)) {
                         RippleLoadingVideoTag(
                             modifier = tagListItemModifier,
-                            color = contentColor,
+                            color = contentRippleColor,
                             alpha = rippleAlpha,
                         )
                     }

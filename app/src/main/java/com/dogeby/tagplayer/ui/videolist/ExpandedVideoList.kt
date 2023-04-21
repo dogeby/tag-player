@@ -160,8 +160,8 @@ fun ExpandedRippleLoadingVideoList(
     verticalItemSpacing: Dp = dimensionResource(id = R.dimen.padding_small),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
-    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    contentColor: Color = RippleLoadingColor,
+    containerRippleColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentRippleColor: Color = RippleLoadingColor,
     rippleAlpha: Float = rememberRippleLoadingEffectAlpha(),
 ) {
     LazyVerticalStaggeredGrid(
@@ -174,8 +174,8 @@ fun ExpandedRippleLoadingVideoList(
         items(itemCount) {
             ExpandedRippleLoadingVideoCard(
                 modifier = Modifier.padding(videoItemContentPadding),
-                containerColor = containerColor,
-                contentColor = contentColor,
+                containerRippleColor = containerRippleColor,
+                contentRippleColor = contentRippleColor,
                 rippleAlpha = rippleAlpha,
             )
         }
@@ -185,8 +185,8 @@ fun ExpandedRippleLoadingVideoList(
 @Composable
 private fun ExpandedRippleLoadingVideoCard(
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
-    contentColor: Color = RippleLoadingColor,
+    containerRippleColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentRippleColor: Color = RippleLoadingColor,
     rippleAlpha: Float = rememberRippleLoadingEffectAlpha(),
 ) {
     Card(
@@ -194,7 +194,7 @@ private fun ExpandedRippleLoadingVideoCard(
             .aspectRatio(16 / (LocalConfiguration.current.fontScale * 10 + 6f))
             .clip(CardDefaults.shape),
         colors = CardDefaults.cardColors(
-            containerColor = containerColor.copy(alpha = rippleAlpha)
+            containerColor = containerRippleColor.copy(alpha = rippleAlpha)
         ),
     ) {
         RippleLoadingVideoThumbnail(
@@ -206,7 +206,7 @@ private fun ExpandedRippleLoadingVideoCard(
             modifier = Modifier.padding(dimensionResource(id = R.dimen.videolist_video_item_info_padding)),
         ) {
             RippleLoadingText(
-                color = contentColor,
+                color = contentRippleColor,
                 rippleAlpha = rippleAlpha,
             )
 
@@ -218,7 +218,7 @@ private fun ExpandedRippleLoadingVideoCard(
                 repeat(2) {
                     RippleLoadingVideoTag(
                         modifier = tagListItemModifier,
-                        color = contentColor,
+                        color = contentRippleColor,
                         alpha = rippleAlpha,
                     )
                 }
@@ -226,7 +226,7 @@ private fun ExpandedRippleLoadingVideoCard(
             Row(modifier = Modifier.padding(top = 4.dp)) {
                 RippleLoadingVideoTag(
                     modifier = tagListItemModifier,
-                    color = contentColor,
+                    color = contentRippleColor,
                     alpha = rippleAlpha,
                 )
             }

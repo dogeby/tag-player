@@ -1,11 +1,13 @@
 package com.dogeby.tagplayer.ui.videolist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -24,15 +26,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
+import com.dogeby.tagplayer.ui.component.RippleLoadingVideoTag
+import com.dogeby.tagplayer.ui.component.RippleLoadingVideoThumbnail
 import com.dogeby.tagplayer.ui.component.VideoTag
+import com.dogeby.tagplayer.ui.component.rememberRippleLoadingEffectAlpha
+import com.dogeby.tagplayer.ui.theme.RippleLoadingColor
+import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -140,5 +149,106 @@ private fun ExpandedVideoCard(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ExpandedRippleLoadingVideoList(
+    itemCount: Int,
+    modifier: Modifier = Modifier,
+    verticalItemSpacing: Dp = dimensionResource(id = R.dimen.padding_small),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
+    videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
+    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor: Color = RippleLoadingColor,
+    rippleAlpha: Float = rememberRippleLoadingEffectAlpha(),
+) {
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Adaptive(dimensionResource(id = R.dimen.videolist_expanded_video_item_width)),
+        modifier = modifier,
+        verticalItemSpacing = verticalItemSpacing,
+        horizontalArrangement = horizontalArrangement,
+        userScrollEnabled = false,
+    ) {
+        items(itemCount) {
+            ExpandedRippleLoadingVideoCard(
+                modifier = Modifier.padding(videoItemContentPadding),
+                containerColor = containerColor,
+                contentColor = contentColor,
+                rippleAlpha = rippleAlpha,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ExpandedRippleLoadingVideoCard(
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor: Color = RippleLoadingColor,
+    rippleAlpha: Float = rememberRippleLoadingEffectAlpha(),
+) {
+    Card(
+        modifier = modifier
+            .aspectRatio(16 / (LocalConfiguration.current.fontScale * 10 + 6f))
+            .clip(CardDefaults.shape),
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor.copy(alpha = rippleAlpha)
+        ),
+    ) {
+        RippleLoadingVideoThumbnail(
+            modifier = Modifier.aspectRatio(16 / 9f),
+            shape = MaterialTheme.shapes.small,
+            alpha = rippleAlpha,
+        )
+        Column(
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.videolist_video_item_info_padding)),
+        ) {
+            Text(
+                text = "",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.small)
+                    .background(contentColor.copy(alpha = rippleAlpha))
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            val tagListItemModifier =
+                Modifier.padding(horizontal = dimensionResource(id = R.dimen.videolist_video_tag_list_item_horizontal_padding))
+            Row {
+                repeat(2) {
+                    RippleLoadingVideoTag(
+                        modifier = tagListItemModifier,
+                        color = contentColor,
+                        alpha = rippleAlpha,
+                    )
+                }
+            }
+            Row(modifier = Modifier.padding(top = 4.dp)) {
+                RippleLoadingVideoTag(
+                    modifier = tagListItemModifier,
+                    color = contentColor,
+                    alpha = rippleAlpha,
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ExpandedRippleLoadingVideoCardPreview() {
+    TagPlayerTheme {
+        ExpandedRippleLoadingVideoCard()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ExpandedRippleLoadingVideoListPreview() {
+    TagPlayerTheme {
+        ExpandedRippleLoadingVideoList(3)
     }
 }

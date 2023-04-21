@@ -17,7 +17,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -138,7 +137,6 @@ fun VideoListScreen(
         mutableStateOf(false)
     }
 
-    var progressIndicatorState by rememberSaveable { mutableStateOf(videoListUiState is VideoListUiState.Loading) }
     var isShowBottomAppBarIconAnimation by remember { mutableStateOf(false) }
     var bottomBarShown by rememberSaveable { mutableStateOf(true) }.apply {
         if (isSelectMode) this.value = isSelectMode
@@ -203,20 +201,32 @@ fun VideoListScreen(
                 isShowBottomAppBarIconAnimation = true
             },
         ) { contentPadding ->
-            if (progressIndicatorState) {
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(contentPadding),
-                )
-            }
+            val windowInfo = rememberWindowInfo()
 
             when (videoListUiState) {
                 VideoListUiState.Loading -> {
-                    progressIndicatorState = true
+
+                    when (windowInfo.screenWidthInfo) {
+                        WindowInfo.WindowType.Compact -> {
+                            CompactRippleLoadingVideoList(
+                                count = 7,
+                                modifier = Modifier.padding(contentPadding),
+                                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                            )
+                        }
+                        else -> {
+                            ExpandedRippleLoadingVideoList(
+                                itemCount = 9,
+                                modifier = Modifier
+                                    .padding(contentPadding)
+                                    .padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
+                                verticalItemSpacing = 0.dp,
+                                videoItemContentPadding = PaddingValues(vertical = dimensionResource(id = R.dimen.padding_small) / 2),
+                            )
+                        }
+                    }
                 }
                 VideoListUiState.Empty -> {
-                    progressIndicatorState = false
                     MaxSizeCenterText(
                         text = stringResource(id = R.string.videoList_listEmpty),
                         modifier = modifier.padding(contentPadding)
@@ -231,9 +241,6 @@ fun VideoListScreen(
                             onConfirmButtonClick = { isShowVideoInfoDialog = false },
                         )
                     }
-                    progressIndicatorState = false
-
-                    val windowInfo = rememberWindowInfo()
                     when (windowInfo.screenWidthInfo) {
                         WindowInfo.WindowType.Compact -> {
                             CompactVideoList(
@@ -254,7 +261,9 @@ fun VideoListScreen(
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
                                 onNavigateToPlayer = onNavigateToPlayer,
-                                modifier = Modifier.padding(contentPadding).padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
+                                modifier = Modifier
+                                    .padding(contentPadding)
+                                    .padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
                                 verticalItemSpacing = 0.dp,
                                 videoItemContentPadding = PaddingValues(vertical = dimensionResource(id = R.dimen.padding_small) / 2),
                                 setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,

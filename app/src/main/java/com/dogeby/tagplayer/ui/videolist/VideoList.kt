@@ -2,7 +2,6 @@ package com.dogeby.tagplayer.ui.videolist
 
 import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,6 +40,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
+import com.dogeby.tagplayer.ui.component.RippleLoadingText
 import com.dogeby.tagplayer.ui.component.RippleLoadingVideoTag
 import com.dogeby.tagplayer.ui.component.RippleLoadingVideoThumbnail
 import com.dogeby.tagplayer.ui.component.VideoTag
@@ -235,12 +235,9 @@ private fun CompactRippleLoadingVideoCard(
                 Column(
                     modifier = Modifier.padding(dimensionResource(id = R.dimen.videolist_video_item_info_padding)),
                 ) {
-                    Text(
-                        text = "",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(MaterialTheme.shapes.small)
-                            .background(contentColor.copy(alpha = rippleAlpha))
+                    RippleLoadingText(
+                        color = contentColor,
+                        rippleAlpha = rippleAlpha,
                     )
 
                     Spacer(modifier = Modifier.weight(1f))

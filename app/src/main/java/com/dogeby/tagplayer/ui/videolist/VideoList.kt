@@ -19,9 +19,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -33,14 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -53,34 +48,6 @@ import com.dogeby.tagplayer.ui.component.VideoThumbnail
 import com.dogeby.tagplayer.ui.component.rememberRippleLoadingEffectAlpha
 import com.dogeby.tagplayer.ui.theme.RippleLoadingColor
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
-
-@Composable
-private fun VideoListUpdate(
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null,
-) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && setTopResumedActivityChangedListener != null) {
-
-            setTopResumedActivityChangedListener { isTopResumedActivity: Boolean ->
-                if (isTopResumedActivity && updateVideo != null) updateVideo()
-            }
-            return@DisposableEffect onDispose {
-                setTopResumedActivityChangedListener(null)
-            }
-        }
-
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME && updateVideo != null) updateVideo()
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-}
 
 @Composable
 fun CompactVideoList(
@@ -204,133 +171,6 @@ private fun CompactVideoCard(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun ExpandedVideoList(
-    videoItems: List<VideoItem>,
-    isSelectMode: () -> Boolean,
-    isSelectedVideoItems: Map<Long, Boolean>,
-    onNavigateToPlayer: (List<Long>, Long) -> Unit,
-    modifier: Modifier = Modifier,
-    verticalItemSpacing: Dp = dimensionResource(id = R.dimen.padding_small),
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
-    videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
-    onToggleVideoSelection: (VideoItem) -> Unit = {},
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null,
-) {
-    VideoListUpdate(setTopResumedActivityChangedListener, updateVideo)
-
-    if (videoItems.isEmpty()) {
-        Box(
-            modifier = modifier
-                .fillMaxHeight()
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(text = stringResource(id = R.string.videoList_listEmpty))
-        }
-        return
-    }
-
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(dimensionResource(id = R.dimen.videolist_expanded_video_item_width)),
-        modifier = modifier,
-        verticalItemSpacing = verticalItemSpacing,
-        horizontalArrangement = horizontalArrangement,
-    ) {
-        items(videoItems) { item ->
-            ExpandedVideoCard(
-                videoItem = item,
-                isSelected = isSelectedVideoItems.getOrDefault(item.id, false),
-                onClick = { videoItem ->
-                    if (isSelectMode()) {
-                        onToggleVideoSelection(videoItem)
-                        return@ExpandedVideoCard
-                    }
-                    onNavigateToPlayer(videoItems.map { it.id }, videoItem.id)
-                },
-                onLongClick = onToggleVideoSelection,
-                modifier = Modifier.padding(videoItemContentPadding),
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun ExpandedVideoCard(
-    videoItem: VideoItem,
-    isSelected: Boolean,
-    onClick: (VideoItem) -> Unit,
-    onLongClick: (VideoItem) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer
-            else MaterialTheme.colorScheme.surfaceVariant,
-        ),
-        modifier = modifier
-            .aspectRatio(16 / (LocalConfiguration.current.fontScale * 10 + 6f))
-            .clip(CardDefaults.shape)
-            .combinedClickable(
-                onClick = { onClick(videoItem) },
-                onLongClick = { onLongClick(videoItem) },
-            ),
-    ) {
-        VideoListVideoThumbnail(
-            uri = videoItem.uri,
-            duration = videoItem.duration.toString()
-        )
-        Column(
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.videolist_video_item_info_padding)),
-        ) {
-            Text(text = videoItem.name, maxLines = 2, overflow = TextOverflow.Ellipsis)
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            val tagListItemHorizontalPadding = Modifier.padding(horizontal = dimensionResource(id = R.dimen.videolist_video_tag_list_item_horizontal_padding))
-            LazyRow {
-                items(videoItem.parentDirectories) {
-                    VideoTag(
-                        name = it,
-                        color = MaterialTheme.colorScheme.secondary,
-                        modifier = tagListItemHorizontalPadding,
-                    )
-                }
-            }
-            LazyRow(modifier = Modifier.padding(top = 4.dp)) {
-                items(videoItem.tags) {
-                    VideoTag(
-                        name = it.name,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        modifier = tagListItemHorizontalPadding,
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun VideoListVideoThumbnail(
-    uri: String,
-    duration: String,
-    modifier: Modifier = Modifier,
-) {
-    VideoThumbnail(
-        uri = uri,
-        modifier = modifier.aspectRatio(16 / 9f),
-        imageShape = MaterialTheme.shapes.small,
-        applyContentBasedColorToBackgroundColor = true,
-        contentScale = ContentScale.FillHeight,
-        duration = duration,
-        durationShape = MaterialTheme.shapes.small,
-        frameTimeMicrosecond = integerResource(id = R.integer.videolist_video_thumbnail_frameTimeMicrosecond).toLong(),
-    )
-}
-
 @Composable
 fun CompactRippleLoadingVideoList(
     count: Int,
@@ -427,6 +267,52 @@ private fun CompactRippleLoadingVideoCard(
             }
         }
     }
+}
+
+@Composable
+fun VideoListUpdate(
+    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
+    updateVideo: (() -> Unit)? = null,
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && setTopResumedActivityChangedListener != null) {
+
+            setTopResumedActivityChangedListener { isTopResumedActivity: Boolean ->
+                if (isTopResumedActivity && updateVideo != null) updateVideo()
+            }
+            return@DisposableEffect onDispose {
+                setTopResumedActivityChangedListener(null)
+            }
+        }
+
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME && updateVideo != null) updateVideo()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+}
+
+@Composable
+fun VideoListVideoThumbnail(
+    uri: String,
+    duration: String,
+    modifier: Modifier = Modifier,
+) {
+    VideoThumbnail(
+        uri = uri,
+        modifier = modifier.aspectRatio(16 / 9f),
+        imageShape = MaterialTheme.shapes.small,
+        applyContentBasedColorToBackgroundColor = true,
+        contentScale = ContentScale.FillHeight,
+        duration = duration,
+        durationShape = MaterialTheme.shapes.small,
+        frameTimeMicrosecond = integerResource(id = R.integer.videolist_video_thumbnail_frameTimeMicrosecond).toLong(),
+    )
 }
 
 @Preview(showBackground = true)

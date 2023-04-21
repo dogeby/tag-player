@@ -86,24 +86,29 @@ fun AppThemeModeSettingDialog(
                     text = stringResource(id = R.string.appPreferences_theme_title),
                     style = MaterialTheme.typography.headlineSmall,
                 )
+
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_medium)))
+
                 TextWithRadioButton(
                     text = stringResource(id = R.string.appPreferences_theme_body_systemSetting),
                     selected = { currentAppThemeMode() == AppThemeMode.SYSTEM_SETTING },
                     onClick = { onSetAppThemeMode(AppThemeMode.SYSTEM_SETTING) },
                     modifier = Modifier.fillMaxWidth(),
+                    isRowClickable = true,
                 )
                 TextWithRadioButton(
                     text = stringResource(id = R.string.appPreferences_theme_body_light),
                     selected = { currentAppThemeMode() == AppThemeMode.LIGHT },
                     onClick = { onSetAppThemeMode(AppThemeMode.LIGHT) },
                     modifier = Modifier.fillMaxWidth(),
+                    isRowClickable = true,
                 )
                 TextWithRadioButton(
                     text = stringResource(id = R.string.appPreferences_theme_body_dark),
                     selected = { currentAppThemeMode() == AppThemeMode.DARK },
                     onClick = { onSetAppThemeMode(AppThemeMode.DARK) },
                     modifier = Modifier.fillMaxWidth(),
+                    isRowClickable = true,
                 )
             }
         }

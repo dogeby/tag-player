@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -70,11 +71,15 @@ class VideoFilterViewModel @Inject constructor(
         val tagFiltersFilteredByQuery = tagFilters.filter { it.tagName.contains(query) }
 
         createVideoFilterUiState(directoryFiltersFilteredByQuery, tagFiltersFilteredByQuery)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = VideoFilterUiState.Loading,
-    )
+    }
+        .onStart {
+            VideoFilterUiState.Loading
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = VideoFilterUiState.Loading,
+        )
 
     private fun createVideoFilterUiState(
         directoryFilters: List<VideoDirectoryFilterItemUiState>,

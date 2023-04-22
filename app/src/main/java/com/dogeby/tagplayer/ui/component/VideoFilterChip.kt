@@ -2,15 +2,25 @@ package com.dogeby.tagplayer.ui.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import com.dogeby.tagplayer.R
+import com.dogeby.tagplayer.ui.theme.RippleLoadingColor
+import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,4 +46,41 @@ fun VideoFilterChip(
             }
         },
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RippleLoadingVideoFilterChip(
+    modifier: Modifier = Modifier,
+    color: Color = RippleLoadingColor,
+    shape: Shape = FilterChipDefaults.shape,
+    alpha: Float = rememberRippleLoadingEffectAlpha(),
+    textStyle: TextStyle = LocalTextStyle.current,
+) {
+    val rippleColor = color.copy(alpha = alpha)
+    FilterChip(
+        selected = false,
+        onClick = {},
+        label = {
+            Text(
+                text = "",
+                style = textStyle,
+            )
+        },
+        modifier = modifier.widthIn(min = dimensionResource(id = R.dimen.rippleLoadingVideoFilterChip_minWidth)),
+        enabled = false,
+        shape = shape,
+        colors = FilterChipDefaults.filterChipColors(
+            disabledContainerColor = rippleColor,
+        ),
+        border = FilterChipDefaults.filterChipBorder(disabledBorderColor = rippleColor),
+    )
+}
+
+@Preview
+@Composable
+fun RippleLoadingVideoFilterChipPreview() {
+    TagPlayerTheme {
+        RippleLoadingVideoFilterChip()
+    }
 }

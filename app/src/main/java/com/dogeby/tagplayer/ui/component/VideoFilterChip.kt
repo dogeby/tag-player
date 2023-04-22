@@ -57,6 +57,7 @@ fun RippleLoadingVideoFilterChip(
     alpha: Float = rememberRippleLoadingEffectAlpha(),
     textStyle: TextStyle = LocalTextStyle.current,
 ) {
+    val rippleColor = color.copy(alpha = alpha)
     FilterChip(
         selected = false,
         onClick = {},
@@ -69,7 +70,10 @@ fun RippleLoadingVideoFilterChip(
         modifier = modifier.widthIn(min = dimensionResource(id = R.dimen.rippleLoadingVideoFilterChip_minWidth)),
         enabled = false,
         shape = shape,
-        colors = FilterChipDefaults.filterChipColors(disabledContainerColor = color.copy(alpha = alpha)),
+        colors = FilterChipDefaults.filterChipColors(
+            disabledContainerColor = rippleColor,
+        ),
+        border = FilterChipDefaults.filterChipBorder(disabledBorderColor = rippleColor),
     )
 }
 

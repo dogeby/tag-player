@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -13,7 +12,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
@@ -107,10 +105,7 @@ fun VideoFilterScreen(
         ) {
             when (videoFilterUiState) {
                 VideoFilterUiState.Loading -> {
-                    LinearProgressIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                    )
+                    RippleLoadingVideoFilterScreen()
                 }
                 VideoFilterUiState.Empty -> {
                     MaxSizeCenterText(
@@ -139,6 +134,43 @@ fun VideoFilterScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun RippleLoadingVideoFilterScreen(
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier,
+        userScrollEnabled = false,
+    ) {
+        item {
+            RippleLoadingVideoFilterFlowRow(
+                filterTitleName = stringResource(id = R.string.folder),
+                itemCount = 7,
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_folder),
+                        contentDescription = null,
+                    )
+                }
+            )
+        }
+        item {
+            RippleLoadingVideoFilterFlowRow(
+                filterTitleName = stringResource(id = R.string.tag),
+                itemCount = 7,
+                modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_tag),
+                        contentDescription = null,
+                    )
+                }
+            )
         }
     }
 }

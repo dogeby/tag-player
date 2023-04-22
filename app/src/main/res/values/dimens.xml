@@ -37,4 +37,6 @@
     <dimen name="videoSmallThumbnail_height">180dp</dimen>
 
     <dimen name="tagListItem_Width">165dp</dimen>
+
+    <dimen name="rippleLoadingVideoFilterChip_minWidth">64dp</dimen>
 </resources>

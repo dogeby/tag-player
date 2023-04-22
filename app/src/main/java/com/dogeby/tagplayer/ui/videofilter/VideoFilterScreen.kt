@@ -1,15 +1,11 @@
 package com.dogeby.tagplayer.ui.videofilter
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -31,7 +27,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
@@ -156,16 +151,16 @@ fun DirectoryFilterList(
     onDirectoryFilterRemove: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        FilterTitle(
-            name = stringResource(id = R.string.folder),
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_folder),
-                    contentDescription = null,
-                )
-            },
-        )
+    VideoFilterFlowRow(
+        filterTitleName = stringResource(id = R.string.folder),
+        modifier = modifier,
+        leadingIcon = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_folder),
+                contentDescription = null,
+            )
+        },
+    ) {
         when (directoryFilterUiState) {
             VideoDirectoryFilterUiState.Empty -> {
                 Text(
@@ -198,16 +193,16 @@ fun TagFilterList(
     onTagFilterRemove: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        FilterTitle(
-            name = stringResource(id = R.string.tag),
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_tag),
-                    contentDescription = null,
-                )
-            },
-        )
+    VideoFilterFlowRow(
+        filterTitleName = stringResource(id = R.string.tag),
+        modifier = modifier,
+        leadingIcon = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_tag),
+                contentDescription = null,
+            )
+        },
+    ) {
         when (tagFilterUiState) {
             VideoTagFilterUiState.Empty -> {
                 Text(
@@ -232,21 +227,6 @@ fun TagFilterList(
     }
 }
 
-@Composable
-fun FilterTitle(
-    name: String,
-    modifier: Modifier = Modifier,
-    leadingIcon: @Composable (() -> Unit)? = null,
-) {
-    Row(modifier = modifier) {
-        if (leadingIcon != null) {
-            leadingIcon()
-        }
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = name)
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun TagFilterListPreview() {
@@ -263,22 +243,6 @@ fun TagFilterListPreview() {
             ),
             onTagFilterAdd = {},
             onTagFilterRemove = {},
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FilterTitlePreview() {
-    TagPlayerTheme {
-        FilterTitle(
-            name = "태그",
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_tag),
-                    contentDescription = null,
-                )
-            },
         )
     }
 }

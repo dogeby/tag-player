@@ -207,6 +207,13 @@ fun VideoListScreen(
                 VideoListUiState.Loading -> {
 
                     when (windowInfo.screenWidthInfo) {
+                        WindowInfo.WindowType.Contracted -> {
+                            ContractedRippleLoadingVideoList(
+                                count = 7,
+                                modifier = Modifier.padding(contentPadding),
+                                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                            )
+                        }
                         WindowInfo.WindowType.Compact -> {
                             CompactRippleLoadingVideoList(
                                 count = 7,
@@ -242,6 +249,19 @@ fun VideoListScreen(
                         )
                     }
                     when (windowInfo.screenWidthInfo) {
+                        WindowInfo.WindowType.Contracted -> {
+                            ContractedVideoList(
+                                videoItems = videoListUiState.videoItems,
+                                isSelectMode = { isSelectMode },
+                                isSelectedVideoItems = isSelectedVideoItems,
+                                onNavigateToPlayer = onNavigateToPlayer,
+                                modifier = Modifier.padding(contentPadding),
+                                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                                updateVideo = updateVideo,
+                                onToggleVideoSelection = toggleVideoSelection,
+                            )
+                        }
                         WindowInfo.WindowType.Compact -> {
                             CompactVideoList(
                                 videoItems = videoListUiState.videoItems,

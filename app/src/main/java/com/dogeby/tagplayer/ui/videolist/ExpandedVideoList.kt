@@ -98,7 +98,7 @@ fun ExpandedVideoList(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ExpandedVideoCard(
+fun ExpandedVideoCard(
     videoItem: VideoItem,
     isSelected: Boolean,
     onClick: (VideoItem) -> Unit,
@@ -183,7 +183,7 @@ fun ExpandedRippleLoadingVideoList(
 }
 
 @Composable
-private fun ExpandedRippleLoadingVideoCard(
+fun ExpandedRippleLoadingVideoCard(
     modifier: Modifier = Modifier,
     containerRippleColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     contentRippleColor: Color = RippleLoadingColor,

@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.domain.video.VideoItem
+import com.dogeby.tagplayer.ui.component.ContractedTagDetailCard
 import com.dogeby.tagplayer.ui.component.ExpandedTagDetailCard
 import com.dogeby.tagplayer.ui.component.TagDetailCard
 import com.dogeby.tagplayer.ui.component.TagNameEditDialog
@@ -142,6 +143,26 @@ fun TagDetailScreen(
 
                 val windowInfo = rememberWindowInfo()
                 when (windowInfo.screenWidthInfo) {
+                    WindowInfo.WindowType.Contracted -> {
+                        ContractedTagDetailCard(
+                            tagName = { tagDetailUiState.tagName },
+                            videoItems = { tagDetailUiState.videoItems },
+                            onPlayButtonClick = onNavigateToPlayer,
+                            onEditButtonClick = { onTagNameEditDialogVisibilitySet(true) },
+                            onDeleteButtonClick = {
+                                onDeleteTag()
+                                onNavigateUp()
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(contentPadding),
+                            isSelectMode = { isSelectMode },
+                            isSelectedVideoItems = isSelectedVideoItems,
+                            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                            updateVideo = updateVideo,
+                            onToggleVideoSelection = toggleVideoSelection,
+                        )
+                    }
                     WindowInfo.WindowType.Compact -> {
                         TagDetailCard(
                             tagName = { tagDetailUiState.tagName },

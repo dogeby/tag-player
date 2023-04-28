@@ -41,6 +41,7 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 import com.dogeby.tagplayer.ui.videolist.CompactVideoList
+import com.dogeby.tagplayer.ui.videolist.ContractedVideoList
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -154,6 +155,66 @@ private fun TagDetailCardHeader(
                     tint = MaterialTheme.colorScheme.onPrimary,
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ContractedTagDetailCard(
+    tagName: () -> String,
+    videoItems: () -> List<VideoItem>,
+    onPlayButtonClick: (List<Long>, Long) -> Unit,
+    onEditButtonClick: () -> Unit,
+    onDeleteButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = RectangleShape,
+    isSelectMode: () -> Boolean = { false },
+    isSelectedVideoItems: Map<Long, Boolean> = emptyMap(),
+    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
+    updateVideo: (() -> Unit)? = null,
+    onToggleVideoSelection: (VideoItem) -> Unit = {},
+) {
+    Card(
+        modifier = modifier,
+        shape = shape,
+    ) {
+        CompositionLocalProvider(
+            LocalOverscrollConfiguration provides null,
+        ) {
+            ContractedVideoList(
+                videoItems = videoItems(),
+                isSelectMode = isSelectMode,
+                isSelectedVideoItems = isSelectedVideoItems,
+                onNavigateToPlayer = onPlayButtonClick,
+                contentPadding = PaddingValues(bottom = dimensionResource(id = R.dimen.padding_small)),
+                videoItemContentPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.padding_small)),
+                header = {
+                    if (videoItems().isNotEmpty()) {
+                        item {
+                            VideoThumbnail(
+                                uri = videoItems().first().uri,
+                                modifier = Modifier.fillMaxWidth().aspectRatio(16 / 9f),
+                                imageShape = RoundedCornerShape(0, 0, 4, 4),
+                                applyContentBasedColorToBackgroundColor = true,
+                                contentScale = ContentScale.FillHeight,
+                            )
+                        }
+                    }
+                    stickyHeader {
+                        TagDetailCardHeader(
+                            tagName = tagName,
+                            videoItems = videoItems,
+                            onPlayButtonClick = onPlayButtonClick,
+                            onEditButtonClick = onEditButtonClick,
+                            onDeleteButtonClick = onDeleteButtonClick,
+                        )
+                    }
+                },
+                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                updateVideo = updateVideo,
+                onToggleVideoSelection = onToggleVideoSelection,
+            )
         }
     }
 }

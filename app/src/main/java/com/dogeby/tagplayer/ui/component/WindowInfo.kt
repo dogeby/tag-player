@@ -12,6 +12,8 @@ data class WindowInfo(
     val screenHeight: Dp,
 ) {
     sealed interface WindowType {
+
+        object Contracted : WindowType
         object Compact : WindowType
         object Medium : WindowType
         object Expanded : WindowType
@@ -23,11 +25,13 @@ fun rememberWindowInfo(): WindowInfo {
     val configuration = LocalConfiguration.current
     return WindowInfo(
         screenWidthInfo = when {
+            configuration.screenWidthDp < 300 -> WindowInfo.WindowType.Contracted
             configuration.screenWidthDp < 600 -> WindowInfo.WindowType.Compact
             configuration.screenWidthDp < 840 -> WindowInfo.WindowType.Medium
             else -> WindowInfo.WindowType.Expanded
         },
         screenHeightInfo = when {
+            configuration.screenHeightDp < 240 -> WindowInfo.WindowType.Contracted
             configuration.screenHeightDp < 480 -> WindowInfo.WindowType.Compact
             configuration.screenHeightDp < 900 -> WindowInfo.WindowType.Medium
             else -> WindowInfo.WindowType.Expanded

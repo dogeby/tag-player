@@ -26,12 +26,17 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
+import com.dogeby.tagplayer.ui.component.WindowInfo
+import com.dogeby.tagplayer.ui.component.rememberWindowInfo
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.videolist.CompactVideoList
+import com.dogeby.tagplayer.ui.videolist.ContractedVideoList
+import com.dogeby.tagplayer.ui.videolist.ExpandedVideoList
 import com.dogeby.tagplayer.ui.videolist.VideoInfoDialog
 import com.dogeby.tagplayer.ui.videolist.VideoItemBottomAppBar
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -104,6 +109,7 @@ fun VideoSearchScreen(
     var isShowVideoInfoDialog by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
+    val windowInfo = rememberWindowInfo()
 
     Scaffold(
         modifier = modifier,
@@ -184,16 +190,47 @@ fun VideoSearchScreen(
                             onConfirmButtonClick = { isShowVideoInfoDialog = false },
                         )
                     }
-                    CompactVideoList(
-                        videoItems = videoSearchViewUiState.videoListUiState.videoItems,
-                        isSelectMode = { isSelectMode },
-                        isSelectedVideoItems = isSelectedVideoItems,
-                        onNavigateToPlayer = onNavigateToPlayer,
-                        contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
-                        setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                        updateVideo = updateVideo,
-                        onToggleVideoSelection = toggleVideoSelection,
-                    )
+
+                    when (windowInfo.screenWidthInfo) {
+                        WindowInfo.WindowType.Contracted -> {
+                            ContractedVideoList(
+                                videoItems = videoSearchViewUiState.videoListUiState.videoItems,
+                                isSelectMode = { isSelectMode },
+                                isSelectedVideoItems = isSelectedVideoItems,
+                                onNavigateToPlayer = onNavigateToPlayer,
+                                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                                updateVideo = updateVideo,
+                                onToggleVideoSelection = toggleVideoSelection,
+                            )
+                        }
+                        WindowInfo.WindowType.Compact -> {
+                            CompactVideoList(
+                                videoItems = videoSearchViewUiState.videoListUiState.videoItems,
+                                isSelectMode = { isSelectMode },
+                                isSelectedVideoItems = isSelectedVideoItems,
+                                onNavigateToPlayer = onNavigateToPlayer,
+                                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                                updateVideo = updateVideo,
+                                onToggleVideoSelection = toggleVideoSelection,
+                            )
+                        }
+                        else -> {
+                            ExpandedVideoList(
+                                videoItems = videoSearchViewUiState.videoListUiState.videoItems,
+                                isSelectMode = { isSelectMode },
+                                isSelectedVideoItems = isSelectedVideoItems,
+                                onNavigateToPlayer = onNavigateToPlayer,
+                                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
+                                verticalItemSpacing = 0.dp,
+                                videoItemContentPadding = PaddingValues(vertical = dimensionResource(id = R.dimen.padding_small) / 2),
+                                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
+                                updateVideo = updateVideo,
+                                onToggleVideoSelection = toggleVideoSelection,
+                            )
+                        }
+                    }
                 }
                 VideoSearchViewUiState.QueryBlank -> {
                     MaxSizeCenterText(

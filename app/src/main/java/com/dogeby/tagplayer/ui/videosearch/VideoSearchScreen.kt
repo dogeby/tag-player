@@ -152,6 +152,10 @@ fun VideoSearchScreen(
                     isSelectedVideoItems.clear()
                     return@SearchBar
                 }
+                if (query.isNotEmpty()) {
+                    onClear()
+                    return@SearchBar
+                }
                 onNavigateUp()
             },
             modifier = Modifier.padding(

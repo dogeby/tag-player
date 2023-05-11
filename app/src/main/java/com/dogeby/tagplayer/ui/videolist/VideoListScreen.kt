@@ -48,16 +48,10 @@ import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.component.TagPlayerNavigationDrawer
 import com.dogeby.tagplayer.ui.component.WindowInfo
 import com.dogeby.tagplayer.ui.component.rememberWindowInfo
-import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.theme.EmphasizedDecelerateEasing
 import com.dogeby.tagplayer.ui.theme.MediumDuration4
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun VideoListRoute(
     tagPlayerDrawerItems: List<TagPlayerDrawerItem>,
@@ -67,14 +61,10 @@ fun VideoListRoute(
     onNavigateToVideoSearch: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: VideoListViewModel = hiltViewModel(),
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
 ) {
     val videoListUiState: VideoListUiState by viewModel.videoListUiState.collectAsState()
     val isVideoFiltered: Boolean by viewModel.isVideoFiltered.collectAsState()
     val videoListSortTypeUiState: VideoListSortTypeUiState by viewModel.videoListSortTypeUiState.collectAsState()
-
-    val permissionState: PermissionState = rememberPermissionState(AppRequiredPermission)
-    if (permissionState.status.isGranted) viewModel.updateVideoList()
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -96,8 +86,6 @@ fun VideoListRoute(
             isVideoFiltered = isVideoFiltered,
             modifier = modifier.fillMaxWidth(),
             onNavigateToFilterSetting = onNavigateToFilterSetting,
-            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-            updateVideo = viewModel::updateVideoList
         )
     }
 }
@@ -115,8 +103,6 @@ fun VideoListScreen(
     isVideoFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
     modifier: Modifier = Modifier,
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null
 ) {
     var isSelectMode by remember(videoListUiState) {
         mutableStateOf(false)
@@ -257,8 +243,6 @@ fun VideoListScreen(
                                 onNavigateToPlayer = onNavigateToPlayer,
                                 modifier = Modifier.padding(contentPadding),
                                 contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
-                                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                                updateVideo = updateVideo,
                                 onToggleVideoSelection = toggleVideoSelection,
                             )
                         }
@@ -270,8 +254,6 @@ fun VideoListScreen(
                                 onNavigateToPlayer = onNavigateToPlayer,
                                 modifier = Modifier.padding(contentPadding),
                                 contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
-                                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                                updateVideo = updateVideo,
                                 onToggleVideoSelection = toggleVideoSelection,
                             )
                         }
@@ -286,8 +268,6 @@ fun VideoListScreen(
                                     .padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
                                 verticalItemSpacing = 0.dp,
                                 videoItemContentPadding = PaddingValues(vertical = dimensionResource(id = R.dimen.padding_small) / 2),
-                                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                                updateVideo = updateVideo,
                                 onToggleVideoSelection = toggleVideoSelection,
                             )
                         }

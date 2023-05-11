@@ -14,7 +14,6 @@ fun TagPlayerApp(
     appPreferencesData: AppPreferencesData,
     onExit: () -> Unit = {},
     isRequiredPermissionsGranted: Boolean,
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
 ) {
     TagPlayerTheme(
         darkTheme = when (appPreferencesData.appThemeMode) {
@@ -25,7 +24,6 @@ fun TagPlayerApp(
     ) {
         TagPlayerNavHost(
             onExit = onExit,
-            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
             startDestination = if (isRequiredPermissionsGranted) VideoListRoute else PermissionRoute,
         )
     }

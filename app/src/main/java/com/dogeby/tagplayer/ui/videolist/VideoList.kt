@@ -1,6 +1,5 @@
 package com.dogeby.tagplayer.ui.videolist
 
-import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,21 +22,17 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.RippleLoadingText
@@ -63,11 +58,7 @@ fun CompactVideoList(
     header: LazyListScope.() -> Unit = {},
     footer: LazyListScope.() -> Unit = {},
     onToggleVideoSelection: (VideoItem) -> Unit = {},
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null,
 ) {
-    VideoListUpdate(setTopResumedActivityChangedListener, updateVideo)
-
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding,
@@ -263,34 +254,6 @@ private fun CompactRippleLoadingVideoCard(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun VideoListUpdate(
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null,
-) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && setTopResumedActivityChangedListener != null) {
-
-            setTopResumedActivityChangedListener { isTopResumedActivity: Boolean ->
-                if (isTopResumedActivity && updateVideo != null) updateVideo()
-            }
-            return@DisposableEffect onDispose {
-                setTopResumedActivityChangedListener(null)
-            }
-        }
-
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME && updateVideo != null) updateVideo()
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 }

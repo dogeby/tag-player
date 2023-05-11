@@ -33,7 +33,6 @@ fun TagPlayerNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = PermissionRoute,
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
 ) {
     val drawerItems = listOf(
         TagPlayerDrawerItem(
@@ -83,7 +82,6 @@ fun TagPlayerNavHost(
                     navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
                 },
                 onNavigateToVideoSearch = { navController.navigate(VideoSearchRoute) },
-                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener
             )
         }
         composable(
@@ -102,7 +100,6 @@ fun TagPlayerNavHost(
                 onNavigateToTagSetting = { videoIds ->
                     navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
                 },
-                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener
             )
         }
         composable(VideoFilterRoute) {
@@ -137,7 +134,6 @@ fun TagPlayerNavHost(
                 onNavigateToTagSetting = { videoIds ->
                     navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
                 },
-                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener
             )
         }
         composable(AppPreferencesRoute) {

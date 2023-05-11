@@ -55,8 +55,6 @@ fun TagDetailCard(
     shape: Shape = RectangleShape,
     isSelectMode: () -> Boolean = { false },
     isSelectedVideoItems: Map<Long, Boolean> = emptyMap(),
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null,
     onToggleVideoSelection: (VideoItem) -> Unit = {},
 ) {
     Card(
@@ -95,8 +93,6 @@ fun TagDetailCard(
                         )
                     }
                 },
-                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                updateVideo = updateVideo,
                 onToggleVideoSelection = onToggleVideoSelection,
             )
         }
@@ -171,8 +167,6 @@ fun ContractedTagDetailCard(
     shape: Shape = RectangleShape,
     isSelectMode: () -> Boolean = { false },
     isSelectedVideoItems: Map<Long, Boolean> = emptyMap(),
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null,
     onToggleVideoSelection: (VideoItem) -> Unit = {},
 ) {
     Card(
@@ -211,8 +205,6 @@ fun ContractedTagDetailCard(
                         )
                     }
                 },
-                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                updateVideo = updateVideo,
                 onToggleVideoSelection = onToggleVideoSelection,
             )
         }
@@ -231,8 +223,6 @@ fun ExpandedTagDetailCard(
     shape: Shape = RectangleShape,
     isSelectMode: () -> Boolean = { false },
     isSelectedVideoItems: Map<Long, Boolean> = emptyMap(),
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null,
     onToggleVideoSelection: (VideoItem) -> Unit = {},
 ) {
     Card(
@@ -280,8 +270,6 @@ fun ExpandedTagDetailCard(
                             )
                         }
                     },
-                    setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                    updateVideo = updateVideo,
                     onToggleVideoSelection = onToggleVideoSelection,
                 )
             }

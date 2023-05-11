@@ -38,11 +38,7 @@ fun ContractedVideoList(
     header: LazyListScope.() -> Unit = {},
     footer: LazyListScope.() -> Unit = {},
     onToggleVideoSelection: (VideoItem) -> Unit = {},
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null,
 ) {
-    VideoListUpdate(setTopResumedActivityChangedListener, updateVideo)
-
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding,

@@ -14,6 +14,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.dogeby.tagplayer.ui.TagPlayerApp
 import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,9 +25,6 @@ class TagPlayerActivity : ComponentActivity() {
 
     private val isRequiredPermissionsGranted: Boolean
         get() = checkSelfPermission(AppRequiredPermission) == PackageManager.PERMISSION_GRANTED
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private var topResumedActivityChangedListener: ((isTopResumedActivity: Boolean) -> Unit)? = null
 
     private val viewModel: TagPlayerViewModel by viewModels()
 
@@ -39,18 +38,24 @@ class TagPlayerActivity : ComponentActivity() {
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            lifecycle.addObserver(
+                object : DefaultLifecycleObserver {
+                    override fun onResume(owner: LifecycleOwner) {
+                        if (isRequiredPermissionsGranted) {
+                            viewModel.updateVideoList()
+                        }
+                    }
+                }
+            )
+        }
+
         setContent {
             val appPreferencesData by viewModel.appPreferencesData.collectAsState()
             appPreferencesData?.let { preferencesData ->
                 TagPlayerApp(
                     appPreferencesData = preferencesData,
                     onExit = { finish() },
-                    setTopResumedActivityChangedListener =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        { topResumedActivityChangedListener = it }
-                    } else {
-                        null
-                    },
                     isRequiredPermissionsGranted = isRequiredPermissionsGranted,
                 )
             }
@@ -60,7 +65,7 @@ class TagPlayerActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onTopResumedActivityChanged(isTopResumedActivity: Boolean) {
         super.onTopResumedActivityChanged(isTopResumedActivity)
-        topResumedActivityChangedListener?.let { it(isTopResumedActivity) }
+        if (isTopResumedActivity && isRequiredPermissionsGranted) viewModel.updateVideoList()
     }
 }
 

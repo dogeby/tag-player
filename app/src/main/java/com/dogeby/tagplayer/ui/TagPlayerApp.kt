@@ -12,7 +12,6 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 @Composable
 fun TagPlayerApp(
     appPreferencesData: AppPreferencesData,
-    onExit: () -> Unit = {},
     isRequiredPermissionsGranted: Boolean,
 ) {
     TagPlayerTheme(
@@ -23,7 +22,6 @@ fun TagPlayerApp(
         },
     ) {
         TagPlayerNavHost(
-            onExit = onExit,
             startDestination = if (isRequiredPermissionsGranted) VideoListRoute else PermissionRoute,
         )
     }

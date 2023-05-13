@@ -55,7 +55,6 @@ class TagPlayerActivity : ComponentActivity() {
             appPreferencesData?.let { preferencesData ->
                 TagPlayerApp(
                     appPreferencesData = preferencesData,
-                    onExit = { finish() },
                     isRequiredPermissionsGranted = isRequiredPermissionsGranted,
                 )
             }

@@ -16,7 +16,7 @@ import androidx.navigation.navArgument
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.apppreferences.AppPreferencesRoute
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
-import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
+import com.dogeby.tagplayer.ui.permission.AppPermissionCheck
 import com.dogeby.tagplayer.ui.permission.PermissionScreen
 import com.dogeby.tagplayer.ui.tagdetail.TagDetailRoute
 import com.dogeby.tagplayer.ui.taglist.TagListRoute
@@ -29,7 +29,6 @@ import com.google.gson.Gson
 
 @Composable
 fun TagPlayerNavHost(
-    onExit: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     startDestination: String = PermissionRoute,
@@ -73,7 +72,7 @@ fun TagPlayerNavHost(
             )
         }
         composable(VideoListRoute) {
-            AppPermissionDeniedByExternalAction(onExit)
+            AppPermissionCheck()
             VideoListRoute(
                 tagPlayerDrawerItems = drawerItems,
                 onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
@@ -93,7 +92,7 @@ fun TagPlayerNavHost(
             )
         }
         composable(VideoSearchRoute) {
-            AppPermissionDeniedByExternalAction(onExit)
+            AppPermissionCheck()
             VideoSearchRoute(
                 onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
                 onNavigateUp = { navController.navigateUp() },

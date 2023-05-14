@@ -16,7 +16,6 @@ import androidx.navigation.navArgument
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.apppreferences.AppPreferencesRoute
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
-import com.dogeby.tagplayer.ui.permission.AppPermissionCheck
 import com.dogeby.tagplayer.ui.permission.permissionNavigationRoute
 import com.dogeby.tagplayer.ui.permission.permissionScreen
 import com.dogeby.tagplayer.ui.tagdetail.TagDetailRoute
@@ -28,7 +27,8 @@ import com.dogeby.tagplayer.ui.videolist.navigateToVideoList
 import com.dogeby.tagplayer.ui.videolist.videoListNavigationRoute
 import com.dogeby.tagplayer.ui.videolist.videoListScreen
 import com.dogeby.tagplayer.ui.videoplayer.VideoPlayerRoute
-import com.dogeby.tagplayer.ui.videosearch.VideoSearchRoute
+import com.dogeby.tagplayer.ui.videosearch.navigateToVideoSearch
+import com.dogeby.tagplayer.ui.videosearch.videoSearchScreen
 import com.google.gson.Gson
 
 @Composable
@@ -80,19 +80,16 @@ fun TagPlayerNavHost(
             onNavigateToTagSetting = { videoIds ->
                 navController.navigateToTagSetting(videoIds)
             },
-            onNavigateToVideoSearch = { navController.navigate(VideoSearchRoute) },
+            onNavigateToVideoSearch = { navController.navigateToVideoSearch() },
         )
         tagSettingScreen(onNavigateUp = { navController.navigateUp() })
-        composable(VideoSearchRoute) {
-            AppPermissionCheck()
-            VideoSearchRoute(
-                onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
-                onNavigateUp = { navController.navigateUp() },
-                onNavigateToTagSetting = { videoIds ->
-                    navController.navigateToTagSetting(videoIds)
-                },
-            )
-        }
+        videoSearchScreen(
+            onNavigateUp = { navController.navigateUp() },
+            onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
+            onNavigateToTagSetting = { videoIds ->
+                navController.navigateToTagSetting(videoIds)
+            },
+        )
         composable(VideoFilterRoute) {
             VideoFilterRoute(
                 onNavigateUp = { navController.navigateUp() }

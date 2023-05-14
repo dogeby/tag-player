@@ -23,7 +23,9 @@ import com.dogeby.tagplayer.ui.tagdetail.TagDetailRoute
 import com.dogeby.tagplayer.ui.taglist.TagListRoute
 import com.dogeby.tagplayer.ui.tagsetting.TagSettingRoute
 import com.dogeby.tagplayer.ui.videofilter.VideoFilterRoute
-import com.dogeby.tagplayer.ui.videolist.VideoListRoute
+import com.dogeby.tagplayer.ui.videolist.navigateToVideoList
+import com.dogeby.tagplayer.ui.videolist.videoListNavigationRoute
+import com.dogeby.tagplayer.ui.videolist.videoListScreen
 import com.dogeby.tagplayer.ui.videoplayer.VideoPlayerRoute
 import com.dogeby.tagplayer.ui.videosearch.VideoSearchRoute
 import com.google.gson.Gson
@@ -36,12 +38,12 @@ fun TagPlayerNavHost(
 ) {
     val drawerItems = listOf(
         TagPlayerDrawerItem(
-            route = VideoListRoute,
+            route = videoListNavigationRoute,
             name = stringResource(id = R.string.videoList_topAppBar_title),
             icon = ImageVector.vectorResource(id = R.drawable.ic_movie),
             onClick = {
-                navController.navigate(VideoListRoute) {
-                    popUpTo(VideoListRoute) { inclusive = true }
+                navController.navigateToVideoList {
+                    popUpTo(videoListNavigationRoute) { inclusive = true }
                 }
             }
         ),
@@ -65,23 +67,20 @@ fun TagPlayerNavHost(
     ) {
         permissionScreen(
             onNavigateToDestination = {
-                navController.navigate(VideoListRoute) {
+                navController.navigateToVideoList {
                     popUpTo(permissionNavigationRoute) { inclusive = true }
                 }
             },
         )
-        composable(VideoListRoute) {
-            AppPermissionCheck()
-            VideoListRoute(
-                tagPlayerDrawerItems = drawerItems,
-                onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
-                onNavigateToFilterSetting = { navController.navigate(VideoFilterRoute) },
-                onNavigateToTagSetting = { videoIds ->
-                    navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
-                },
-                onNavigateToVideoSearch = { navController.navigate(VideoSearchRoute) },
-            )
-        }
+        videoListScreen(
+            tagPlayerDrawerItems = drawerItems,
+            onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
+            onNavigateToFilterSetting = { navController.navigate(VideoFilterRoute) },
+            onNavigateToTagSetting = { videoIds ->
+                navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
+            },
+            onNavigateToVideoSearch = { navController.navigate(VideoSearchRoute) },
+        )
         composable(
             route = "$TagSettingRoute/{$TagSettingVideoIdsArgument}",
             arguments = listOf(navArgument(TagSettingVideoIdsArgument) { type = NavType.StringType }),

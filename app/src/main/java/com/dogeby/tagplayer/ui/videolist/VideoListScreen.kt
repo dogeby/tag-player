@@ -70,7 +70,7 @@ fun VideoListRoute(
     val scope = rememberCoroutineScope()
 
     TagPlayerNavigationDrawer(
-        startRoute = com.dogeby.tagplayer.ui.navigation.VideoListRoute,
+        startRoute = videoListNavigationRoute,
         tagPlayerDrawerItems = tagPlayerDrawerItems,
         onItemClick = { it.onClick() },
         drawerState = drawerState,

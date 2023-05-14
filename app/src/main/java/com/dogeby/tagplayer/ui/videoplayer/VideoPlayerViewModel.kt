@@ -4,9 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.domain.video.GetVideoItemByIdsUseCase
-import com.dogeby.tagplayer.ui.navigation.VideoPlayerStartVideoId
-import com.dogeby.tagplayer.ui.navigation.VideoPlayerVideoIdsArgument
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,16 +18,12 @@ class VideoPlayerViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val startVideoId: Long = checkNotNull(savedStateHandle[VideoPlayerStartVideoId])
-    private val videoIds: List<Long> = Gson().fromJson(
-        checkNotNull<String>(savedStateHandle[VideoPlayerVideoIdsArgument]),
-        LongArray::class.java,
-    ).toList()
+    private val videoPlayerArgs = VideoPlayerArgs(savedStateHandle)
 
-    private val currentPageVideoId: StateFlow<Long> = savedStateHandle.getStateFlow(CURRENT_PAGE_VIDEO_ID, startVideoId)
+    private val currentPageVideoId: StateFlow<Long> = savedStateHandle.getStateFlow(CURRENT_PAGE_VIDEO_ID, videoPlayerArgs.startVideoId)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val videoPlayerPagerUiState: StateFlow<VideoPlayerPagerUiState> = getVideoItemByIdsUseCase(videoIds)
+    val videoPlayerPagerUiState: StateFlow<VideoPlayerPagerUiState> = getVideoItemByIdsUseCase(videoPlayerArgs.videoIds)
         .mapLatest { videoItems ->
             if (videoItems.isEmpty()) return@mapLatest VideoPlayerPagerUiState.Empty
             VideoPlayerPagerUiState.Success(currentPageVideoId.value, videoItems)

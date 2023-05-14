@@ -13,8 +13,6 @@ import com.dogeby.tagplayer.domain.tag.GetAllTagsUseCase
 import com.dogeby.tagplayer.domain.tag.GetCommonTagsFromVideosUseCase
 import com.dogeby.tagplayer.domain.tag.ModifyTagNameUseCase
 import com.dogeby.tagplayer.domain.tag.RemoveTagFromVideosUseCase
-import com.dogeby.tagplayer.ui.navigation.TagSettingVideoIdsArgument
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.SortedSet
 import javax.inject.Inject
@@ -45,14 +43,11 @@ class TagSettingViewModel @Inject constructor(
     private val modifyTagNameUseCase: ModifyTagNameUseCase,
 ) : ViewModel() {
 
-    private val videoIds: List<Long> = Gson().fromJson(
-        checkNotNull<String>(savedStateHandle[TagSettingVideoIdsArgument]),
-        LongArray::class.java,
-    ).toList()
+    private val tagSettingArgs: TagSettingArgs = TagSettingArgs(savedStateHandle)
 
     private val tagSearchKeyword = MutableStateFlow("")
 
-    private val commonTags: StateFlow<SortedSet<Tag>> = getCommonTagsFromVideosUseCase(videoIds)
+    private val commonTags: StateFlow<SortedSet<Tag>> = getCommonTagsFromVideosUseCase(tagSettingArgs.videoIds)
         .map { tags -> tags.toSortedSet(compareBy { it.name }) }
         .stateIn(
             scope = viewModelScope,
@@ -125,14 +120,14 @@ class TagSettingViewModel @Inject constructor(
 
     fun addTagToVideos(tagId: Long) {
         viewModelScope.launch {
-            addTagToVideosUseCase(tagId, videoIds)
+            addTagToVideosUseCase(tagId, tagSettingArgs.videoIds)
             tagSearchKeyword.value = ""
         }
     }
 
     fun removeTagFromVideos(tagId: Long) {
         viewModelScope.launch {
-            removeTagFromVideosUseCase(tagId, videoIds)
+            removeTagFromVideosUseCase(tagId, tagSettingArgs.videoIds)
         }
     }
 

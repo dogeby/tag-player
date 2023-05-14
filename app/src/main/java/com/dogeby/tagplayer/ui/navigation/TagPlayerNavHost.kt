@@ -21,7 +21,8 @@ import com.dogeby.tagplayer.ui.permission.permissionNavigationRoute
 import com.dogeby.tagplayer.ui.permission.permissionScreen
 import com.dogeby.tagplayer.ui.tagdetail.TagDetailRoute
 import com.dogeby.tagplayer.ui.taglist.TagListRoute
-import com.dogeby.tagplayer.ui.tagsetting.TagSettingRoute
+import com.dogeby.tagplayer.ui.tagsetting.navigateToTagSetting
+import com.dogeby.tagplayer.ui.tagsetting.tagSettingScreen
 import com.dogeby.tagplayer.ui.videofilter.VideoFilterRoute
 import com.dogeby.tagplayer.ui.videolist.navigateToVideoList
 import com.dogeby.tagplayer.ui.videolist.videoListNavigationRoute
@@ -77,25 +78,18 @@ fun TagPlayerNavHost(
             onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
             onNavigateToFilterSetting = { navController.navigate(VideoFilterRoute) },
             onNavigateToTagSetting = { videoIds ->
-                navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
+                navController.navigateToTagSetting(videoIds)
             },
             onNavigateToVideoSearch = { navController.navigate(VideoSearchRoute) },
         )
-        composable(
-            route = "$TagSettingRoute/{$TagSettingVideoIdsArgument}",
-            arguments = listOf(navArgument(TagSettingVideoIdsArgument) { type = NavType.StringType }),
-        ) {
-            TagSettingRoute(
-                onNavigateUp = { navController.navigateUp() }
-            )
-        }
+        tagSettingScreen(onNavigateUp = { navController.navigateUp() })
         composable(VideoSearchRoute) {
             AppPermissionCheck()
             VideoSearchRoute(
                 onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
                 onNavigateUp = { navController.navigateUp() },
                 onNavigateToTagSetting = { videoIds ->
-                    navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
+                    navController.navigateToTagSetting(videoIds)
                 },
             )
         }
@@ -129,7 +123,7 @@ fun TagPlayerNavHost(
                 onNavigateUp = { navController.navigateUp() },
                 onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
                 onNavigateToTagSetting = { videoIds ->
-                    navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
+                    navController.navigateToTagSetting(videoIds)
                 },
             )
         }

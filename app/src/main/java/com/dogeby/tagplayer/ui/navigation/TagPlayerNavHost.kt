@@ -9,10 +9,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dogeby.tagplayer.R
-import com.dogeby.tagplayer.ui.apppreferences.AppPreferencesRoute
+import com.dogeby.tagplayer.ui.apppreferences.appPreferences
+import com.dogeby.tagplayer.ui.apppreferences.appPreferencesNavigationRoute
+import com.dogeby.tagplayer.ui.apppreferences.navigateToAppPreferences
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.permission.permissionNavigationRoute
 import com.dogeby.tagplayer.ui.permission.permissionScreen
@@ -57,10 +58,10 @@ fun TagPlayerNavHost(
             onClick = { navController.navigateToTagList() },
         ),
         TagPlayerDrawerItem(
-            route = AppPreferencesRoute,
+            route = appPreferencesNavigationRoute,
             name = stringResource(id = R.string.appPreferences_topAppBar_title),
             icon = Icons.Default.Settings,
-            onClick = { navController.navigate(AppPreferencesRoute) },
+            onClick = { navController.navigateToAppPreferences() },
         ),
     )
     NavHost(
@@ -122,10 +123,6 @@ fun TagPlayerNavHost(
                 navController.navigateToTagSetting(videoIds)
             },
         )
-        composable(AppPreferencesRoute) {
-            AppPreferencesRoute(
-                onNavigateUp = { navController.navigateUp() },
-            )
-        }
+        appPreferences(onNavigateUp = { navController.navigateUp() })
     }
 }

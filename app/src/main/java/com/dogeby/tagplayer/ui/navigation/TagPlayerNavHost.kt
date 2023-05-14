@@ -8,17 +8,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.apppreferences.AppPreferencesRoute
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.permission.permissionNavigationRoute
 import com.dogeby.tagplayer.ui.permission.permissionScreen
-import com.dogeby.tagplayer.ui.tagdetail.TagDetailRoute
+import com.dogeby.tagplayer.ui.tagdetail.navigateToTagDetail
+import com.dogeby.tagplayer.ui.tagdetail.tagDetailScreen
 import com.dogeby.tagplayer.ui.taglist.navigateToTagList
 import com.dogeby.tagplayer.ui.taglist.tagListNavigationRoute
 import com.dogeby.tagplayer.ui.taglist.tagListScreen
@@ -107,25 +106,22 @@ fun TagPlayerNavHost(
         videoPlayerScreen(onNavigateUp = { navController.navigateUp() })
         tagListScreen(
             tagPlayerDrawerItems = drawerItems,
-            onNavigateToTagDetail = { navController.navigate("$TagDetailRoute/$it") },
+            onNavigateToTagDetail = { tagId ->
+                navController.navigateToTagDetail(tagId)
+            },
         )
-        composable(
-            route = "$TagDetailRoute/{$TagDetailTagIdArgument}",
-            arguments = listOf(navArgument(TagDetailTagIdArgument) { type = NavType.LongType }),
-        ) {
-            TagDetailRoute(
-                onNavigateUp = { navController.navigateUp() },
-                onNavigateToPlayer = { videoIds, videoIndex ->
-                    navController.navigateToVideoPlayer(
-                        startVideoId = videoIndex,
-                        videoIds = videoIds,
-                    )
-                },
-                onNavigateToTagSetting = { videoIds ->
-                    navController.navigateToTagSetting(videoIds)
-                },
-            )
-        }
+        tagDetailScreen(
+            onNavigateUp = { navController.navigateUp() },
+            onNavigateToPlayer = { videoIds, videoIndex ->
+                navController.navigateToVideoPlayer(
+                    startVideoId = videoIndex,
+                    videoIds = videoIds,
+                )
+            },
+            onNavigateToTagSetting = { videoIds ->
+                navController.navigateToTagSetting(videoIds)
+            },
+        )
         composable(AppPreferencesRoute) {
             AppPreferencesRoute(
                 onNavigateUp = { navController.navigateUp() },

@@ -7,7 +7,6 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.tag.DeleteTagsUseCase
 import com.dogeby.tagplayer.domain.tag.GetTagItemUseCase
 import com.dogeby.tagplayer.domain.tag.ModifyTagNameUseCase
-import com.dogeby.tagplayer.ui.navigation.TagDetailTagIdArgument
 import com.dogeby.tagplayer.ui.tagsetting.TagNameEditDialogUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -29,10 +28,10 @@ class TagDetailViewModel @Inject constructor(
     private val modifyTagNameUseCase: ModifyTagNameUseCase,
 ) : ViewModel() {
 
-    private val tagId: Long = checkNotNull(savedStateHandle[TagDetailTagIdArgument])
+    private val tagDetailArgs = TagDetailArgs(savedStateHandle)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val tagDetailUiState = getTagItemUseCase(tagId).mapLatest { tagItemResult ->
+    val tagDetailUiState = getTagItemUseCase(tagDetailArgs.tagId).mapLatest { tagItemResult ->
         val tagItem = tagItemResult.getOrElse { return@mapLatest TagDetailUiState.Empty }
         TagDetailUiState.Success(
             tagId = tagItem.id,
@@ -54,7 +53,7 @@ class TagDetailViewModel @Inject constructor(
 
     fun deleteTag() {
         viewModelScope.launch {
-            deleteTagsUseCase(listOf(tagId))
+            deleteTagsUseCase(listOf(tagDetailArgs.tagId))
         }
     }
 
@@ -69,7 +68,7 @@ class TagDetailViewModel @Inject constructor(
                 return
             }
             viewModelScope.launch {
-                if (modifyTagNameUseCase(tagId, name.trim()).isSuccess) {
+                if (modifyTagNameUseCase(tagDetailArgs.tagId, name.trim()).isSuccess) {
                     setTagNameEditDialogVisibility(false)
                 } else {
                     _tagNameEditDialogUiState.value = tagNameEditDialogUiStateValue.copy(

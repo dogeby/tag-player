@@ -1,7 +1,5 @@
 package com.dogeby.tagplayer.ui.navigation
 
-const val VideoFilterRoute = "videoFilter"
-
 const val VideoPlayerRoute = "videoPlayer"
 const val VideoPlayerVideoIdsArgument = "VideoPlayerVideoIds"
 const val VideoPlayerStartVideoId = "VideoPlayerVideoStartVideoId"

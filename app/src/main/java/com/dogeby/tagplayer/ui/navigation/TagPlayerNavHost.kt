@@ -22,7 +22,8 @@ import com.dogeby.tagplayer.ui.tagdetail.TagDetailRoute
 import com.dogeby.tagplayer.ui.taglist.TagListRoute
 import com.dogeby.tagplayer.ui.tagsetting.navigateToTagSetting
 import com.dogeby.tagplayer.ui.tagsetting.tagSettingScreen
-import com.dogeby.tagplayer.ui.videofilter.VideoFilterRoute
+import com.dogeby.tagplayer.ui.videofilter.navigateToVideoFilter
+import com.dogeby.tagplayer.ui.videofilter.videoFilterScreen
 import com.dogeby.tagplayer.ui.videolist.navigateToVideoList
 import com.dogeby.tagplayer.ui.videolist.videoListNavigationRoute
 import com.dogeby.tagplayer.ui.videolist.videoListScreen
@@ -76,7 +77,7 @@ fun TagPlayerNavHost(
         videoListScreen(
             tagPlayerDrawerItems = drawerItems,
             onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
-            onNavigateToFilterSetting = { navController.navigate(VideoFilterRoute) },
+            onNavigateToFilterSetting = { navController.navigateToVideoFilter() },
             onNavigateToTagSetting = { videoIds ->
                 navController.navigateToTagSetting(videoIds)
             },
@@ -90,11 +91,7 @@ fun TagPlayerNavHost(
                 navController.navigateToTagSetting(videoIds)
             },
         )
-        composable(VideoFilterRoute) {
-            VideoFilterRoute(
-                onNavigateUp = { navController.navigateUp() }
-            )
-        }
+        videoFilterScreen(onNavigateUp = { navController.navigateUp() })
         composable(
             route = "$VideoPlayerRoute/{$VideoPlayerVideoIdsArgument}/{$VideoPlayerStartVideoId}",
             arguments = listOf(

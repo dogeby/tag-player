@@ -19,7 +19,9 @@ import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.permission.permissionNavigationRoute
 import com.dogeby.tagplayer.ui.permission.permissionScreen
 import com.dogeby.tagplayer.ui.tagdetail.TagDetailRoute
-import com.dogeby.tagplayer.ui.taglist.TagListRoute
+import com.dogeby.tagplayer.ui.taglist.navigateToTagList
+import com.dogeby.tagplayer.ui.taglist.tagListNavigationRoute
+import com.dogeby.tagplayer.ui.taglist.tagListScreen
 import com.dogeby.tagplayer.ui.tagsetting.navigateToTagSetting
 import com.dogeby.tagplayer.ui.tagsetting.tagSettingScreen
 import com.dogeby.tagplayer.ui.videofilter.navigateToVideoFilter
@@ -50,10 +52,10 @@ fun TagPlayerNavHost(
             }
         ),
         TagPlayerDrawerItem(
-            route = TagListRoute,
+            route = tagListNavigationRoute,
             name = stringResource(id = R.string.tagList_topAppBar_title),
             icon = ImageVector.vectorResource(id = R.drawable.ic_tag),
-            onClick = { navController.navigate(TagListRoute) },
+            onClick = { navController.navigateToTagList() },
         ),
         TagPlayerDrawerItem(
             route = AppPreferencesRoute,
@@ -103,12 +105,10 @@ fun TagPlayerNavHost(
         )
         videoFilterScreen(onNavigateUp = { navController.navigateUp() })
         videoPlayerScreen(onNavigateUp = { navController.navigateUp() })
-        composable(TagListRoute) {
-            TagListRoute(
-                tagPlayerDrawerItems = drawerItems,
-                onNavigateToTagDetail = { navController.navigate("$TagDetailRoute/$it") },
-            )
-        }
+        tagListScreen(
+            tagPlayerDrawerItems = drawerItems,
+            onNavigateToTagDetail = { navController.navigate("$TagDetailRoute/$it") },
+        )
         composable(
             route = "$TagDetailRoute/{$TagDetailTagIdArgument}",
             arguments = listOf(navArgument(TagDetailTagIdArgument) { type = NavType.LongType }),

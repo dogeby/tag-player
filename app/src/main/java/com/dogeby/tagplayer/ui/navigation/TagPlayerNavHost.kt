@@ -17,7 +17,8 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.apppreferences.AppPreferencesRoute
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
 import com.dogeby.tagplayer.ui.permission.AppPermissionCheck
-import com.dogeby.tagplayer.ui.permission.PermissionScreen
+import com.dogeby.tagplayer.ui.permission.permissionNavigationRoute
+import com.dogeby.tagplayer.ui.permission.permissionScreen
 import com.dogeby.tagplayer.ui.tagdetail.TagDetailRoute
 import com.dogeby.tagplayer.ui.taglist.TagListRoute
 import com.dogeby.tagplayer.ui.tagsetting.TagSettingRoute
@@ -31,7 +32,7 @@ import com.google.gson.Gson
 fun TagPlayerNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = PermissionRoute,
+    startDestination: String = permissionNavigationRoute,
 ) {
     val drawerItems = listOf(
         TagPlayerDrawerItem(
@@ -62,15 +63,13 @@ fun TagPlayerNavHost(
         modifier = modifier,
         startDestination = startDestination,
     ) {
-        composable(PermissionRoute) {
-            PermissionScreen(
-                onNavigateToDestination = {
-                    navController.navigate(VideoListRoute) {
-                        popUpTo(PermissionRoute) { inclusive = true }
-                    }
-                },
-            )
-        }
+        permissionScreen(
+            onNavigateToDestination = {
+                navController.navigate(VideoListRoute) {
+                    popUpTo(permissionNavigationRoute) { inclusive = true }
+                }
+            },
+        )
         composable(VideoListRoute) {
             AppPermissionCheck()
             VideoListRoute(

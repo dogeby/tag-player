@@ -7,7 +7,6 @@ import com.dogeby.tagplayer.domain.preferences.videolist.GetIsVideoFilteredUseCa
 import com.dogeby.tagplayer.domain.preferences.videolist.GetVideoListSortTypeUseCase
 import com.dogeby.tagplayer.domain.preferences.videolist.SetVideoListSortTypeUseCase
 import com.dogeby.tagplayer.domain.video.GetVideoItemsUseCase
-import com.dogeby.tagplayer.domain.video.UpdateVideoListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,7 +21,6 @@ class VideoListViewModel @Inject constructor(
     getVideoItemsUseCase: GetVideoItemsUseCase,
     getIsVideoFilteredUseCase: GetIsVideoFilteredUseCase,
     getVideoListSortTypeUseCase: GetVideoListSortTypeUseCase,
-    private val updateVideoListUseCase: UpdateVideoListUseCase,
     private val setVideoListSortTypeUseCase: SetVideoListSortTypeUseCase,
 ) : ViewModel() {
 
@@ -57,12 +55,6 @@ class VideoListViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = VideoListSortTypeUiState(emptyList())
         )
-
-    fun updateVideoList() {
-        viewModelScope.launch {
-            updateVideoListUseCase()
-        }
-    }
 
     fun setSortType(videoListSortType: VideoListSortType) {
         viewModelScope.launch {

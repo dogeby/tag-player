@@ -29,16 +29,10 @@ import com.dogeby.tagplayer.ui.component.TagDetailCard
 import com.dogeby.tagplayer.ui.component.TagNameEditDialog
 import com.dogeby.tagplayer.ui.component.WindowInfo
 import com.dogeby.tagplayer.ui.component.rememberWindowInfo
-import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import com.dogeby.tagplayer.ui.tagsetting.TagNameEditDialogUiState
 import com.dogeby.tagplayer.ui.videolist.VideoInfoDialog
 import com.dogeby.tagplayer.ui.videolist.VideoItemBottomAppBar
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun TagDetailRoute(
     onNavigateUp: () -> Unit,
@@ -46,13 +40,9 @@ fun TagDetailRoute(
     onNavigateToTagSetting: (List<Long>) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TagDetailViewModel = hiltViewModel(),
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
 ) {
     val tagDetailUiState by viewModel.tagDetailUiState.collectAsState()
     val tagNameEditDialogUiState by viewModel.tagNameEditDialogUiState.collectAsState()
-
-    val permissionState: PermissionState = rememberPermissionState(AppRequiredPermission)
-    if (permissionState.status.isGranted) viewModel.updateVideoList()
 
     TagDetailScreen(
         tagDetailUiState = tagDetailUiState,
@@ -64,8 +54,6 @@ fun TagDetailRoute(
         onNavigateToPlayer = onNavigateToPlayer,
         onNavigateToTagSetting = onNavigateToTagSetting,
         modifier = modifier,
-        setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-        updateVideo = viewModel::updateVideoList
     )
 }
 
@@ -80,8 +68,6 @@ fun TagDetailScreen(
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onNavigateToTagSetting: (List<Long>) -> Unit,
     modifier: Modifier = Modifier,
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null
 ) {
     var isSelectMode by remember(tagDetailUiState) {
         mutableStateOf(false)
@@ -158,8 +144,6 @@ fun TagDetailScreen(
                                 .padding(contentPadding),
                             isSelectMode = { isSelectMode },
                             isSelectedVideoItems = isSelectedVideoItems,
-                            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                            updateVideo = updateVideo,
                             onToggleVideoSelection = toggleVideoSelection,
                         )
                     }
@@ -178,8 +162,6 @@ fun TagDetailScreen(
                                 .padding(contentPadding),
                             isSelectMode = { isSelectMode },
                             isSelectedVideoItems = isSelectedVideoItems,
-                            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                            updateVideo = updateVideo,
                             onToggleVideoSelection = toggleVideoSelection,
                         )
                     }
@@ -198,8 +180,6 @@ fun TagDetailScreen(
                                 .padding(contentPadding),
                             isSelectMode = { isSelectMode },
                             isSelectedVideoItems = isSelectedVideoItems,
-                            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-                            updateVideo = updateVideo,
                             onToggleVideoSelection = toggleVideoSelection,
                         )
                     }

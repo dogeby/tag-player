@@ -55,11 +55,7 @@ fun ExpandedVideoList(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
     onToggleVideoSelection: (VideoItem) -> Unit = {},
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
-    updateVideo: (() -> Unit)? = null,
 ) {
-    VideoListUpdate(setTopResumedActivityChangedListener, updateVideo)
-
     if (videoItems.isEmpty()) {
         Box(
             modifier = modifier

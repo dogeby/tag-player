@@ -4,17 +4,15 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import com.dogeby.tagplayer.datastore.app.AppPreferencesData
 import com.dogeby.tagplayer.datastore.app.AppThemeMode
-import com.dogeby.tagplayer.ui.navigation.PermissionRoute
 import com.dogeby.tagplayer.ui.navigation.TagPlayerNavHost
-import com.dogeby.tagplayer.ui.navigation.VideoListRoute
+import com.dogeby.tagplayer.ui.permission.permissionNavigationRoute
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
+import com.dogeby.tagplayer.ui.videolist.videoListNavigationRoute
 
 @Composable
 fun TagPlayerApp(
     appPreferencesData: AppPreferencesData,
-    onExit: () -> Unit = {},
     isRequiredPermissionsGranted: Boolean,
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
 ) {
     TagPlayerTheme(
         darkTheme = when (appPreferencesData.appThemeMode) {
@@ -24,9 +22,7 @@ fun TagPlayerApp(
         },
     ) {
         TagPlayerNavHost(
-            onExit = onExit,
-            setTopResumedActivityChangedListener = setTopResumedActivityChangedListener,
-            startDestination = if (isRequiredPermissionsGranted) VideoListRoute else PermissionRoute,
+            startDestination = if (isRequiredPermissionsGranted) videoListNavigationRoute else permissionNavigationRoute,
         )
     }
 }

@@ -8,55 +8,60 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.dogeby.tagplayer.R
-import com.dogeby.tagplayer.ui.apppreferences.AppPreferencesRoute
+import com.dogeby.tagplayer.ui.apppreferences.appPreferences
+import com.dogeby.tagplayer.ui.apppreferences.appPreferencesNavigationRoute
+import com.dogeby.tagplayer.ui.apppreferences.navigateToAppPreferences
 import com.dogeby.tagplayer.ui.component.TagPlayerDrawerItem
-import com.dogeby.tagplayer.ui.permission.AppPermissionDeniedByExternalAction
-import com.dogeby.tagplayer.ui.permission.PermissionScreen
-import com.dogeby.tagplayer.ui.tagdetail.TagDetailRoute
-import com.dogeby.tagplayer.ui.taglist.TagListRoute
-import com.dogeby.tagplayer.ui.tagsetting.TagSettingRoute
-import com.dogeby.tagplayer.ui.videofilter.VideoFilterRoute
-import com.dogeby.tagplayer.ui.videolist.VideoListRoute
-import com.dogeby.tagplayer.ui.videoplayer.VideoPlayerRoute
-import com.dogeby.tagplayer.ui.videosearch.VideoSearchRoute
-import com.google.gson.Gson
+import com.dogeby.tagplayer.ui.permission.permissionNavigationRoute
+import com.dogeby.tagplayer.ui.permission.permissionScreen
+import com.dogeby.tagplayer.ui.tagdetail.navigateToTagDetail
+import com.dogeby.tagplayer.ui.tagdetail.tagDetailScreen
+import com.dogeby.tagplayer.ui.taglist.navigateToTagList
+import com.dogeby.tagplayer.ui.taglist.tagListNavigationRoute
+import com.dogeby.tagplayer.ui.taglist.tagListScreen
+import com.dogeby.tagplayer.ui.tagsetting.navigateToTagSetting
+import com.dogeby.tagplayer.ui.tagsetting.tagSettingScreen
+import com.dogeby.tagplayer.ui.videofilter.navigateToVideoFilter
+import com.dogeby.tagplayer.ui.videofilter.videoFilterScreen
+import com.dogeby.tagplayer.ui.videolist.navigateToVideoList
+import com.dogeby.tagplayer.ui.videolist.videoListNavigationRoute
+import com.dogeby.tagplayer.ui.videolist.videoListScreen
+import com.dogeby.tagplayer.ui.videoplayer.navigateToVideoPlayer
+import com.dogeby.tagplayer.ui.videoplayer.videoPlayerScreen
+import com.dogeby.tagplayer.ui.videosearch.navigateToVideoSearch
+import com.dogeby.tagplayer.ui.videosearch.videoSearchScreen
 
 @Composable
 fun TagPlayerNavHost(
-    onExit: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = PermissionRoute,
-    setTopResumedActivityChangedListener: ((((isTopResumedActivity: Boolean) -> Unit)?) -> Unit)? = null,
+    startDestination: String = permissionNavigationRoute,
 ) {
     val drawerItems = listOf(
         TagPlayerDrawerItem(
-            route = VideoListRoute,
+            route = videoListNavigationRoute,
             name = stringResource(id = R.string.videoList_topAppBar_title),
             icon = ImageVector.vectorResource(id = R.drawable.ic_movie),
             onClick = {
-                navController.navigate(VideoListRoute) {
-                    popUpTo(VideoListRoute) { inclusive = true }
+                navController.navigateToVideoList {
+                    popUpTo(videoListNavigationRoute) { inclusive = true }
                 }
             }
         ),
         TagPlayerDrawerItem(
-            route = TagListRoute,
+            route = tagListNavigationRoute,
             name = stringResource(id = R.string.tagList_topAppBar_title),
             icon = ImageVector.vectorResource(id = R.drawable.ic_tag),
-            onClick = { navController.navigate(TagListRoute) },
+            onClick = { navController.navigateToTagList() },
         ),
         TagPlayerDrawerItem(
-            route = AppPreferencesRoute,
+            route = appPreferencesNavigationRoute,
             name = stringResource(id = R.string.appPreferences_topAppBar_title),
             icon = Icons.Default.Settings,
-            onClick = { navController.navigate(AppPreferencesRoute) },
+            onClick = { navController.navigateToAppPreferences() },
         ),
     )
     NavHost(
@@ -64,86 +69,60 @@ fun TagPlayerNavHost(
         modifier = modifier,
         startDestination = startDestination,
     ) {
-        composable(PermissionRoute) {
-            PermissionScreen(
-                onNavigateToDestination = {
-                    navController.navigate(VideoListRoute) {
-                        popUpTo(PermissionRoute) { inclusive = true }
-                    }
-                },
-            )
-        }
-        composable(VideoListRoute) {
-            AppPermissionDeniedByExternalAction(onExit)
-            VideoListRoute(
-                tagPlayerDrawerItems = drawerItems,
-                onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
-                onNavigateToFilterSetting = { navController.navigate(VideoFilterRoute) },
-                onNavigateToTagSetting = { videoIds ->
-                    navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
-                },
-                onNavigateToVideoSearch = { navController.navigate(VideoSearchRoute) },
-                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener
-            )
-        }
-        composable(
-            route = "$TagSettingRoute/{$TagSettingVideoIdsArgument}",
-            arguments = listOf(navArgument(TagSettingVideoIdsArgument) { type = NavType.StringType }),
-        ) {
-            TagSettingRoute(
-                onNavigateUp = { navController.navigateUp() }
-            )
-        }
-        composable(VideoSearchRoute) {
-            AppPermissionDeniedByExternalAction(onExit)
-            VideoSearchRoute(
-                onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
-                onNavigateUp = { navController.navigateUp() },
-                onNavigateToTagSetting = { videoIds ->
-                    navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
-                },
-                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener
-            )
-        }
-        composable(VideoFilterRoute) {
-            VideoFilterRoute(
-                onNavigateUp = { navController.navigateUp() }
-            )
-        }
-        composable(
-            route = "$VideoPlayerRoute/{$VideoPlayerVideoIdsArgument}/{$VideoPlayerStartVideoId}",
-            arguments = listOf(
-                navArgument(VideoPlayerVideoIdsArgument) { type = NavType.StringType },
-                navArgument(VideoPlayerStartVideoId) { type = NavType.LongType },
-            )
-        ) {
-            VideoPlayerRoute(
-                onNavigateUp = { navController.navigateUp() }
-            )
-        }
-        composable(TagListRoute) {
-            TagListRoute(
-                tagPlayerDrawerItems = drawerItems,
-                onNavigateToTagDetail = { navController.navigate("$TagDetailRoute/$it") },
-            )
-        }
-        composable(
-            route = "$TagDetailRoute/{$TagDetailTagIdArgument}",
-            arguments = listOf(navArgument(TagDetailTagIdArgument) { type = NavType.LongType }),
-        ) {
-            TagDetailRoute(
-                onNavigateUp = { navController.navigateUp() },
-                onNavigateToPlayer = { videoIds, videoIndex -> navController.navigate("$VideoPlayerRoute/${Gson().toJson(videoIds)}/$videoIndex") },
-                onNavigateToTagSetting = { videoIds ->
-                    navController.navigate("$TagSettingRoute/${Gson().toJson(videoIds)}")
-                },
-                setTopResumedActivityChangedListener = setTopResumedActivityChangedListener
-            )
-        }
-        composable(AppPreferencesRoute) {
-            AppPreferencesRoute(
-                onNavigateUp = { navController.navigateUp() },
-            )
-        }
+        permissionScreen(
+            onNavigateToDestination = {
+                navController.navigateToVideoList {
+                    popUpTo(permissionNavigationRoute) { inclusive = true }
+                }
+            },
+        )
+        videoListScreen(
+            tagPlayerDrawerItems = drawerItems,
+            onNavigateToPlayer = { videoIds, videoIndex ->
+                navController.navigateToVideoPlayer(
+                    startVideoId = videoIndex,
+                    videoIds = videoIds,
+                )
+            },
+            onNavigateToFilterSetting = { navController.navigateToVideoFilter() },
+            onNavigateToTagSetting = { videoIds ->
+                navController.navigateToTagSetting(videoIds)
+            },
+            onNavigateToVideoSearch = { navController.navigateToVideoSearch() },
+        )
+        tagSettingScreen(onNavigateUp = { navController.navigateUp() })
+        videoSearchScreen(
+            onNavigateUp = { navController.navigateUp() },
+            onNavigateToPlayer = { videoIds, videoIndex ->
+                navController.navigateToVideoPlayer(
+                    startVideoId = videoIndex,
+                    videoIds = videoIds,
+                )
+            },
+            onNavigateToTagSetting = { videoIds ->
+                navController.navigateToTagSetting(videoIds)
+            },
+        )
+        videoFilterScreen(onNavigateUp = { navController.navigateUp() })
+        videoPlayerScreen(onNavigateUp = { navController.navigateUp() })
+        tagListScreen(
+            tagPlayerDrawerItems = drawerItems,
+            onNavigateToTagDetail = { tagId ->
+                navController.navigateToTagDetail(tagId)
+            },
+        )
+        tagDetailScreen(
+            onNavigateUp = { navController.navigateUp() },
+            onNavigateToPlayer = { videoIds, videoIndex ->
+                navController.navigateToVideoPlayer(
+                    startVideoId = videoIndex,
+                    videoIds = videoIds,
+                )
+            },
+            onNavigateToTagSetting = { videoIds ->
+                navController.navigateToTagSetting(videoIds)
+            },
+        )
+        appPreferences(onNavigateUp = { navController.navigateUp() })
     }
 }

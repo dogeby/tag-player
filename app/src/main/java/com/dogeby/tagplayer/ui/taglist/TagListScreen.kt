@@ -48,7 +48,7 @@ fun TagListRoute(
     val scope = rememberCoroutineScope()
 
     TagPlayerNavigationDrawer(
-        startRoute = com.dogeby.tagplayer.ui.navigation.TagListRoute,
+        startRoute = tagListNavigationRoute,
         tagPlayerDrawerItems = tagPlayerDrawerItems,
         onItemClick = { it.onClick() },
         drawerState = drawerState,

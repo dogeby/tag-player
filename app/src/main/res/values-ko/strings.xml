@@ -27,38 +27,38 @@
     <string name="permission_dialog_app_setting">앱 설정</string>
 
     <string name="videoList_topAppBar_title">동영상 목록</string>
-    <string name="videoList_listEmpty">동영상을 찾지 못했습니다.</string>
+    <string name="videoList_listEmpty">동영상을 찾지 못했습니다</string>
 
     <string name="tagSetting_topAppBarTitle">태그 설정</string>
     <string name="tagSetting_selectOrCreate">선택 또는 생성</string>
-    <string name="tagSetting_tagSearchResultEmpty">태그를 찾지 못했습니다.</string>
+    <string name="tagSetting_tagSearchResultEmpty">태그를 찾지 못했습니다</string>
     <string name="tagInputChipTextField_searchHint">태그 검색 또는 생성</string>
 
     <string name="tagNameModifyDialog_dialogTitle">태그 이름 수정</string>
-    <string name="tagNameDuplicateNameError">중복된 태그가 있습니다.</string>
-    <string name="tagNameBlankError">이름을 입력해주세요.</string>
+    <string name="tagNameDuplicateNameError">중복된 태그가 있습니다</string>
+    <string name="tagNameBlankError">이름을 입력해주세요</string>
 
     <string name="videoInfoDialog_title">상세 정보</string>
     <string name="multiVideoInfoDialog_name">%1$s 외 %2$d개</string>
 
     <string name="videoSearch_searchTextFieldHint">동영상 검색</string>
-    <string name="videoSearch_queryBlank">동영상 이름을 입력해주세요.</string>
-    <string name="videoSearch_searchResultEmpty">검색 결과가 없습니다.</string>
+    <string name="videoSearch_queryBlank">동영상 이름을 입력해주세요</string>
+    <string name="videoSearch_searchResultEmpty">검색 결과가 없습니다</string>
 
     <string name="videoFilter_searchTextFieldHint">태그 검색</string>
-    <string name="videoFilter_tagEmpty">태그를 찾지 못했습니다.</string>
-    <string name="videoFilter_directoryEmpty">폴더를 찾지 못했습니다.</string>
-    <string name="videoFilter_tagAndDirectoryEmpty">태그와 폴더를 찾지 못했습니다.</string>
+    <string name="videoFilter_tagEmpty">태그를 찾지 못했습니다</string>
+    <string name="videoFilter_directoryEmpty">폴더를 찾지 못했습니다</string>
+    <string name="videoFilter_tagAndDirectoryEmpty">태그와 폴더를 찾지 못했습니다</string>
 
     <string-array name="videoSortTypes">
         <item>이름</item>
         <item>크기</item>
     </string-array>
 
-    <string name="videoPlayer_videoEmpty">동영상을 찾지 못했습니다.</string>
+    <string name="videoPlayer_videoEmpty">동영상을 찾지 못했습니다</string>
 
     <string name="tagList_topAppBar_title">태그 목록</string>
-    <string name="tagList_empty">태그를 찾지 못했습니다.</string>
+    <string name="tagList_empty">태그를 찾지 못했습니다</string>
     <string name="video_count">%1$d 동영상</string>
 
     <string name="tagCreateDialog_title">태그 생성</string>

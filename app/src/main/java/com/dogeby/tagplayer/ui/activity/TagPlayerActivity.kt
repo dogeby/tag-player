@@ -6,10 +6,10 @@ import android.content.ContextWrapper
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -21,7 +21,7 @@ import com.dogeby.tagplayer.ui.permission.AppRequiredPermission
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TagPlayerActivity : ComponentActivity() {
+class TagPlayerActivity : AppCompatActivity() {
 
     private val isRequiredPermissionsGranted: Boolean
         get() = checkSelfPermission(AppRequiredPermission) == PackageManager.PERMISSION_GRANTED

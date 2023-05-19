@@ -27,8 +27,8 @@ android {
         applicationId "com.dogeby.tagplayer"
         minSdk 26
         targetSdk 33
-        versionCode 3
-        versionName "1.0"
+        versionCode 4
+        versionName "1.1.0"
 
         testInstrumentationRunner "com.dogeby.tagplayer.TagPlayerTestRunner"
         vectorDrawables {
@@ -69,12 +69,12 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
-    implementation 'androidx.activity:activity-compose:1.7.0'
+    implementation 'androidx.activity:activity-compose:1.7.1'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.compose.material3:material3:1.1.0-beta01'
+    implementation 'androidx.compose.material3:material3:1.1.0'
 
     //debug
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
@@ -101,7 +101,7 @@ dependencies {
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
     //splash screen compat library
-    implementation 'androidx.core:core-splashscreen:1.0.0'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
 
     //accompanist jetpack compose permission
     implementation "com.google.accompanist:accompanist-permissions:$accompanist_version"
@@ -131,7 +131,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
 
     //play services open source licenses
-    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
     implementation "androidx.appcompat:appcompat:1.6.1"
 
     //palette api

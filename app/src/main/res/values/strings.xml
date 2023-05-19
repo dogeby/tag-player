@@ -70,4 +70,10 @@
     <string name="appPreferences_theme_body_dark">Dark mode</string>
     <string name="appPreferences_ossLicenses_title">Open Source Licenses</string>
     <string name="appPreferences_ossLicenses_body">License details for open source software</string>
+    <string name="appPreferences_locale_title">Language</string>
+    <string name="appPreferences_locale_language">English</string>
+    <string name="appPreferences_locale_language_code">en</string>
+    <string name="appPreferences_locale_body_systemSetting">System default language</string>
+    <string name="appPreferences_locale_body_english">English</string>
+    <string name="appPreferences_locale_body_korean">Korean</string>
 </resources>

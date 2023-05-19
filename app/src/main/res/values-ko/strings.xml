@@ -70,4 +70,10 @@
     <string name="appPreferences_theme_body_dark">다크 모드</string>
     <string name="appPreferences_ossLicenses_title">오픈소스 라이선스</string>
     <string name="appPreferences_ossLicenses_body">오픈소스 소프트웨어에 대한 라이선스 세부정보</string>
+    <string name="appPreferences_locale_title">언어</string>
+    <string name="appPreferences_locale_language">한국어</string>
+    <string name="appPreferences_locale_language_code">ko</string>
+    <string name="appPreferences_locale_body_systemSetting">시스템 기본 언어</string>
+    <string name="appPreferences_locale_body_english">영어</string>
+    <string name="appPreferences_locale_body_korean">한국어</string>
 </resources>

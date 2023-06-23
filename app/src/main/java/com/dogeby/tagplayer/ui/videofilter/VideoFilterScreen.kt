@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.VideoFilterChip
+import com.dogeby.tagplayer.ui.component.clearFocusWhenTap
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
@@ -84,11 +85,13 @@ fun VideoFilterScreen(
             onActiveChange = {
                 if (it.not()) onNavigateUp()
             },
-            modifier = Modifier.padding(
-                start = contentPadding.calculateStartPadding(layoutDirection),
-                end = contentPadding.calculateEndPadding(layoutDirection),
-                bottom = contentPadding.calculateBottomPadding(),
-            ),
+            modifier = Modifier
+                .clearFocusWhenTap()
+                .padding(
+                    start = contentPadding.calculateStartPadding(layoutDirection),
+                    end = contentPadding.calculateEndPadding(layoutDirection),
+                    bottom = contentPadding.calculateBottomPadding(),
+                ),
             leadingIcon = {
                 IconButton(onClick = onNavigateUp) {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)

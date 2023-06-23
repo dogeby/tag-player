@@ -82,8 +82,13 @@ fun VideoFilterScreen(
                 onSearch(it)
             },
             active = true,
-            onActiveChange = {
-                if (it.not()) onNavigateUp()
+            onActiveChange = { active ->
+                if (active) return@SearchBar
+                if (query.isNotEmpty()) {
+                    onQueryClear()
+                    return@SearchBar
+                }
+                onNavigateUp()
             },
             modifier = Modifier
                 .clearFocusWhenTap()

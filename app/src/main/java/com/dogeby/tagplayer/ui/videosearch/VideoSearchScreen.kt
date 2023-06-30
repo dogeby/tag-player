@@ -32,6 +32,7 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.MaxSizeCenterText
 import com.dogeby.tagplayer.ui.component.WindowInfo
+import com.dogeby.tagplayer.ui.component.clearFocusWhenTap
 import com.dogeby.tagplayer.ui.component.rememberWindowInfo
 import com.dogeby.tagplayer.ui.videolist.CompactVideoList
 import com.dogeby.tagplayer.ui.videolist.ContractedVideoList
@@ -75,6 +76,9 @@ fun VideoSearchScreen(
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit = {},
 ) {
+    val focusManager = LocalFocusManager.current
+    val windowInfo = rememberWindowInfo()
+
     var isSelectMode by remember(videoSearchViewUiState) {
         mutableStateOf(false)
     }
@@ -83,6 +87,7 @@ fun VideoSearchScreen(
     }
     val toggleVideoSelection = remember(videoSearchViewUiState) {
         { videoItem: VideoItem ->
+            focusManager.clearFocus()
             isSelectedVideoItems.compute(videoItem.id) { _, v ->
                 v?.not() ?: true
             }
@@ -93,9 +98,6 @@ fun VideoSearchScreen(
         this.value = isSelectMode
     }
     var isShowVideoInfoDialog by remember { mutableStateOf(false) }
-
-    val focusManager = LocalFocusManager.current
-    val windowInfo = rememberWindowInfo()
 
     Scaffold(
         modifier = modifier,
@@ -144,11 +146,13 @@ fun VideoSearchScreen(
                 }
                 onNavigateUp()
             },
-            modifier = Modifier.padding(
-                start = contentPadding.calculateStartPadding(layoutDirection),
-                end = contentPadding.calculateEndPadding(layoutDirection),
-                bottom = contentPadding.calculateBottomPadding(),
-            ),
+            modifier = Modifier
+                .clearFocusWhenTap()
+                .padding(
+                    start = contentPadding.calculateStartPadding(layoutDirection),
+                    end = contentPadding.calculateEndPadding(layoutDirection),
+                    bottom = contentPadding.calculateBottomPadding(),
+                ),
             leadingIcon = {
                 IconButton(onClick = onNavigateUp) {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)

@@ -27,17 +27,12 @@ android {
         applicationId "com.dogeby.tagplayer"
         minSdk 26
         targetSdk 33
-        versionCode 4
-        versionName "1.1.0"
+        versionCode 9
+        versionName "1.1.1"
 
         testInstrumentationRunner "com.dogeby.tagplayer.TagPlayerTestRunner"
         vectorDrawables {
             useSupportLibrary true
-        }
-    }
-    bundle {
-        language {
-            enableSplit = false
         }
     }
     buildTypes {

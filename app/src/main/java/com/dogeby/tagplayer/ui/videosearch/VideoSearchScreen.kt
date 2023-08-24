@@ -147,12 +147,12 @@ fun VideoSearchScreen(
                 onNavigateUp()
             },
             modifier = Modifier
-                .clearFocusWhenTap()
                 .padding(
                     start = contentPadding.calculateStartPadding(layoutDirection),
                     end = contentPadding.calculateEndPadding(layoutDirection),
                     bottom = contentPadding.calculateBottomPadding(),
-                ),
+                )
+                .clearFocusWhenTap(),
             leadingIcon = {
                 IconButton(onClick = onNavigateUp) {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)

@@ -18,6 +18,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.ui.PlayerView
+import com.dogeby.tagplayer.ui.activity.findActivity
+import com.dogeby.tagplayer.ui.activity.setKeepScreenOn
 import com.dogeby.tagplayer.ui.theme.PlayerBackgroundColor
 
 private const val POSITION_UPDATE_INTERVAL_MS = 200L
@@ -70,13 +72,16 @@ fun VideoPlayer(
                     handler.postDelayed(POSITION_UPDATE_INTERVAL_MS, actionToken) { getCurrentPosition() }
                 }
                 val playerListener = object : Player.Listener {
+                    val activity = context.findActivity()
 
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
                         super.onIsPlayingChanged(isPlaying)
                         if (isPlaying.not()) {
                             handler.removeCallbacksAndMessages(actionToken)
+                            activity?.setKeepScreenOn(false)
                             return
                         }
+                        activity?.setKeepScreenOn(true)
                         handler.postDelayed(POSITION_UPDATE_INTERVAL_MS, actionToken) { getCurrentPosition() }
                     }
 

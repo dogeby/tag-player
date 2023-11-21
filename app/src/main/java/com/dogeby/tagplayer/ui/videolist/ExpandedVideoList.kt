@@ -107,7 +107,6 @@ fun ExpandedVideoCard(
             else MaterialTheme.colorScheme.surfaceVariant,
         ),
         modifier = modifier
-            .aspectRatio(16 / (LocalConfiguration.current.fontScale * 10 + 5f))
             .clip(CardDefaults.shape)
             .combinedClickable(
                 onClick = { onClick(videoItem) },

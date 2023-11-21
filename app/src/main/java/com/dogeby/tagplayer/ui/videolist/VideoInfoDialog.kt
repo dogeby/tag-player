@@ -138,7 +138,7 @@ private fun VideoInfoTags(
                 VideoTag(
                     name = it.name,
                     color = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.videolist_video_tag_list_item_horizontal_padding)),
+                    modifier = Modifier.padding(end = dimensionResource(id = R.dimen.videolist_video_tag_list_item_end_padding)),
                 )
             }
         }

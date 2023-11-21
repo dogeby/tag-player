@@ -134,14 +134,14 @@ private fun CompactVideoCard(
             ) {
                 Text(text = videoItem.name, maxLines = 2, overflow = TextOverflow.Ellipsis)
 
-                val tagListItemHorizontalPadding = Modifier.padding(horizontal = dimensionResource(id = R.dimen.videolist_video_tag_list_item_horizontal_padding))
+                val tagListItemEndPadding = Modifier.padding(end = dimensionResource(id = R.dimen.videolist_video_tag_list_item_end_padding))
                 Column(modifier = Modifier.align(Alignment.BottomStart)) {
                     LazyRow {
                         items(videoItem.parentDirectories) {
                             VideoTag(
                                 name = it,
                                 color = MaterialTheme.colorScheme.secondary,
-                                modifier = tagListItemHorizontalPadding,
+                                modifier = tagListItemEndPadding,
                             )
                         }
                     }
@@ -151,7 +151,7 @@ private fun CompactVideoCard(
                                 VideoTag(
                                     name = it.name,
                                     color = MaterialTheme.colorScheme.tertiary,
-                                    modifier = tagListItemHorizontalPadding,
+                                    modifier = tagListItemEndPadding,
                                 )
                             }
                         }
@@ -235,7 +235,7 @@ private fun CompactRippleLoadingVideoCard(
                     Spacer(modifier = Modifier.weight(1f))
 
                     val tagListItemModifier =
-                        Modifier.padding(horizontal = dimensionResource(id = R.dimen.videolist_video_tag_list_item_horizontal_padding))
+                        Modifier.padding(end = dimensionResource(id = R.dimen.videolist_video_tag_list_item_end_padding))
                     Row {
                         repeat(2) {
                             RippleLoadingVideoTag(

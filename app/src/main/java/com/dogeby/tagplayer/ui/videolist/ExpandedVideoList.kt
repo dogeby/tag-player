@@ -107,7 +107,6 @@ fun ExpandedVideoCard(
             else MaterialTheme.colorScheme.surfaceVariant,
         ),
         modifier = modifier
-            .aspectRatio(16 / (LocalConfiguration.current.fontScale * 10 + 5f))
             .clip(CardDefaults.shape)
             .combinedClickable(
                 onClick = { onClick(videoItem) },
@@ -123,15 +122,13 @@ fun ExpandedVideoCard(
         ) {
             Text(text = videoItem.name, maxLines = 2, overflow = TextOverflow.Ellipsis)
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            val tagListItemHorizontalPadding = Modifier.padding(horizontal = dimensionResource(id = R.dimen.videolist_video_tag_list_item_horizontal_padding))
-            LazyRow {
+            val tagListItemEndPadding = Modifier.padding(end = dimensionResource(id = R.dimen.videolist_video_tag_list_item_end_padding))
+            LazyRow(modifier = Modifier.padding(top = 8.dp)) {
                 items(videoItem.parentDirectories) {
                     VideoTag(
                         name = it,
                         color = MaterialTheme.colorScheme.secondary,
-                        modifier = tagListItemHorizontalPadding,
+                        modifier = tagListItemEndPadding,
                     )
                 }
             }
@@ -140,7 +137,7 @@ fun ExpandedVideoCard(
                     VideoTag(
                         name = it.name,
                         color = MaterialTheme.colorScheme.tertiary,
-                        modifier = tagListItemHorizontalPadding,
+                        modifier = tagListItemEndPadding,
                     )
                 }
             }
@@ -210,7 +207,7 @@ fun ExpandedRippleLoadingVideoCard(
             Spacer(modifier = Modifier.weight(1f))
 
             val tagListItemModifier =
-                Modifier.padding(horizontal = dimensionResource(id = R.dimen.videolist_video_tag_list_item_horizontal_padding))
+                Modifier.padding(end = dimensionResource(id = R.dimen.videolist_video_tag_list_item_end_padding))
             Row {
                 repeat(2) {
                     RippleLoadingVideoTag(

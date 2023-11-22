@@ -14,10 +14,10 @@
     <dimen name="videolist_setting_assist_chip_max_width">210dp</dimen>
     <dimen name="videolist_video_duration_horizontal_padding">2dp</dimen>
     <dimen name="videolist_video_thumbnail_duration_padding">4dp</dimen>
-    <dimen name="videolist_video_tag_list_item_horizontal_padding">2dp</dimen>
+    <dimen name="videolist_video_tag_list_item_end_padding">4dp</dimen>
     <dimen name="videolist_video_tag_horizontal_padding">4dp</dimen>
     <dimen name="videolist_compact_video_item_height">108dp</dimen>
-    <dimen name="videolist_video_item_info_padding">4dp</dimen>
+    <dimen name="videolist_video_item_info_padding">8dp</dimen>
     <dimen name="videolist_expanded_video_item_width">192dp</dimen>
 
     <dimen name="videoTag_min_width">32dp</dimen>

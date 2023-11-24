@@ -6,4 +6,5 @@ option java_multiple_files = true;
 
 message AppPreferences {
     int32 app_theme_mode = 1;
+    bool auto_rotation = 2;
 }

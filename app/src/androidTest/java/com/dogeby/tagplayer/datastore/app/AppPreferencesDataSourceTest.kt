@@ -49,4 +49,21 @@ class AppPreferencesDataSourceTest {
 
         Assert.assertEquals(appThemeMode, data.appThemeMode)
     }
+
+    @Test
+    fun getAutoRotation_default() = runTest {
+        val data = appPreferencesDataSource.appPreferencesData.first()
+
+        Assert.assertEquals(false, data.autoRotation)
+    }
+
+    @Test
+    fun setAutoRotation() = runTest {
+        val autoRotation = true
+
+        appPreferencesDataSource.setAutoRotation(autoRotation)
+        val data = appPreferencesDataSource.appPreferencesData.first()
+
+        Assert.assertEquals(autoRotation, data.autoRotation)
+    }
 }

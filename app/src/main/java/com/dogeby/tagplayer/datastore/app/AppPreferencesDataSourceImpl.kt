@@ -13,15 +13,21 @@ class AppPreferencesDataSourceImpl @Inject constructor(
     private val appPreferences: DataStore<AppPreferences>
 ) : AppPreferencesDataSource {
 
+    private val appThemeModeDefaultValue = AppThemeMode.SYSTEM_SETTING
+
     override val appPreferencesData: Flow<AppPreferencesData> = appPreferences
         .data
         .map {
             AppPreferencesData(
                 AppThemeMode.values().getOrElse(it.appThemeMode) {
-                    AppThemeMode.SYSTEM_SETTING
+                    appThemeModeDefaultValue
                 }
             )
         }
+
+    override suspend fun resetAppPreferences() {
+        setAppThemeMode(appThemeModeDefaultValue)
+    }
 
     override suspend fun setAppThemeMode(appThemeMode: AppThemeMode) {
         appPreferences.updateData {

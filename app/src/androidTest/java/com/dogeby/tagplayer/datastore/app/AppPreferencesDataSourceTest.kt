@@ -5,7 +5,9 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -24,6 +26,11 @@ class AppPreferencesDataSourceTest {
     @Before
     fun setUp() {
         hiltRule.inject()
+    }
+
+    @After
+    fun clear() {
+        runBlocking { appPreferencesDataSource.resetAppPreferences() }
     }
 
     @Test

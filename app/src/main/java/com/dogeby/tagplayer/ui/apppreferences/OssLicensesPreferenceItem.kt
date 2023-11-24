@@ -15,7 +15,7 @@ fun OssLicensesPreferenceItem(
     val context = LocalContext.current
     val title = stringResource(id = R.string.appPreferences_ossLicenses_title)
 
-    PreferencesItem(
+    ClickablePreferencesItem(
         title = title,
         body = stringResource(id = R.string.appPreferences_ossLicenses_body),
         onItemClick = {

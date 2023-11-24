@@ -43,7 +43,7 @@ fun AppThemeModePreferencesItem(
         )
     }
 
-    PreferencesItem(
+    ClickablePreferencesItem(
         title = stringResource(id = R.string.appPreferences_theme_title),
         body = when (currentAppThemeMode()) {
             AppThemeMode.SYSTEM_SETTING -> {

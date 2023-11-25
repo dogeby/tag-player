@@ -104,7 +104,6 @@ fun PermissionScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(it)
                 .padding(all = dimensionResource(id = R.dimen.padding_medium)),
-            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = stringResource(id = R.string.permission_guide_app_access_permission),
@@ -116,11 +115,25 @@ fun PermissionScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.permission_request_description_bottom_padding)),
             )
-
+            Text(
+                text = stringResource(id = R.string.permission_requiredPermissions),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.padding_small)),
+            )
             PermissionElement(
                 image = R.drawable.ic_media_video_permission,
                 title = R.string.permission_read_media_video,
                 description = R.string.permission_read_media_video_description,
+            )
+            Text(
+                text = stringResource(id = R.string.permission_optionalPermissions),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.padding_small)),
+            )
+            PermissionElement(
+                image = R.drawable.ic_settings_permission,
+                title = R.string.permission_write_settings,
+                description = R.string.permission_write_settings_description,
             )
             Spacer(modifier = Modifier.weight(1f))
             Button(

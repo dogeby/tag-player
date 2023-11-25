@@ -1,6 +1,7 @@
 package com.dogeby.tagplayer.ui.permission
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.provider.Settings
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -36,9 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @Composable
 private fun PermissionElement(
@@ -74,7 +72,7 @@ private fun PermissionElement(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PermissionScreen(
     modifier: Modifier = Modifier,
@@ -83,16 +81,17 @@ fun PermissionScreen(
     var isShowPermissionDialog by rememberSaveable { mutableStateOf(false) }
     if (isShowPermissionDialog) {
         PermissionAlertDialog(
+            requireDescription = stringResource(id = R.string.permission_dialog_require_description),
+            methodDescription = stringResource(id = R.string.permission_dialog_method_description),
+            activityStartAction = Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             isDismissRequest = true,
             onDismiss = { isShowPermissionDialog = false },
         )
     }
 
-    val permissionState = rememberPermissionState(
-        permission = AppRequiredPermission
-    )
-    if (permissionState.status.isGranted) {
-        LaunchedEffect(permissionState.permission) {
+    val permissionState = rememberMultiplePermissionsState(AppRequiredPermission)
+    if (permissionState.allPermissionsGranted) {
+        LaunchedEffect(permissionState.permissions) {
             isShowPermissionDialog = false
             onNavigateToDestination()
         }
@@ -126,10 +125,10 @@ fun PermissionScreen(
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = {
-                    if (permissionState.status.shouldShowRationale) {
+                    if (permissionState.shouldShowRationale) {
                         isShowPermissionDialog = true
                     } else {
-                        permissionState.launchPermissionRequest()
+                        permissionState.launchMultiplePermissionRequest()
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -22,6 +21,9 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable
 fun PermissionAlertDialog(
+    requireDescription: String,
+    methodDescription: String,
+    activityStartAction: String,
     modifier: Modifier = Modifier,
     dismissButtonText: String = stringResource(id = R.string.close),
     isDismissRequest: Boolean = false,
@@ -32,15 +34,13 @@ fun PermissionAlertDialog(
         onDismissRequest = { if (isDismissRequest) onDismiss() },
         text = {
             Text(
-                text = "${stringResource(id = R.string.permission_dialog_require_description)}\n\n${
-                stringResource(id = R.string.permission_dialog_method_description)
-                }",
+                text = "$requireDescription\n\n$methodDescription",
             )
         },
         confirmButton = {
             val context = LocalContext.current
             Button(
-                onClick = { startTagPlayerAppDetailsSettings(context) },
+                onClick = { startTagPlayerAppDetailsSettings(activityStartAction, context) },
             ) {
                 Text(text = stringResource(id = R.string.permission_dialog_app_setting))
             }
@@ -53,10 +53,13 @@ fun PermissionAlertDialog(
     )
 }
 
-private fun startTagPlayerAppDetailsSettings(context: Context) {
+private fun startTagPlayerAppDetailsSettings(
+    activityStartAction: String,
+    context: Context
+) {
     context.startActivity(
         Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            activityStartAction,
             Uri.parse("package:" + BuildConfig.APPLICATION_ID),
         ),
     )
@@ -67,6 +70,6 @@ private fun startTagPlayerAppDetailsSettings(context: Context) {
 @Composable
 fun PermissionAlertDialogPreview() {
     TagPlayerTheme {
-        PermissionAlertDialog()
+        PermissionAlertDialog("test", "test", "")
     }
 }

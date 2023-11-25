@@ -22,6 +22,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
+import com.dogeby.tagplayer.ui.activity.findActivity
 import com.dogeby.tagplayer.ui.component.VideoThumbnail
 import com.dogeby.tagplayer.ui.theme.PlayerBackgroundColor
 
@@ -34,6 +35,7 @@ fun VideoPlayerPager(
     isControllerVisible: () -> Boolean,
     onSettledPageChanged: (videoId: Long) -> Unit,
     modifier: Modifier = Modifier,
+    useSystemAutoRotation: Boolean = false,
 ) {
     val pagerState = rememberPagerState(
         videoItems
@@ -46,6 +48,15 @@ fun VideoPlayerPager(
         }
     }
     onSettledPageChanged(settledPageVideoId)
+
+    val context = LocalContext.current
+    val activity = context.findActivity()
+    var orientation by remember {
+        val orientation = getCurrentScreenOrientation(context, activity, useSystemAutoRotation)
+        mutableStateOf(orientation)
+    }.also {
+        activity?.requestedOrientation = it.value
+    }
 
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null
@@ -62,6 +73,9 @@ fun VideoPlayerPager(
                 isSettledPage = { videoItem.id == settledPageVideoId },
                 isControllerVisible = isControllerVisible,
                 modifier = Modifier.fillMaxSize(),
+                orientation = { orientation },
+                onRotationBtnClick = { orientation = it },
+                useSystemAutoRotation = useSystemAutoRotation,
             )
         }
     }
@@ -72,7 +86,10 @@ fun VideoPlayerPage(
     videoItem: () -> VideoItem,
     isSettledPage: () -> Boolean,
     isControllerVisible: () -> Boolean,
+    orientation: () -> Int,
+    onRotationBtnClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    useSystemAutoRotation: Boolean = false,
 ) {
     val context = LocalContext.current
     val player = remember {
@@ -123,8 +140,11 @@ fun VideoPlayerPage(
             totalDuration = videoItemValue.duration,
             isProgressBarExternalUpdate = { playBackState == Player.STATE_READY },
             isPlaying = { isPlaying },
+            orientation = orientation,
+            useSystemAutoRotation = useSystemAutoRotation,
             onPlay = { isPlaying = true },
             onPause = { isPlaying = false },
+            onRotationBtnClick = onRotationBtnClick,
             onProgressBarScrubbingFinished = { player.seekTo(it.coerceIn(0, videoItemValue.duration.value)) },
             modifier = Modifier.fillMaxSize(),
         )

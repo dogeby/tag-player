@@ -1,6 +1,10 @@
 package com.dogeby.tagplayer.ui.videoplayer
 
+import android.app.Activity
+import android.content.Context
 import android.content.pm.ActivityInfo
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.Spring.DampingRatioNoBouncy
@@ -30,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +49,7 @@ import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.activity.findActivity
+import com.dogeby.tagplayer.ui.permission.WriteSettingsPermissionCheck
 import com.dogeby.tagplayer.ui.theme.PlayerControllerOnBackgroundColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarIndicatorColor
 import com.dogeby.tagplayer.ui.theme.PlayerProgressBarTrackColor
@@ -57,8 +63,11 @@ fun VideoPlayerController(
     totalDuration: VideoDuration,
     isProgressBarExternalUpdate: () -> Boolean,
     isPlaying: () -> Boolean,
+    orientation: () -> Int,
+    useSystemAutoRotation: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
+    onRotationBtnClick: (Int) -> Unit,
     onProgressBarScrubbingFinished: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -67,7 +76,7 @@ fun VideoPlayerController(
         modifier = modifier,
     ) {
         Column(
-            verticalArrangement = Arrangement.Bottom
+            verticalArrangement = Arrangement.Bottom,
         ) {
             Row(
                 modifier = Modifier
@@ -84,8 +93,11 @@ fun VideoPlayerController(
                 )
                 VideoPlayerRightController(
                     isPlaying = isPlaying,
+                    orientation = orientation,
+                    useSystemAutoRotation = useSystemAutoRotation,
                     onPlay = onPlay,
                     onPause = onPause,
+                    onRotationBtnClick = onRotationBtnClick,
                 )
             }
 
@@ -105,7 +117,7 @@ fun VideoPlayerController(
 fun VideoPlayerControllerAnimation(
     visible: Boolean,
     modifier: Modifier = Modifier,
-    content: @Composable AnimatedVisibilityScope.() -> Unit
+    content: @Composable AnimatedVisibilityScope.() -> Unit,
 ) {
     AnimatedVisibility(
         visible = visible,
@@ -170,7 +182,7 @@ fun VideoPlayerProgressBar(
         VideoPlayerDuration(
             currentDuration = sliderCurrentProgress.toString(),
             totalDuration = totalDuration.toString(),
-            modifier = Modifier.padding(durationTextPadding)
+            modifier = Modifier.padding(durationTextPadding),
         )
         Slider(
             value = animatedProgress,
@@ -181,7 +193,7 @@ fun VideoPlayerProgressBar(
             valueRange = 0f..totalDuration.value.toFloat(),
             colors = SliderDefaults.colors(
                 activeTrackColor = PlayerProgressBarIndicatorColor,
-                inactiveTrackColor = PlayerProgressBarTrackColor
+                inactiveTrackColor = PlayerProgressBarTrackColor,
             ),
             onValueChangeFinished = {
                 onScrubbingFinished(sliderCurrentProgress.value)
@@ -195,12 +207,19 @@ fun VideoPlayerProgressBar(
 @Composable
 fun VideoPlayerRightController(
     isPlaying: () -> Boolean,
+    orientation: () -> Int,
+    useSystemAutoRotation: Boolean,
     onPlay: () -> Unit,
     onPause: () -> Unit,
+    onRotationBtnClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        ScreenRotationButton()
+        ScreenRotationButton(
+            orientation = orientation,
+            useSystemAutoRotation = useSystemAutoRotation,
+            onClick = onRotationBtnClick,
+        )
         PlayPauseButton(
             isPlaying = isPlaying,
             onPlay = onPlay,
@@ -243,22 +262,36 @@ fun PlayPauseButton(
 
 @Composable
 fun ScreenRotationButton(
+    orientation: () -> Int,
+    useSystemAutoRotation: Boolean,
+    onClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val activity = LocalContext.current.findActivity()
-    var orientation by remember {
-        val orientation = when (activity?.requestedOrientation) {
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
-            else -> ActivityInfo.SCREEN_ORIENTATION_LOCKED
-        }
-        mutableStateOf(orientation)
-    }.also {
-        activity?.requestedOrientation = it.value
+    val context = LocalContext.current
+    var isCheckWriteSettingsPermission by rememberSaveable { mutableStateOf(false) }
+
+    if (isCheckWriteSettingsPermission) {
+        WriteSettingsPermissionCheck(
+            onDismiss = { isCheckWriteSettingsPermission = false },
+        )
     }
 
-    if (orientation == ActivityInfo.SCREEN_ORIENTATION_LOCKED) {
+    if (orientation() == ActivityInfo.SCREEN_ORIENTATION_LOCKED) {
         IconButton(
-            onClick = { orientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR },
+            onClick = {
+                if (useSystemAutoRotation) {
+                    if (Settings.System.canWrite(context).not()) {
+                        isCheckWriteSettingsPermission = true
+                        return@IconButton
+                    }
+                    Settings.System.putInt(
+                        context.contentResolver,
+                        Settings.System.ACCELEROMETER_ROTATION,
+                        1,
+                    )
+                }
+                onClick(ActivityInfo.SCREEN_ORIENTATION_SENSOR)
+            },
             modifier = modifier,
         ) {
             Icon(
@@ -270,7 +303,32 @@ fun ScreenRotationButton(
         return
     }
     IconButton(
-        onClick = { orientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED },
+        onClick = {
+            if (useSystemAutoRotation) {
+                if (Settings.System.canWrite(context).not()) {
+                    isCheckWriteSettingsPermission = true
+                    return@IconButton
+                }
+                val defaultDisplay = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    context.display
+                } else {
+                    context.findActivity()?.windowManager?.defaultDisplay
+                }
+                defaultDisplay?.let { display ->
+                    Settings.System.putInt(
+                        context.contentResolver,
+                        Settings.System.USER_ROTATION,
+                        display.rotation,
+                    )
+                }
+                Settings.System.putInt(
+                    context.contentResolver,
+                    Settings.System.ACCELEROMETER_ROTATION,
+                    0,
+                )
+            }
+            onClick(ActivityInfo.SCREEN_ORIENTATION_LOCKED)
+        },
         modifier = modifier,
     ) {
         Icon(
@@ -278,6 +336,24 @@ fun ScreenRotationButton(
             contentDescription = null,
             tint = PlayerControllerOnBackgroundColor,
         )
+    }
+}
+
+fun getCurrentScreenOrientation(
+    context: Context,
+    activity: Activity?,
+    useSystemAutoRotation: Boolean,
+): Int {
+    return if (useSystemAutoRotation) {
+        when (Settings.System.getInt(context.contentResolver, Settings.System.ACCELEROMETER_ROTATION)) {
+            1 -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
+            else -> ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        }
+    } else {
+        when (activity?.requestedOrientation) {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR -> ActivityInfo.SCREEN_ORIENTATION_SENSOR
+            else -> ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        }
     }
 }
 
@@ -304,12 +380,15 @@ fun VideoPlayerControllerPreview() {
                     totalDuration = VideoDuration(200000),
                     isProgressBarExternalUpdate = { true },
                     isPlaying = { true },
+                    orientation = { ActivityInfo.SCREEN_ORIENTATION_SENSOR },
+                    useSystemAutoRotation = false,
                     onPlay = {},
                     onPause = {},
+                    onRotationBtnClick = {},
                     onProgressBarScrubbingFinished = {},
                     modifier = Modifier
                         .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
+                        .align(Alignment.BottomCenter),
                 )
             }
         }

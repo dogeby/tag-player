@@ -23,10 +23,7 @@ fun PreferencesItem(
     titleTextColor: Color = Color.Unspecified,
     bodyTextColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
-    Column(
-        modifier = modifier
-            .padding(dimensionResource(id = R.dimen.padding_medium)),
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = title,
             color = titleTextColor,

@@ -78,4 +78,6 @@
     <string name="appPreferences_locale_body_korean">한국어</string>
     <string name="appPreferences_autoRotation_title">기기 자동 회전 이용</string>
     <string name="appPreferences_autoRotation_body">동영상 회전이 안 되는 경우 사용해주세요</string>
+    <string name="permission_dialog_optionalPermision_reason_description">동영상 회전을 하기 위해서 기기의 자동 회전 기능을 사용하기 때문에 설정 수정 권한이 필요합니다.</string>
+    <string name="permission_dialog_optionalPermision_method_description">시스템 설정 수정 허용을 해주세요.</string>
 </resources>

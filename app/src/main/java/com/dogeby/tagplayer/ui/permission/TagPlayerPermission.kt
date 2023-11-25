@@ -28,6 +28,7 @@ fun OptionalPermissionCheck(
     methodDescription: String,
     activityStartAction: String,
     permission: String,
+    isDismissRequest: Boolean = false,
     onDismiss: () -> Unit = {},
 ) {
     val permissionState = rememberPermissionState(permission)
@@ -38,6 +39,7 @@ fun OptionalPermissionCheck(
             methodDescription = methodDescription,
             activityStartAction = activityStartAction,
             dismissButtonText = stringResource(id = R.string.cancel),
+            isDismissRequest = isDismissRequest,
             onDismiss = onDismiss,
         )
     }
@@ -63,4 +65,19 @@ fun RequiredPermissionsCheck(
             },
         )
     }
+}
+
+@Composable
+fun WriteSettingsPermissionCheck(
+    onDismiss: () -> Unit,
+) {
+    if (Settings.System.canWrite(LocalContext.current)) return
+    OptionalPermissionCheck(
+        requireDescription = stringResource(id = R.string.permission_dialog_optionalPermision_reason_description),
+        methodDescription = stringResource(id = R.string.permission_dialog_optionalPermision_method_description),
+        activityStartAction = Settings.ACTION_MANAGE_WRITE_SETTINGS,
+        permission = Manifest.permission.WRITE_SETTINGS, // 이 권한은 isGranted 시 false를 반환한다.
+        isDismissRequest = true,
+        onDismiss = onDismiss,
+    )
 }

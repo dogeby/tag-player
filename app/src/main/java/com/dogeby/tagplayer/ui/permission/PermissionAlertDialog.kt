@@ -27,6 +27,7 @@ fun PermissionAlertDialog(
     modifier: Modifier = Modifier,
     dismissButtonText: String = stringResource(id = R.string.close),
     isDismissRequest: Boolean = false,
+    onConfirm: () -> Unit = {},
     onDismiss: () -> Unit = {},
 ) {
     AlertDialog(
@@ -40,7 +41,10 @@ fun PermissionAlertDialog(
         confirmButton = {
             val context = LocalContext.current
             Button(
-                onClick = { startTagPlayerAppDetailsSettings(activityStartAction, context) },
+                onClick = {
+                    startTagPlayerAppDetailsSettings(activityStartAction, context)
+                    onConfirm()
+                },
             ) {
                 Text(text = stringResource(id = R.string.permission_dialog_app_setting))
             }

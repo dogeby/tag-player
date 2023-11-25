@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.datastore.app.AppThemeMode
 import com.dogeby.tagplayer.domain.preferences.app.GetAppPreferencesDataUseCase
 import com.dogeby.tagplayer.domain.preferences.app.SetAppThemeModeUseCase
+import com.dogeby.tagplayer.domain.preferences.app.SetAutoRotationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,12 +18,14 @@ import kotlinx.coroutines.launch
 class AppPreferencesViewModel @Inject constructor(
     getAppPreferencesDataUseCase: GetAppPreferencesDataUseCase,
     private val setAppThemeModeUseCase: SetAppThemeModeUseCase,
+    private val setAutoRotationUseCase: SetAutoRotationUseCase,
 ) : ViewModel() {
 
     val appPreferencesUiState = getAppPreferencesDataUseCase()
         .map {
             AppPreferencesUiState.Success(
                 appThemeMode = it.appThemeMode,
+                autoRotation = it.autoRotation,
             )
         }
         .onStart {
@@ -37,6 +40,12 @@ class AppPreferencesViewModel @Inject constructor(
     fun setAppThemeMode(appThemeMode: AppThemeMode) {
         viewModelScope.launch {
             setAppThemeModeUseCase(appThemeMode)
+        }
+    }
+
+    fun setAutoRotation(isAutoRotation: Boolean) {
+        viewModelScope.launch {
+            setAutoRotationUseCase(isAutoRotation)
         }
     }
 }

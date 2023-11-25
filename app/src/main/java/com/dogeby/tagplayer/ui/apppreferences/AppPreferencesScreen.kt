@@ -38,6 +38,7 @@ fun AppPreferencesRoute(
         onNavigateUp = onNavigateUp,
         appPreferencesUiState = appPreferencesUiState,
         onSetAppThemeMode = viewModel::setAppThemeMode,
+        onSetAutoRotation = viewModel::setAutoRotation,
         modifier = modifier,
     )
 }
@@ -48,6 +49,7 @@ fun AppPreferencesScreen(
     onNavigateUp: () -> Unit,
     appPreferencesUiState: AppPreferencesUiState,
     onSetAppThemeMode: (appThemeMode: AppThemeMode) -> Unit,
+    onSetAutoRotation: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -83,8 +85,8 @@ fun AppPreferencesScreen(
                     )
                     AppLocalePreferencesItem(modifier = Modifier.fillMaxWidth())
                     AutoRotationPreferencesItem(
-                        currentAutoRotationValue = { false },
-                        onSetAutoRotation = {},
+                        currentAutoRotationValue = { appPreferencesUiState.autoRotation },
+                        onSetAutoRotation = onSetAutoRotation,
                         modifier = Modifier.fillMaxWidth(),
                     )
                     OssLicensesPreferenceItem(Modifier.fillMaxWidth())
@@ -102,6 +104,7 @@ fun AppPreferencesScreenPreview() {
             onNavigateUp = {},
             appPreferencesUiState = AppPreferencesUiState.Success(AppThemeMode.SYSTEM_SETTING, false),
             onSetAppThemeMode = {},
+            onSetAutoRotation = {},
         )
     }
 }

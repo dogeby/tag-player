@@ -8,5 +8,6 @@ sealed interface AppPreferencesUiState {
 
     data class Success(
         val appThemeMode: AppThemeMode,
+        val autoRotation: Boolean,
     ) : AppPreferencesUiState
 }

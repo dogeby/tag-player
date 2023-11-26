@@ -75,7 +75,7 @@ fun AppPreferencesScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(contentPadding)
-                        .padding(horizontal = dimensionResource(id = R.dimen.padding_small))
+                        .padding(horizontal = dimensionResource(id = R.dimen.padding_medium))
                         .verticalScroll(rememberScrollState()),
                 ) {
                     AppThemeModePreferencesItem(

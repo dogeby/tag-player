@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,16 +18,11 @@ import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 fun PreferencesItem(
     title: String,
     body: String,
-    onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
     titleTextColor: Color = Color.Unspecified,
     bodyTextColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
 ) {
-    Column(
-        modifier = modifier
-            .clickable(onClick = onItemClick)
-            .padding(dimensionResource(id = R.dimen.padding_medium)),
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = title,
             color = titleTextColor,
@@ -43,6 +37,24 @@ fun PreferencesItem(
     }
 }
 
+@Composable
+fun ClickablePreferencesItem(
+    title: String,
+    body: String,
+    onItemClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    titleTextColor: Color = Color.Unspecified,
+    bodyTextColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+) {
+    PreferencesItem(
+        title = title,
+        body = body,
+        modifier = modifier.clickable(onClick = onItemClick),
+        titleTextColor = titleTextColor,
+        bodyTextColor = bodyTextColor,
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun PreferencesItemPreview() {
@@ -50,7 +62,6 @@ fun PreferencesItemPreview() {
         PreferencesItem(
             title = "설정 제목",
             body = "설명",
-            onItemClick = {}
         )
     }
 }
@@ -64,7 +75,6 @@ fun PreferencesItemsPreview() {
                 PreferencesItem(
                     title = "설정 제목 $it",
                     body = "설명 $it",
-                    onItemClick = {}
                 )
                 Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_medium)))
             }

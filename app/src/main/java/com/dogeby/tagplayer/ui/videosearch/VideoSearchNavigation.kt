@@ -6,7 +6,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
-import com.dogeby.tagplayer.ui.permission.AppPermissionCheck
+import com.dogeby.tagplayer.ui.permission.RequiredPermissionsCheck
 
 private const val videoSearchNavigationRoute = "video_search_route"
 
@@ -27,7 +27,7 @@ fun NavGraphBuilder.videoSearchScreen(
     onNavigateToTagSetting: (List<Long>) -> Unit,
 ) {
     composable(videoSearchNavigationRoute) {
-        AppPermissionCheck()
+        RequiredPermissionsCheck()
         VideoSearchRoute(
             onNavigateUp = onNavigateUp,
             onNavigateToPlayer = onNavigateToPlayer,

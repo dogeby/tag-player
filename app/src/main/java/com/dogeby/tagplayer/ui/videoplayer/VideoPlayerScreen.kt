@@ -47,12 +47,13 @@ fun VideoPlayerRoute(
     viewModel: VideoPlayerViewModel = hiltViewModel(),
 ) {
     val videoPlayerPagerUiState: VideoPlayerPagerUiState by viewModel.videoPlayerPagerUiState.collectAsState()
-
+    val useSystemAutoRotation by viewModel.useSystemAutoRotation.collectAsState()
     VideoPlayerScreen(
         videoPlayerPagerUiState = videoPlayerPagerUiState,
         onPlayerSettledPageChanged = viewModel::onPlayerSettledPageChanged,
         onNavigateUp = onNavigateUp,
         modifier = modifier,
+        useSystemAutoRotation = useSystemAutoRotation,
     )
 }
 
@@ -64,6 +65,7 @@ fun VideoPlayerScreen(
     onPlayerSettledPageChanged: (videoId: Long) -> Unit,
     onNavigateUp: () -> Unit,
     modifier: Modifier = Modifier,
+    useSystemAutoRotation: Boolean = false,
 ) {
     val systemUiController = rememberSystemUiController()
     val activity = LocalContext.current.findActivity()
@@ -143,6 +145,7 @@ fun VideoPlayerScreen(
                         ) {
                             videoPlayerControllerVisible = videoPlayerControllerVisible.not()
                         },
+                    useSystemAutoRotation = useSystemAutoRotation,
                 )
             }
         }

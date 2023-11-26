@@ -25,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class TagPlayerActivity : AppCompatActivity() {
 
     private val isRequiredPermissionsGranted: Boolean
-        get() = checkSelfPermission(AppRequiredPermission) == PackageManager.PERMISSION_GRANTED
+        get() = AppRequiredPermission.all { checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }
 
     private val viewModel: TagPlayerViewModel by viewModels()
 

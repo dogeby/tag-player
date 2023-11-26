@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.apppreferences
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,6 +38,7 @@ fun AppPreferencesRoute(
         onNavigateUp = onNavigateUp,
         appPreferencesUiState = appPreferencesUiState,
         onSetAppThemeMode = viewModel::setAppThemeMode,
+        onSetAutoRotation = viewModel::setAutoRotation,
         modifier = modifier,
     )
 }
@@ -47,6 +49,7 @@ fun AppPreferencesScreen(
     onNavigateUp: () -> Unit,
     appPreferencesUiState: AppPreferencesUiState,
     onSetAppThemeMode: (appThemeMode: AppThemeMode) -> Unit,
+    onSetAutoRotation: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -68,10 +71,11 @@ fun AppPreferencesScreen(
             AppPreferencesUiState.Loading -> { /*TODO*/ }
             is AppPreferencesUiState.Success -> {
                 Column(
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium)),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(contentPadding)
-                        .padding(vertical = dimensionResource(id = R.dimen.padding_medium))
+                        .padding(horizontal = dimensionResource(id = R.dimen.padding_medium))
                         .verticalScroll(rememberScrollState()),
                 ) {
                     AppThemeModePreferencesItem(
@@ -80,6 +84,11 @@ fun AppPreferencesScreen(
                         modifier = Modifier.fillMaxWidth(),
                     )
                     AppLocalePreferencesItem(modifier = Modifier.fillMaxWidth())
+                    AutoRotationPreferencesItem(
+                        currentAutoRotationValue = { appPreferencesUiState.autoRotation },
+                        onSetAutoRotation = onSetAutoRotation,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                     OssLicensesPreferenceItem(Modifier.fillMaxWidth())
                 }
             }
@@ -93,8 +102,9 @@ fun AppPreferencesScreenPreview() {
     TagPlayerTheme {
         AppPreferencesScreen(
             onNavigateUp = {},
-            appPreferencesUiState = AppPreferencesUiState.Success(AppThemeMode.SYSTEM_SETTING),
+            appPreferencesUiState = AppPreferencesUiState.Success(AppThemeMode.SYSTEM_SETTING, false),
             onSetAppThemeMode = {},
+            onSetAutoRotation = {},
         )
     }
 }

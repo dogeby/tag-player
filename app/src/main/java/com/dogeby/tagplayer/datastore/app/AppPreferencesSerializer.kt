@@ -14,6 +14,7 @@ class AppPreferencesSerializer @Inject constructor() : Serializer<AppPreferences
         get() = AppPreferences.getDefaultInstance()
             .toBuilder()
             .setAppThemeMode(AppThemeMode.SYSTEM_SETTING.ordinal)
+            .setAutoRotation(false)
             .build()
 
     override suspend fun readFrom(input: InputStream): AppPreferences {

@@ -36,7 +36,7 @@ fun AppLocalePreferencesItem(
         AppLocaleSettingDialog(onDismissRequest = { isAppLanguageSettingDialogShown = false })
     }
 
-    PreferencesItem(
+    ClickablePreferencesItem(
         title = stringResource(id = R.string.appPreferences_locale_title),
         body = if (AppCompatDelegate.getApplicationLocales().isEmpty) {
             stringResource(id = R.string.appPreferences_locale_body_systemSetting)

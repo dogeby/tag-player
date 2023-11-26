@@ -37,4 +37,8 @@ class PreferencesRepositoryImpl @Inject constructor(
     override suspend fun setAppThemeMode(appThemeMode: AppThemeMode) {
         appPreferencesDataSource.setAppThemeMode(appThemeMode)
     }
+
+    override suspend fun setAutoRotation(isAutoRotation: Boolean) {
+        appPreferencesDataSource.setAutoRotation(isAutoRotation)
+    }
 }

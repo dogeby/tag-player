@@ -19,4 +19,6 @@ interface PreferencesRepository {
     suspend fun setDirectoryFilter(directoryNames: List<String>)
 
     suspend fun setAppThemeMode(appThemeMode: AppThemeMode)
+
+    suspend fun setAutoRotation(isAutoRotation: Boolean)
 }

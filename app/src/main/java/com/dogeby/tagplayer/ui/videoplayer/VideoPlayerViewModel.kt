@@ -3,18 +3,21 @@ package com.dogeby.tagplayer.ui.videoplayer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dogeby.tagplayer.domain.preferences.app.GetAppPreferencesDataUseCase
 import com.dogeby.tagplayer.domain.video.GetVideoItemByIdsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
 class VideoPlayerViewModel @Inject constructor(
     getVideoItemByIdsUseCase: GetVideoItemByIdsUseCase,
+    getAppPreferencesDataUseCase: GetAppPreferencesDataUseCase,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -32,6 +35,14 @@ class VideoPlayerViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = VideoPlayerPagerUiState.Loading,
+        )
+
+    val useSystemAutoRotation: StateFlow<Boolean> = getAppPreferencesDataUseCase()
+        .map { it.autoRotation }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false
         )
 
     fun onPlayerSettledPageChanged(videoId: Long) {

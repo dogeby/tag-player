@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BackupTagWithVideos(
-    val tag: BackupTag,
+    val name: String,
     val videos: List<BackupVideo>,
 )

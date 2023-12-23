@@ -5,7 +5,7 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id "com.google.protobuf" version "0.9.1"
     id 'com.google.android.gms.oss-licenses-plugin'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.21'
+    id 'org.jetbrains.kotlin.plugin.serialization' version "$serialization_plugin_version"
 }
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -138,7 +138,7 @@ dependencies {
     implementation "androidx.palette:palette-ktx:1.0.0"
 
     //serialization
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1'
 }
 
 kapt {

@@ -48,7 +48,7 @@ class TagRepositoryTest {
         val addTagsResult = tagRepository.addTags(tags)
         val allTags = tagRepository.allTags.first()
 
-        Assert.assertEquals(fakeTagIds, addTagsResult.getOrNull())
+        Assert.assertEquals(fakeTagIds, addTagsResult)
         Assert.assertEquals(tags.map { it.name }, allTags.map { it.name })
     }
 

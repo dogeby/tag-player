@@ -4,11 +4,12 @@ import com.dogeby.tagplayer.data.tag.Tag
 import com.dogeby.tagplayer.data.tag.TagRepository
 import javax.inject.Inject
 
-class CreateTagUseCase @Inject constructor(
+class CreateTagsUseCase @Inject constructor(
     private val tagRepository: TagRepository,
 ) {
 
-    suspend operator fun invoke(name: String): Result<Long> {
-        return tagRepository.addTag(Tag(name = name))
+    suspend operator fun invoke(names: List<String>): List<Long> {
+        val tags = names.map { Tag(name = it) }
+        return tagRepository.addTags(tags)
     }
 }

@@ -17,6 +17,8 @@
     <string name="folder">Folder</string>
     <string name="total_size">Total size</string>
     <string name="search_result">Search result</string>
+    <string name="save">Save</string>
+    <string name="load">Load</string>
 
     <string name="permission_guide_app_access_permission">App access permission guide</string>
     <string name="permission_app_permission_request_description">The following permissions are required to use Tag Player.</string>
@@ -84,4 +86,18 @@
     <string name="appPreferences_autoRotation_body">Please use this if the video cannot be rotated</string>
     <string name="permission_dialog_optionalPermision_reason_description">To rotate a video, the device\'s auto-rotation function is used, so permission to modify settings is required.</string>
     <string name="permission_dialog_optionalPermision_method_description">Please allow modification of system settings.</string>
+    <string name="appPreferences_backup_title">Backup</string>
+    <string name="appPreferences_backup_body">Save or load tag information as a file</string>
+    <string name="appPreferences_backup_dialog_title">Tag information backup</string>
+    <string name="appPreferences_backup_dialog_body">
+        TagPlayer tag information on the device is saved to a JSON file.\n\n
+        When loading, the following operations are performed.\n
+        - Existing tags will not be changed.\n
+        - Tags that are not in the existing tag list will be added.\n
+        - Tags will be added only to videos with the same name, extension, and size as videos in the imported file list.
+    </string>
+    <string name="appPreferences_backup_load_tags_success">Tags loaded successfully.</string>
+    <string name="appPreferences_backup_load_tags_failure">Failed to load tags.\nPlease check that you have selected the correct file.</string>
+    <string name="appPreferences_backup_save_tags_success">Tags saved successfully.</string>
+    <string name="appPreferences_backup_save_tags_failure">Failed to save tags.\nPlease try again.</string>
 </resources>

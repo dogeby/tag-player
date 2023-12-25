@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.apppreferences
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,9 +16,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,12 +36,17 @@ fun AppPreferencesRoute(
     viewModel: AppPreferencesViewModel = hiltViewModel(),
 ) {
     val appPreferencesUiState by viewModel.appPreferencesUiState.collectAsState()
+    val encodedTagsUiState by viewModel.encodedTags.collectAsState()
+    val loadTagResultUiState by viewModel.loadTagsResultUiState.collectAsState(initial = LoadTagsResultUiState.Nothing)
 
     AppPreferencesScreen(
         onNavigateUp = onNavigateUp,
         appPreferencesUiState = appPreferencesUiState,
+        encodedTagsUiState = encodedTagsUiState,
+        loadTagResultUiState = loadTagResultUiState,
         onSetAppThemeMode = viewModel::setAppThemeMode,
         onSetAutoRotation = viewModel::setAutoRotation,
+        onLoadTags = viewModel::loadTags,
         modifier = modifier,
     )
 }
@@ -48,8 +56,11 @@ fun AppPreferencesRoute(
 fun AppPreferencesScreen(
     onNavigateUp: () -> Unit,
     appPreferencesUiState: AppPreferencesUiState,
+    encodedTagsUiState: EncodeTagsUiState,
+    loadTagResultUiState: LoadTagsResultUiState,
     onSetAppThemeMode: (appThemeMode: AppThemeMode) -> Unit,
     onSetAutoRotation: (Boolean) -> Unit,
+    onLoadTags: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -67,6 +78,18 @@ fun AppPreferencesScreen(
             )
         },
     ) { contentPadding ->
+        val context = LocalContext.current
+        LaunchedEffect(key1 = loadTagResultUiState) {
+            when (loadTagResultUiState) {
+                is LoadTagsResultUiState.Success -> {
+                    Toast.makeText(context, context.getString(R.string.appPreferences_backup_load_tags_success), Toast.LENGTH_SHORT).show()
+                }
+                is LoadTagsResultUiState.Failure -> {
+                    Toast.makeText(context, context.getString(R.string.appPreferences_backup_load_tags_failure), Toast.LENGTH_SHORT).show()
+                }
+                else -> Unit
+            }
+        }
         when (appPreferencesUiState) {
             AppPreferencesUiState.Loading -> { /*TODO*/ }
             is AppPreferencesUiState.Success -> {
@@ -89,6 +112,11 @@ fun AppPreferencesScreen(
                         onSetAutoRotation = onSetAutoRotation,
                         modifier = Modifier.fillMaxWidth(),
                     )
+                    BackupPreferencesItem(
+                        encodedTagsUiState = encodedTagsUiState,
+                        onLoadTags = onLoadTags,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                     OssLicensesPreferenceItem(Modifier.fillMaxWidth())
                 }
             }
@@ -103,8 +131,11 @@ fun AppPreferencesScreenPreview() {
         AppPreferencesScreen(
             onNavigateUp = {},
             appPreferencesUiState = AppPreferencesUiState.Success(AppThemeMode.SYSTEM_SETTING, false),
+            encodedTagsUiState = EncodeTagsUiState.Success(""),
+            loadTagResultUiState = LoadTagsResultUiState.Failure,
             onSetAppThemeMode = {},
             onSetAutoRotation = {},
+            onLoadTags = {},
         )
     }
 }

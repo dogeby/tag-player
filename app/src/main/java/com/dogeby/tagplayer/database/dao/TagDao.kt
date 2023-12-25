@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.Flow
 interface TagDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertTag(entity: TagEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTags(entities: List<TagEntity>): List<Long>
 
     @Update(onConflict = OnConflictStrategy.IGNORE)

@@ -35,8 +35,12 @@ class TagRepositoryImpl @Inject constructor(
                 }
             }
 
-    override suspend fun addTags(tags: List<Tag>): Result<List<Long>> = runCatching {
-        tagDao.insertTags(tags.map { it.toTagEntity() })
+    override suspend fun addTag(tag: Tag): Result<Long> = runCatching {
+        tagDao.insertTag(tag.toTagEntity())
+    }
+
+    override suspend fun addTags(tags: List<Tag>): List<Long> {
+        return tagDao.insertTags(tags.map { it.toTagEntity() })
     }
 
     override suspend fun updateTags(tags: List<Tag>): Result<Int> = runCatching {

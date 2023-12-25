@@ -9,7 +9,7 @@ import com.dogeby.tagplayer.domain.tag.GetTagItemsUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
-class RestoreTagsUseCase @Inject constructor(
+class LoadTagsUseCase @Inject constructor(
     private val backupConverter: BackupConverter,
     private val videoRepository: VideoRepository,
     private val getTagItemsUseCase: GetTagItemsUseCase,

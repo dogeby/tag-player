@@ -49,9 +49,9 @@ fun VideoSortTypeMenu(
                                 contentDescription = null,
                                 modifier = Modifier.size(iconSize)
                             )
-                            return@Row
+                        } else {
+                            Spacer(modifier = Modifier.width(iconSize))
                         }
-                        Spacer(modifier = Modifier.width(iconSize))
                     }
                 },
                 onClick = { onSortTypeSet(it.sortType) },

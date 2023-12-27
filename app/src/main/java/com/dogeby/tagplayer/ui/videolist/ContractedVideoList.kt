@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,9 +39,14 @@ fun ContractedVideoList(
     header: LazyListScope.() -> Unit = {},
     footer: LazyListScope.() -> Unit = {},
     onToggleVideoSelection: (VideoItem) -> Unit = {},
+    onScrollToEnd: (Boolean) -> Unit = {},
 ) {
+    val state = rememberLazyListState()
+    state.OnReachedEnd(onScrollToEnd)
+
     LazyColumn(
         modifier = modifier,
+        state = state,
         contentPadding = contentPadding,
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment,

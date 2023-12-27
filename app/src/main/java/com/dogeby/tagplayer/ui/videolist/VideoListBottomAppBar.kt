@@ -1,7 +1,9 @@
 package com.dogeby.tagplayer.ui.videolist
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -14,11 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import com.dogeby.tagplayer.R
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
 import com.dogeby.tagplayer.ui.component.BottomAppBarAnimation
 import com.dogeby.tagplayer.ui.component.BottomAppBarAnimationIconButton
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
+import kotlin.math.roundToInt
 
 @Composable
 fun VideoListBottomAppBar(
@@ -31,14 +35,21 @@ fun VideoListBottomAppBar(
     onSortTypeSet: (VideoListSortType) -> Unit,
     modifier: Modifier = Modifier,
     isShowActionIconAnimation: Boolean = true,
+    bottomBarOffsetHeightPx: (() -> Float) = { 0f }
 ) {
     var sortTypeMenuExpanded by rememberSaveable { mutableStateOf(false) }
+    val animatedBottomBarOffsetHeightPx by animateFloatAsState(bottomBarOffsetHeightPx())
 
     BottomAppBarAnimation(
         shown = shown,
     ) {
         BottomAppBar(
-            modifier = modifier,
+            modifier = modifier.offset {
+                IntOffset(
+                    x = 0,
+                    y = -animatedBottomBarOffsetHeightPx.roundToInt()
+                )
+            },
         ) {
             BottomAppBarAnimationIconButton(
                 onClick = onSearchButtonClick,
@@ -71,7 +82,7 @@ fun VideoListBottomAppBar(
                 delayMillis = 300,
             ) {
                 Box(
-                    modifier = modifier
+                    modifier = Modifier
                         .wrapContentSize(Alignment.TopStart)
                 ) {
                     Icon(painter = painterResource(id = R.drawable.ic_sort), contentDescription = null)

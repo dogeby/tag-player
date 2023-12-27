@@ -8,7 +8,7 @@
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="cancel">Cancel</string>
-    <string name="name">Name</string>
+    <string name="title">Title</string>
     <string name="extension">Extension</string>
     <string name="duration">Duration</string>
     <string name="size">Size</string>
@@ -57,8 +57,12 @@
     <string name="videoFilter_tagAndDirectoryEmpty">Failed to find tag and folder</string>
 
     <string-array name="videoSortTypes">
-        <item>Name</item>
+        <item>Title</item>
+        <item>Title (descending)</item>
         <item>Size</item>
+        <item>Size (descending)</item>
+        <item>Duration</item>
+        <item>Duration (descending)</item>
     </string-array>
 
     <string name="videoPlayer_videoEmpty">No video found</string>

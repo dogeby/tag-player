@@ -18,7 +18,7 @@ class VideoListPreferencesDataSourceImpl @Inject constructor(
             VideoListPreferencesData(
                 filteredTagIds = it.filteredTagIdsList,
                 filteredDirectoryNames = it.filteredDirectoryNamesList,
-                sortType = VideoListSortType.valueOf(it.sortType),
+                sortType = VideoListSortType.values()[it.sortType],
             )
         }
 
@@ -34,7 +34,7 @@ class VideoListPreferencesDataSourceImpl @Inject constructor(
     override suspend fun setSortType(sortType: VideoListSortType) {
         videoListSettingPreferences.updateData { videoListPreferences ->
             videoListPreferences.toBuilder()
-                .setSortType(sortType.name)
+                .setSortType(sortType.ordinal)
                 .build()
         }
     }

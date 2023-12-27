@@ -40,14 +40,34 @@ class GetVideoItemsUseCase @Inject constructor(
 
     private fun List<VideoWithTags>.sorted(videoListSortType: VideoListSortType): List<VideoWithTags> {
         return when (videoListSortType) {
-            VideoListSortType.NAME -> {
-                this.sortedBy {
+            VideoListSortType.TITLE -> {
+                sortedBy {
+                    it.video.name
+                }
+            }
+            VideoListSortType.TITLE_DESC -> {
+                sortedByDescending {
                     it.video.name
                 }
             }
             VideoListSortType.SIZE -> {
-                this.sortedBy {
+                sortedBy {
                     it.video.size
+                }
+            }
+            VideoListSortType.SIZE_DESC -> {
+                sortedByDescending {
+                    it.video.size
+                }
+            }
+            VideoListSortType.DURATION -> {
+                sortedBy {
+                    it.video.duration
+                }
+            }
+            VideoListSortType.DURATION_DESC -> {
+                sortedByDescending {
+                    it.video.duration
                 }
             }
         }

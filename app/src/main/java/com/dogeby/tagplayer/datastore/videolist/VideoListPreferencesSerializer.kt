@@ -13,7 +13,7 @@ class VideoListPreferencesSerializer @Inject constructor() : Serializer<VideoLis
     override val defaultValue: VideoListPreferences =
         VideoListPreferences.getDefaultInstance()
             .toBuilder()
-            .setSortType(VideoListSortType.NAME.name)
+            .setSortType(VideoListSortType.values().first().ordinal)
             .build()
 
     override suspend fun readFrom(input: InputStream): VideoListPreferences =

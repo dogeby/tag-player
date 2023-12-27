@@ -8,7 +8,7 @@
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="cancel">Cancel</string>
-    <string name="name">Name</string>
+    <string name="title">Title</string>
     <string name="extension">Extension</string>
     <string name="duration">Duration</string>
     <string name="size">Size</string>
@@ -48,7 +48,7 @@
     <string name="multiVideoInfoDialog_name">%1$s and %2$d</string>
 
     <string name="videoSearch_searchTextFieldHint">Video Search</string>
-    <string name="videoSearch_queryBlank">Please enter a video name</string>
+    <string name="videoSearch_queryBlank">Please enter a video title</string>
     <string name="videoSearch_searchResultEmpty">No search results</string>
 
     <string name="videoFilter_searchTextFieldHint">Search Tags</string>
@@ -57,8 +57,12 @@
     <string name="videoFilter_tagAndDirectoryEmpty">Failed to find tag and folder</string>
 
     <string-array name="videoSortTypes">
-        <item>Name</item>
+        <item>Title</item>
+        <item>Title (descending)</item>
         <item>Size</item>
+        <item>Size (descending)</item>
+        <item>Duration</item>
+        <item>Duration (descending)</item>
     </string-array>
 
     <string name="videoPlayer_videoEmpty">No video found</string>
@@ -94,7 +98,7 @@
         When loading, the following operations are performed.\n
         - Existing tags will not be changed.\n
         - Tags that are not in the existing tag list will be added.\n
-        - Tags will be added only to videos with the same name, extension, and size as videos in the imported file list.
+        - Tags will be added only to videos with the same title, extension, and size as videos in the imported file list.
     </string>
     <string name="appPreferences_backup_load_tags_success">Tags loaded successfully.</string>
     <string name="appPreferences_backup_load_tags_failure">Failed to load tags.\nPlease check that you have selected the correct file.</string>

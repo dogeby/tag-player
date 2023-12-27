@@ -6,6 +6,6 @@ option java_multiple_files = true;
 
 message VideoListPreferences {
     repeated int64 filtered_tag_ids = 1;
-    string sort_type = 2;
+    int32 sort_type = 2;
     repeated string filtered_directory_names = 3;
 }

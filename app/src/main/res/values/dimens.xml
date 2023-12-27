@@ -20,6 +20,7 @@
     <dimen name="videolist_video_item_info_padding">8dp</dimen>
     <dimen name="videolist_expanded_video_item_width">192dp</dimen>
     <dimen name="videolist_bottom_app_bar_height">80dp</dimen>
+    <dimen name="video_sort_type_menu_icon_size">18dp</dimen>
 
     <dimen name="videoTag_min_width">32dp</dimen>
 

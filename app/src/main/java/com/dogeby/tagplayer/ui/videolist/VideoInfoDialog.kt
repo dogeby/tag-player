@@ -73,7 +73,7 @@ fun SingleVideoInfoDialog(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
             ) {
                 VideoInfoItem(
-                    title = stringResource(id = R.string.name),
+                    title = stringResource(id = R.string.title),
                     content = videoItem.name,
                 )
                 VideoInfoItem(
@@ -164,7 +164,7 @@ fun MultiVideoInfoDialog(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
             ) {
                 VideoInfoItem(
-                    title = stringResource(id = R.string.name),
+                    title = stringResource(id = R.string.title),
                     content = stringResource(
                         R.string.multiVideoInfoDialog_name,
                         representativeName,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -51,10 +53,12 @@ fun ExpandedVideoList(
     isSelectedVideoItems: Map<Long, Boolean>,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     verticalItemSpacing: Dp = dimensionResource(id = R.dimen.padding_small),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
     onToggleVideoSelection: (VideoItem) -> Unit = {},
+    onScrollToEnd: (Boolean) -> Unit = {},
 ) {
     if (videoItems.isEmpty()) {
         Box(
@@ -68,9 +72,14 @@ fun ExpandedVideoList(
         return
     }
 
+    val state = rememberLazyStaggeredGridState()
+    state.OnReachedEnd(onScrollToEnd)
+
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(dimensionResource(id = R.dimen.videolist_expanded_video_item_width)),
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
+        state = state,
+        contentPadding = contentPadding,
         verticalItemSpacing = verticalItemSpacing,
         horizontalArrangement = horizontalArrangement,
     ) {

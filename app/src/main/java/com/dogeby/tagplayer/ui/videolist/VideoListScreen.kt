@@ -8,6 +8,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -29,13 +31,14 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -110,31 +113,39 @@ fun VideoListScreen(
     val isSelectedVideoItems = remember(videoListUiState) {
         mutableStateMapOf<Long, Boolean>()
     }
-    val toggleVideoSelection = remember(videoListUiState) {
-        { videoItem: VideoItem ->
-            isSelectedVideoItems.compute(videoItem.id) { _, v ->
-                v?.not() ?: true
-            }
-            isSelectMode = isSelectedVideoItems.all { it.value.not() }.not()
-        }
-    }
 
     var isShowVideoInfoDialog by remember {
         mutableStateOf(false)
     }
 
     var isShowBottomAppBarIconAnimation by remember { mutableStateOf(false) }
-    var bottomBarShown by rememberSaveable { mutableStateOf(true) }.apply {
-        if (isSelectMode) this.value = isSelectMode
-    }
+    var isScrollToEnd by remember { mutableStateOf(false) }
+
+    val bottomBarHeight = dimensionResource(id = R.dimen.videolist_bottom_app_bar_height)
+    val bottomBarHeightPx = with(LocalDensity.current) { bottomBarHeight.roundToPx().toFloat() }
+    var bottomBarOffsetHeightPx by remember { mutableStateOf(0f) }
+    if (isScrollToEnd) bottomBarOffsetHeightPx = 0f
 
     val nestedScrollConnection = object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-            bottomBarShown = isSelectMode || available.y > 0
-            return super.onPreScroll(available, source)
+            bottomBarOffsetHeightPx = if (isScrollToEnd) {
+                0f
+            } else {
+                val newOffset = bottomBarOffsetHeightPx + available.y
+                newOffset.coerceIn(-bottomBarHeightPx, 0f)
+            }
+            return Offset.Zero
         }
     }
-
+    val toggleVideoSelection = remember(videoListUiState) {
+        { videoItem: VideoItem ->
+            isSelectedVideoItems.compute(videoItem.id) { _, v ->
+                v?.not() ?: true
+            }
+            isSelectMode = isSelectedVideoItems.all { it.value.not() }.not()
+            if (isSelectMode.not()) bottomBarOffsetHeightPx = 0f
+        }
+    }
     CompositionLocalProvider(
         LocalOverscrollConfiguration provides null,
     ) {
@@ -153,7 +164,7 @@ fun VideoListScreen(
             bottomBar = {
                 if (isSelectMode) {
                     VideoItemBottomAppBar(
-                        shown = bottomBarShown,
+                        shown = true,
                         onAllItemSelectButtonClick = {
                             (videoListUiState as? VideoListUiState.Success)?.videoItems?.let { videoItems ->
                                 isSelectedVideoItems.putAll(
@@ -174,7 +185,7 @@ fun VideoListScreen(
                     )
                 } else {
                     VideoListBottomAppBar(
-                        shown = bottomBarShown,
+                        shown = true,
                         isFilterButtonChecked = isVideoFiltered,
                         videoListSortTypeUiState = videoListSortTypeUiState,
                         onSearchButtonClick = onNavigateToVideoSearch,
@@ -182,12 +193,22 @@ fun VideoListScreen(
                         onSortButtonClick = { },
                         onSortTypeSet = onSortTypeSet,
                         isShowActionIconAnimation = isShowBottomAppBarIconAnimation,
+                        bottomBarOffsetHeightPx = { bottomBarOffsetHeightPx },
                     )
                 }
                 isShowBottomAppBarIconAnimation = true
             },
         ) { contentPadding ->
+            val layoutDirection = LocalLayoutDirection.current
             val windowInfo = rememberWindowInfo()
+
+            val listContentPadding =
+                PaddingValues(
+                    start = contentPadding.calculateStartPadding(layoutDirection) + dimensionResource(id = R.dimen.padding_small),
+                    top = contentPadding.calculateTopPadding() + dimensionResource(id = R.dimen.padding_small),
+                    end = contentPadding.calculateEndPadding(layoutDirection) + dimensionResource(id = R.dimen.padding_small),
+                    bottom = contentPadding.calculateBottomPadding() + dimensionResource(id = R.dimen.padding_small),
+                )
 
             when (videoListUiState) {
                 VideoListUiState.Loading -> {
@@ -241,9 +262,9 @@ fun VideoListScreen(
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
                                 onNavigateToPlayer = onNavigateToPlayer,
-                                modifier = Modifier.padding(contentPadding),
-                                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                                contentPadding = listContentPadding,
                                 onToggleVideoSelection = toggleVideoSelection,
+                                onScrollToEnd = { isScrollToEnd = it }
                             )
                         }
                         WindowInfo.WindowType.Compact -> {
@@ -252,9 +273,9 @@ fun VideoListScreen(
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
                                 onNavigateToPlayer = onNavigateToPlayer,
-                                modifier = Modifier.padding(contentPadding),
-                                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
+                                contentPadding = listContentPadding,
                                 onToggleVideoSelection = toggleVideoSelection,
+                                onScrollToEnd = { isScrollToEnd = it }
                             )
                         }
                         else -> {
@@ -263,12 +284,9 @@ fun VideoListScreen(
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
                                 onNavigateToPlayer = onNavigateToPlayer,
-                                modifier = Modifier
-                                    .padding(contentPadding)
-                                    .padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
-                                verticalItemSpacing = 0.dp,
-                                videoItemContentPadding = PaddingValues(vertical = dimensionResource(id = R.dimen.padding_small) / 2),
+                                contentPadding = listContentPadding,
                                 onToggleVideoSelection = toggleVideoSelection,
+                                onScrollToEnd = { isScrollToEnd = it }
                             )
                         }
                     }

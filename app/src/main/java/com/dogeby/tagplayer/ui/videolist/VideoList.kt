@@ -2,6 +2,7 @@ package com.dogeby.tagplayer.ui.videolist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,11 +18,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,9 +64,14 @@ fun CompactVideoList(
     header: LazyListScope.() -> Unit = {},
     footer: LazyListScope.() -> Unit = {},
     onToggleVideoSelection: (VideoItem) -> Unit = {},
+    onScrollToEnd: (Boolean) -> Unit = {},
 ) {
+    val state = rememberLazyListState()
+    state.OnReachedEnd(onScrollToEnd)
+
     LazyColumn(
         modifier = modifier,
+        state = state,
         contentPadding = contentPadding,
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment,
@@ -274,6 +285,18 @@ fun VideoListVideoThumbnail(
         durationShape = MaterialTheme.shapes.small,
         frameTimeMicrosecond = integerResource(id = R.integer.videolist_video_thumbnail_frameTimeMicrosecond).toLong(),
     )
+}
+
+@Composable
+fun ScrollableState.OnReachedEnd(onScrollToEnd: (Boolean) -> Unit) {
+    val isScrolledToEnd by remember {
+        derivedStateOf {
+            canScrollForward.not()
+        }
+    }
+    LaunchedEffect(isScrolledToEnd) {
+        onScrollToEnd(isScrolledToEnd)
+    }
 }
 
 @Preview(showBackground = true)

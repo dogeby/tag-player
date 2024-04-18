@@ -41,4 +41,8 @@ class PreferencesRepositoryImpl @Inject constructor(
     override suspend fun setAutoRotation(isAutoRotation: Boolean) {
         appPreferencesDataSource.setAutoRotation(isAutoRotation)
     }
+
+    override suspend fun setRejectedUpdateVersionCode(versionCode: Int) {
+        appPreferencesDataSource.setRejectedUpdateVersionCode(versionCode)
+    }
 }

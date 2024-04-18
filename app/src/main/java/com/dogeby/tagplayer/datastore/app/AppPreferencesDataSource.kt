@@ -10,5 +10,7 @@ interface AppPreferencesDataSource {
 
     suspend fun setAutoRotation(isAutoRotation: Boolean)
 
+    suspend fun setRejectedUpdateVersionCode(versionCode: Int)
+
     suspend fun resetAppPreferences()
 }

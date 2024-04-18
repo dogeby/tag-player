@@ -15,6 +15,7 @@ class AppPreferencesDataSourceImpl @Inject constructor(
 
     private val appThemeModeDefaultValue = AppThemeMode.SYSTEM_SETTING
     private val autoRotationDefaultValue = false
+    private val rejectedUpdateVersionCodeDefaultValue = 0
 
     override val appPreferencesData: Flow<AppPreferencesData> = appPreferences
         .data
@@ -24,12 +25,14 @@ class AppPreferencesDataSourceImpl @Inject constructor(
                     appThemeModeDefaultValue
                 },
                 it.autoRotation,
+                it.rejectedUpdateVersionCode,
             )
         }
 
     override suspend fun resetAppPreferences() {
         setAppThemeMode(appThemeModeDefaultValue)
         setAutoRotation(autoRotationDefaultValue)
+        setRejectedUpdateVersionCode(rejectedUpdateVersionCodeDefaultValue)
     }
 
     override suspend fun setAppThemeMode(appThemeMode: AppThemeMode) {
@@ -44,6 +47,14 @@ class AppPreferencesDataSourceImpl @Inject constructor(
         appPreferences.updateData {
             it.copy {
                 this.autoRotation = isAutoRotation
+            }
+        }
+    }
+
+    override suspend fun setRejectedUpdateVersionCode(versionCode: Int) {
+        appPreferences.updateData {
+            it.copy {
+                this.rejectedUpdateVersionCode = versionCode
             }
         }
     }

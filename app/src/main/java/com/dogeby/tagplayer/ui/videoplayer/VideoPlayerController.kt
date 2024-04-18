@@ -69,6 +69,8 @@ fun VideoPlayerController(
     onPause: () -> Unit,
     onRotationBtnClick: (Int) -> Unit,
     onProgressBarScrubbingFinished: (Long) -> Unit,
+    onSeekBack: () -> Unit,
+    onSeekForward: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     VideoPlayerControllerAnimation(
@@ -89,7 +91,7 @@ fun VideoPlayerController(
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .padding(bottom = 8.dp)
-                        .align(Alignment.CenterVertically),
+                        .align(Alignment.Bottom),
                 )
                 VideoPlayerRightController(
                     isPlaying = isPlaying,
@@ -98,6 +100,8 @@ fun VideoPlayerController(
                     onPlay = onPlay,
                     onPause = onPause,
                     onRotationBtnClick = onRotationBtnClick,
+                    onSeekBack = onSeekBack,
+                    onSeekForward = onSeekForward,
                 )
             }
 
@@ -212,9 +216,14 @@ fun VideoPlayerRightController(
     onPlay: () -> Unit,
     onPause: () -> Unit,
     onRotationBtnClick: (Int) -> Unit,
+    onSeekBack: () -> Unit,
+    onSeekForward: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.End
+    ) {
         ScreenRotationButton(
             orientation = orientation,
             useSystemAutoRotation = useSystemAutoRotation,
@@ -224,6 +233,10 @@ fun VideoPlayerRightController(
             isPlaying = isPlaying,
             onPlay = onPlay,
             onPause = onPause,
+        )
+        PlayerSeekButtons(
+            onSeekBack = onSeekBack,
+            onSeekForward = onSeekForward
         )
     }
 }
@@ -357,6 +370,32 @@ fun getCurrentScreenOrientation(
     }
 }
 
+@Composable
+fun PlayerSeekButtons(
+    onSeekBack: () -> Unit,
+    onSeekForward: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier,
+    ) {
+        IconButton(onClick = onSeekBack) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_replay_5),
+                contentDescription = null,
+                tint = PlayerControllerOnBackgroundColor,
+            )
+        }
+        IconButton(onClick = onSeekForward) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_forward_5),
+                contentDescription = null,
+                tint = PlayerControllerOnBackgroundColor,
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun VideoPlayerControllerPreview() {
@@ -386,6 +425,8 @@ fun VideoPlayerControllerPreview() {
                     onPause = {},
                     onRotationBtnClick = {},
                     onProgressBarScrubbingFinished = {},
+                    onSeekBack = {},
+                    onSeekForward = {},
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter),

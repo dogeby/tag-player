@@ -82,6 +82,7 @@ fun VideoPlayerPager(
 }
 
 @Composable
+@androidx.annotation.OptIn(UnstableApi::class)
 fun VideoPlayerPage(
     videoItem: () -> VideoItem,
     isSettledPage: () -> Boolean,
@@ -90,11 +91,15 @@ fun VideoPlayerPage(
     onRotationBtnClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     useSystemAutoRotation: Boolean = false,
+    seekBackIncrement: Long = 5_000L,
+    seekForwardIncrement: Long = 5_000L,
 ) {
     val context = LocalContext.current
     val player = remember {
         ExoPlayer
             .Builder(context)
+            .setSeekBackIncrementMs(seekBackIncrement)
+            .setSeekForwardIncrementMs(seekForwardIncrement)
             .build()
     }
     var isPlaying by remember {
@@ -146,6 +151,8 @@ fun VideoPlayerPage(
             onPause = { isPlaying = false },
             onRotationBtnClick = onRotationBtnClick,
             onProgressBarScrubbingFinished = { player.seekTo(it.coerceIn(0, videoItemValue.duration.value)) },
+            onSeekBack = { player.seekBack() },
+            onSeekForward = { player.seekForward() },
             modifier = Modifier.fillMaxSize(),
         )
     }

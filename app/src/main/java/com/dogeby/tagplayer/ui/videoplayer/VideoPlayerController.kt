@@ -254,7 +254,7 @@ fun PlayPauseButton(
             modifier = modifier,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_play),
+                painter = painterResource(id = R.drawable.ic_pause),
                 contentDescription = null,
                 tint = PlayerControllerOnBackgroundColor,
             )
@@ -266,7 +266,7 @@ fun PlayPauseButton(
         modifier = modifier,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_pause),
+            painter = painterResource(id = R.drawable.ic_play),
             contentDescription = null,
             tint = PlayerControllerOnBackgroundColor,
         )

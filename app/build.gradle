@@ -28,7 +28,7 @@ android {
         applicationId "com.dogeby.tagplayer"
         minSdk 26
         targetSdk 33
-        versionCode 16
+        versionCode 17
         versionName "1.3.0"
 
         testInstrumentationRunner "com.dogeby.tagplayer.TagPlayerTestRunner"

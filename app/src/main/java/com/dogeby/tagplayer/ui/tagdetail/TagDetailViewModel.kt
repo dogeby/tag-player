@@ -8,6 +8,7 @@ import com.dogeby.tagplayer.domain.tag.DeleteTagsUseCase
 import com.dogeby.tagplayer.domain.tag.GetTagItemUseCase
 import com.dogeby.tagplayer.domain.tag.ModifyTagNameUseCase
 import com.dogeby.tagplayer.ui.tagsetting.TagNameEditDialogUiState
+import com.dogeby.tagplayer.ui.videolist.VideoListInitialManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -50,6 +51,8 @@ class TagDetailViewModel @Inject constructor(
 
     private val _tagNameEditDialogUiState: MutableStateFlow<TagNameEditDialogUiState> = MutableStateFlow(TagNameEditDialogUiState.Hide)
     val tagNameEditDialogUiState: StateFlow<TagNameEditDialogUiState> = _tagNameEditDialogUiState.asStateFlow()
+
+    val videoListInitialManager = VideoListInitialManager(savedStateHandle)
 
     fun deleteTag() {
         viewModelScope.launch {

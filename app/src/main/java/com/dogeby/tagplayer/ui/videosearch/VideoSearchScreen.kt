@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.videosearch
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -50,29 +51,37 @@ fun VideoSearchRoute(
 ) {
     val query: String by viewModel.query.collectAsState()
     val videoSearchViewUiState: VideoSearchViewUiState by viewModel.videoSearchViewUiState.collectAsState()
+    val videoListInitialItemIndex: Int by viewModel
+        .videoListInitialManager
+        .videoListInitialItemIndex
+        .collectAsState()
 
     VideoSearchScreen(
         videoSearchViewUiState = videoSearchViewUiState,
         query = query,
+        videoListInitialItemIndex = videoListInitialItemIndex,
         onQueryChange = viewModel::setQuery,
         onNavigateToPlayer = onNavigateToPlayer,
         onClear = viewModel::clearQuery,
         onNavigateUp = onNavigateUp,
         onNavigateToTagSetting = onNavigateToTagSetting,
         modifier = modifier,
+        onSaveVideoListInitialItemIndex = viewModel.videoListInitialManager::setVideoListInitialItemIndex,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun VideoSearchScreen(
     videoSearchViewUiState: VideoSearchViewUiState,
     query: String,
+    videoListInitialItemIndex: Int,
     onQueryChange: (String) -> Unit,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onClear: () -> Unit,
     onNavigateUp: () -> Unit,
     onNavigateToTagSetting: (List<Long>) -> Unit,
+    onSaveVideoListInitialItemIndex: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onSearch: (String) -> Unit = {},
 ) {
@@ -191,9 +200,11 @@ fun VideoSearchScreen(
                                 videoItems = videoSearchViewUiState.videoListUiState.videoItems,
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
+                                firstVisibleItemIndex = videoListInitialItemIndex,
                                 onNavigateToPlayer = onNavigateToPlayer,
                                 contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
                                 onToggleVideoSelection = toggleVideoSelection,
+                                onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
                             )
                         }
                         WindowInfo.WindowType.Compact -> {
@@ -201,9 +212,11 @@ fun VideoSearchScreen(
                                 videoItems = videoSearchViewUiState.videoListUiState.videoItems,
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
+                                firstVisibleItemIndex = videoListInitialItemIndex,
                                 onNavigateToPlayer = onNavigateToPlayer,
                                 contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_small)),
                                 onToggleVideoSelection = toggleVideoSelection,
+                                onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
                             )
                         }
                         else -> {
@@ -211,11 +224,13 @@ fun VideoSearchScreen(
                                 videoItems = videoSearchViewUiState.videoListUiState.videoItems,
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
+                                firstVisibleItemIndex = videoListInitialItemIndex,
                                 onNavigateToPlayer = onNavigateToPlayer,
                                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_small)),
                                 verticalItemSpacing = 0.dp,
                                 videoItemContentPadding = PaddingValues(vertical = dimensionResource(id = R.dimen.padding_small) / 2),
                                 onToggleVideoSelection = toggleVideoSelection,
+                                onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
                             )
                         }
                     }

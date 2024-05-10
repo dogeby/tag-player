@@ -1,8 +1,10 @@
 package com.dogeby.tagplayer.ui.videosearch
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.domain.video.FindVideoUseCase
+import com.dogeby.tagplayer.ui.videolist.VideoListInitialManager
 import com.dogeby.tagplayer.ui.videolist.VideoListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
 class VideoSearchViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     findVideoUseCase: FindVideoUseCase,
 ) : ViewModel() {
 
@@ -46,6 +49,8 @@ class VideoSearchViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = VideoSearchViewUiState.QueryBlank,
         )
+
+    val videoListInitialManager = VideoListInitialManager(savedStateHandle)
 
     fun setQuery(query: String) {
         _query.value = query

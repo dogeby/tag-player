@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -46,6 +47,7 @@ import com.dogeby.tagplayer.ui.component.RippleLoadingVideoTag
 import com.dogeby.tagplayer.ui.component.RippleLoadingVideoThumbnail
 import com.dogeby.tagplayer.ui.component.VideoTag
 import com.dogeby.tagplayer.ui.component.VideoThumbnail
+import com.dogeby.tagplayer.ui.component.extensions.OnFirstVisibleItemIndexChange
 import com.dogeby.tagplayer.ui.component.rememberRippleLoadingEffectAlpha
 import com.dogeby.tagplayer.ui.theme.RippleLoadingColor
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
@@ -57,6 +59,8 @@ fun CompactVideoList(
     isSelectedVideoItems: Map<Long, Boolean>,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     modifier: Modifier = Modifier,
+    firstVisibleItemIndex: Int = 0,
+    lazyListState: LazyListState = rememberLazyListState(firstVisibleItemIndex),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
@@ -65,13 +69,16 @@ fun CompactVideoList(
     footer: LazyListScope.() -> Unit = {},
     onToggleVideoSelection: (VideoItem) -> Unit = {},
     onScrollToEnd: (Boolean) -> Unit = {},
+    onSaveVideoListInitialItemIndex: (Int) -> Unit = {},
 ) {
-    val state = rememberLazyListState()
-    state.OnReachedEnd(onScrollToEnd)
+    lazyListState.OnReachedEnd(onScrollToEnd)
+    lazyListState.OnFirstVisibleItemIndexChange {
+        onSaveVideoListInitialItemIndex(it)
+    }
 
     LazyColumn(
         modifier = modifier,
-        state = state,
+        state = lazyListState,
         contentPadding = contentPadding,
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment,

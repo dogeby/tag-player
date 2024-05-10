@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.videolist
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.datastore.videolist.VideoListSortType
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class VideoListViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     getVideoItemsUseCase: GetVideoItemsUseCase,
     getIsVideoFilteredUseCase: GetIsVideoFilteredUseCase,
     getVideoListSortTypeUseCase: GetVideoListSortTypeUseCase,
@@ -55,6 +57,8 @@ class VideoListViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = VideoListSortTypeUiState(emptyList())
         )
+
+    val videoListInitialManager = VideoListInitialManager(savedStateHandle)
 
     fun setSortType(videoListSortType: VideoListSortType) {
         viewModelScope.launch {

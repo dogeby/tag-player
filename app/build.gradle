@@ -22,7 +22,7 @@ android {
         }
     }
     namespace 'com.dogeby.tagplayer'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.dogeby.tagplayer"

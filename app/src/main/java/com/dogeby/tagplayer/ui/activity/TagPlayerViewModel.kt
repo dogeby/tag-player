@@ -1,5 +1,6 @@
 package com.dogeby.tagplayer.ui.activity
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dogeby.tagplayer.domain.preferences.app.GetAppPreferencesDataUseCase
@@ -16,6 +17,7 @@ class TagPlayerViewModel @Inject constructor(
     getAppPreferencesDataUseCase: GetAppPreferencesDataUseCase,
     private val updateVideoListUseCase: UpdateVideoListUseCase,
     private val setRejectedUpdateVersionCodeUseCase: SetRejectedUpdateVersionCodeUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     val appPreferencesData = getAppPreferencesDataUseCase()
@@ -24,6 +26,8 @@ class TagPlayerViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
         )
+
+    val isAppUpdateCheck = savedStateHandle.getStateFlow(IS_APP_UPDATE_CHECK_KEY, false)
 
     fun updateVideoList() {
         viewModelScope.launch {
@@ -35,5 +39,14 @@ class TagPlayerViewModel @Inject constructor(
         viewModelScope.launch {
             setRejectedUpdateVersionCodeUseCase(versionCode)
         }
+    }
+
+    fun setIsAppUpdateCheck(isAppUpdateCheck: Boolean) {
+        savedStateHandle[IS_APP_UPDATE_CHECK_KEY] = isAppUpdateCheck
+    }
+
+    private companion object {
+
+        const val IS_APP_UPDATE_CHECK_KEY = "isAppUpdateCheckKey"
     }
 }

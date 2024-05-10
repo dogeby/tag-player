@@ -68,6 +68,10 @@ fun VideoListRoute(
     val videoListUiState: VideoListUiState by viewModel.videoListUiState.collectAsState()
     val isVideoFiltered: Boolean by viewModel.isVideoFiltered.collectAsState()
     val videoListSortTypeUiState: VideoListSortTypeUiState by viewModel.videoListSortTypeUiState.collectAsState()
+    val videoListInitialItemIndex: Int by viewModel
+        .videoListInitialManager
+        .videoListInitialItemIndex
+        .collectAsState()
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -81,14 +85,16 @@ fun VideoListRoute(
         VideoListScreen(
             videoListUiState = videoListUiState,
             videoListSortTypeUiState = videoListSortTypeUiState,
+            videoListInitialItemIndex = videoListInitialItemIndex,
             onNavigateToPlayer = onNavigateToPlayer,
             onNavigateToTagSetting = onNavigateToTagSetting,
             onNavigateToVideoSearch = onNavigateToVideoSearch,
             onSortTypeSet = viewModel::setSortType,
             onMenuButtonClick = { scope.launch { drawerState.open() } },
             isVideoFiltered = isVideoFiltered,
-            modifier = modifier.fillMaxWidth(),
             onNavigateToFilterSetting = onNavigateToFilterSetting,
+            onSaveVideoListInitialItemIndex = viewModel.videoListInitialManager::setVideoListInitialItemIndex,
+            modifier = modifier.fillMaxWidth(),
         )
     }
 }
@@ -98,6 +104,7 @@ fun VideoListRoute(
 fun VideoListScreen(
     videoListUiState: VideoListUiState,
     videoListSortTypeUiState: VideoListSortTypeUiState,
+    videoListInitialItemIndex: Int,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onNavigateToTagSetting: (List<Long>) -> Unit,
     onNavigateToVideoSearch: () -> Unit,
@@ -105,6 +112,7 @@ fun VideoListScreen(
     onMenuButtonClick: () -> Unit,
     isVideoFiltered: Boolean,
     onNavigateToFilterSetting: () -> Unit,
+    onSaveVideoListInitialItemIndex: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isSelectMode by remember(videoListUiState) {
@@ -262,9 +270,11 @@ fun VideoListScreen(
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
                                 onNavigateToPlayer = onNavigateToPlayer,
+                                firstVisibleItemIndex = videoListInitialItemIndex,
                                 contentPadding = listContentPadding,
                                 onToggleVideoSelection = toggleVideoSelection,
-                                onScrollToEnd = { isScrollToEnd = it }
+                                onScrollToEnd = { isScrollToEnd = it },
+                                onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
                             )
                         }
                         WindowInfo.WindowType.Compact -> {
@@ -273,9 +283,11 @@ fun VideoListScreen(
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
                                 onNavigateToPlayer = onNavigateToPlayer,
+                                firstVisibleItemIndex = videoListInitialItemIndex,
                                 contentPadding = listContentPadding,
                                 onToggleVideoSelection = toggleVideoSelection,
-                                onScrollToEnd = { isScrollToEnd = it }
+                                onScrollToEnd = { isScrollToEnd = it },
+                                onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
                             )
                         }
                         else -> {
@@ -284,9 +296,11 @@ fun VideoListScreen(
                                 isSelectMode = { isSelectMode },
                                 isSelectedVideoItems = isSelectedVideoItems,
                                 onNavigateToPlayer = onNavigateToPlayer,
+                                firstVisibleItemIndex = videoListInitialItemIndex,
                                 contentPadding = listContentPadding,
                                 onToggleVideoSelection = toggleVideoSelection,
-                                onScrollToEnd = { isScrollToEnd = it }
+                                onScrollToEnd = { isScrollToEnd = it },
+                                onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
                             )
                         }
                     }

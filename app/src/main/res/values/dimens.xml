@@ -41,4 +41,7 @@
     <dimen name="tagListItem_Width">165dp</dimen>
 
     <dimen name="rippleLoadingVideoFilterChip_minWidth">64dp</dimen>
+
+    <dimen name="videoPlayer_controller_btnIconSize">32dp</dimen>
+    <dimen name="videoPlayer_controller_btnPadding">8dp</dimen>
 </resources>

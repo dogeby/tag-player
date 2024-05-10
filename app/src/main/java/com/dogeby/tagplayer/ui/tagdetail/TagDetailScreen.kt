@@ -43,16 +43,22 @@ fun TagDetailRoute(
 ) {
     val tagDetailUiState by viewModel.tagDetailUiState.collectAsState()
     val tagNameEditDialogUiState by viewModel.tagNameEditDialogUiState.collectAsState()
+    val videoListInitialItemIndex: Int by viewModel
+        .videoListInitialManager
+        .videoListInitialItemIndex
+        .collectAsState()
 
     TagDetailScreen(
         tagDetailUiState = tagDetailUiState,
         tagNameEditDialogUiState = tagNameEditDialogUiState,
+        videoListInitialItemIndex = videoListInitialItemIndex,
         onTagNameEditDialogVisibilitySet = viewModel::setTagNameEditDialogVisibility,
         onEditTagName = viewModel::modifyTagName,
         onDeleteTag = viewModel::deleteTag,
         onNavigateUp = onNavigateUp,
         onNavigateToPlayer = onNavigateToPlayer,
         onNavigateToTagSetting = onNavigateToTagSetting,
+        onSaveVideoListInitialItemIndex = viewModel.videoListInitialManager::setVideoListInitialItemIndex,
         modifier = modifier,
     )
 }
@@ -61,12 +67,14 @@ fun TagDetailRoute(
 fun TagDetailScreen(
     tagDetailUiState: TagDetailUiState,
     tagNameEditDialogUiState: TagNameEditDialogUiState,
+    videoListInitialItemIndex: Int,
     onTagNameEditDialogVisibilitySet: (visibility: Boolean) -> Unit,
     onEditTagName: (String) -> Unit,
     onDeleteTag: () -> Unit,
     onNavigateUp: () -> Unit,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     onNavigateToTagSetting: (List<Long>) -> Unit,
+    onSaveVideoListInitialItemIndex: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isSelectMode by remember(tagDetailUiState) {
@@ -142,9 +150,11 @@ fun TagDetailScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(contentPadding),
+                            firstVisibleItemIndex = videoListInitialItemIndex,
                             isSelectMode = { isSelectMode },
                             isSelectedVideoItems = isSelectedVideoItems,
                             onToggleVideoSelection = toggleVideoSelection,
+                            onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
                         )
                     }
                     WindowInfo.WindowType.Compact -> {
@@ -160,9 +170,11 @@ fun TagDetailScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(contentPadding),
+                            firstVisibleItemIndex = videoListInitialItemIndex,
                             isSelectMode = { isSelectMode },
                             isSelectedVideoItems = isSelectedVideoItems,
                             onToggleVideoSelection = toggleVideoSelection,
+                            onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
                         )
                     }
                     else -> {
@@ -178,9 +190,11 @@ fun TagDetailScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(contentPadding),
+                            firstVisibleItemIndex = videoListInitialItemIndex,
                             isSelectMode = { isSelectMode },
                             isSelectedVideoItems = isSelectedVideoItems,
                             onToggleVideoSelection = toggleVideoSelection,
+                            onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
                         )
                     }
                 }

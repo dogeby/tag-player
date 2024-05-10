@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -41,6 +42,7 @@ import com.dogeby.tagplayer.ui.component.RippleLoadingText
 import com.dogeby.tagplayer.ui.component.RippleLoadingVideoTag
 import com.dogeby.tagplayer.ui.component.RippleLoadingVideoThumbnail
 import com.dogeby.tagplayer.ui.component.VideoTag
+import com.dogeby.tagplayer.ui.component.extensions.OnFirstVisibleItemIndexChange
 import com.dogeby.tagplayer.ui.component.rememberRippleLoadingEffectAlpha
 import com.dogeby.tagplayer.ui.theme.RippleLoadingColor
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
@@ -53,12 +55,15 @@ fun ExpandedVideoList(
     isSelectedVideoItems: Map<Long, Boolean>,
     onNavigateToPlayer: (List<Long>, Long) -> Unit,
     modifier: Modifier = Modifier,
+    firstVisibleItemIndex: Int = 0,
+    lazyStaggeredGridState: LazyStaggeredGridState = rememberLazyStaggeredGridState(firstVisibleItemIndex),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     verticalItemSpacing: Dp = dimensionResource(id = R.dimen.padding_small),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small)),
     videoItemContentPadding: PaddingValues = PaddingValues(0.dp),
     onToggleVideoSelection: (VideoItem) -> Unit = {},
     onScrollToEnd: (Boolean) -> Unit = {},
+    onSaveVideoListInitialItemIndex: (Int) -> Unit = {},
 ) {
     if (videoItems.isEmpty()) {
         Box(
@@ -72,13 +77,15 @@ fun ExpandedVideoList(
         return
     }
 
-    val state = rememberLazyStaggeredGridState()
-    state.OnReachedEnd(onScrollToEnd)
+    lazyStaggeredGridState.OnReachedEnd(onScrollToEnd)
+    lazyStaggeredGridState.OnFirstVisibleItemIndexChange {
+        onSaveVideoListInitialItemIndex(it)
+    }
 
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Adaptive(dimensionResource(id = R.dimen.videolist_expanded_video_item_width)),
         modifier = modifier.fillMaxSize(),
-        state = state,
+        state = lazyStaggeredGridState,
         contentPadding = contentPadding,
         verticalItemSpacing = verticalItemSpacing,
         horizontalArrangement = horizontalArrangement,

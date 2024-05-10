@@ -62,7 +62,10 @@ class TagPlayerActivity : AppCompatActivity() {
         setContent {
             val appPreferencesData by viewModel.appPreferencesData.collectAsState()
             appPreferencesData?.let { preferencesData ->
-                checkAppUpdate(preferencesData.rejectedUpdateVersionCode)
+                if (viewModel.isAppUpdateCheck.value.not()) {
+                    checkAppUpdate(preferencesData.rejectedUpdateVersionCode)
+                    viewModel.setIsAppUpdateCheck(true)
+                }
                 TagPlayerApp(
                     appPreferencesData = preferencesData,
                     isRequiredPermissionsGranted = isRequiredPermissionsGranted,

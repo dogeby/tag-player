@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -222,7 +223,8 @@ fun VideoPlayerRightController(
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.End
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.videoPlayer_controller_btnPadding)),
+        horizontalAlignment = Alignment.End,
     ) {
         ScreenRotationButton(
             orientation = orientation,
@@ -256,6 +258,7 @@ fun PlayPauseButton(
             Icon(
                 painter = painterResource(id = R.drawable.ic_pause),
                 contentDescription = null,
+                modifier = Modifier.size(dimensionResource(id = R.dimen.videoPlayer_controller_btnIconSize)),
                 tint = PlayerControllerOnBackgroundColor,
             )
         }
@@ -268,6 +271,7 @@ fun PlayPauseButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_play),
             contentDescription = null,
+            modifier = Modifier.size(dimensionResource(id = R.dimen.videoPlayer_controller_btnIconSize)),
             tint = PlayerControllerOnBackgroundColor,
         )
     }
@@ -310,6 +314,7 @@ fun ScreenRotationButton(
             Icon(
                 painter = painterResource(id = R.drawable.ic_screen_lock_rotation),
                 contentDescription = null,
+                modifier = Modifier.size(dimensionResource(id = R.dimen.videoPlayer_controller_btnIconSize)),
                 tint = PlayerControllerOnBackgroundColor,
             )
         }
@@ -347,6 +352,7 @@ fun ScreenRotationButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_screen_rotation),
             contentDescription = null,
+            modifier = Modifier.size(dimensionResource(id = R.dimen.videoPlayer_controller_btnIconSize)),
             tint = PlayerControllerOnBackgroundColor,
         )
     }
@@ -378,11 +384,13 @@ fun PlayerSeekButtons(
 ) {
     Row(
         modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.videoPlayer_controller_btnPadding)),
     ) {
         IconButton(onClick = onSeekBack) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_replay_5),
                 contentDescription = null,
+                modifier = Modifier.size(dimensionResource(id = R.dimen.videoPlayer_controller_btnIconSize)),
                 tint = PlayerControllerOnBackgroundColor,
             )
         }
@@ -390,6 +398,7 @@ fun PlayerSeekButtons(
             Icon(
                 painter = painterResource(id = R.drawable.ic_forward_5),
                 contentDescription = null,
+                modifier = Modifier.size(dimensionResource(id = R.dimen.videoPlayer_controller_btnIconSize)),
                 tint = PlayerControllerOnBackgroundColor,
             )
         }

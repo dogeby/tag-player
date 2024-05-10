@@ -52,10 +52,12 @@ fun TagDetailCard(
     onEditButtonClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
+    firstVisibleItemIndex: Int = 0,
     shape: Shape = RectangleShape,
     isSelectMode: () -> Boolean = { false },
     isSelectedVideoItems: Map<Long, Boolean> = emptyMap(),
     onToggleVideoSelection: (VideoItem) -> Unit = {},
+    onSaveVideoListInitialItemIndex: (Int) -> Unit = {},
 ) {
     Card(
         modifier = modifier,
@@ -69,6 +71,7 @@ fun TagDetailCard(
                 isSelectMode = isSelectMode,
                 isSelectedVideoItems = isSelectedVideoItems,
                 onNavigateToPlayer = onPlayButtonClick,
+                firstVisibleItemIndex = firstVisibleItemIndex,
                 contentPadding = PaddingValues(bottom = dimensionResource(id = R.dimen.padding_small)),
                 videoItemContentPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.padding_small)),
                 header = {
@@ -94,6 +97,7 @@ fun TagDetailCard(
                     }
                 },
                 onToggleVideoSelection = onToggleVideoSelection,
+                onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
             )
         }
     }
@@ -164,10 +168,12 @@ fun ContractedTagDetailCard(
     onEditButtonClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
+    firstVisibleItemIndex: Int = 0,
     shape: Shape = RectangleShape,
     isSelectMode: () -> Boolean = { false },
     isSelectedVideoItems: Map<Long, Boolean> = emptyMap(),
     onToggleVideoSelection: (VideoItem) -> Unit = {},
+    onSaveVideoListInitialItemIndex: (Int) -> Unit = {},
 ) {
     Card(
         modifier = modifier,
@@ -181,6 +187,7 @@ fun ContractedTagDetailCard(
                 isSelectMode = isSelectMode,
                 isSelectedVideoItems = isSelectedVideoItems,
                 onNavigateToPlayer = onPlayButtonClick,
+                firstVisibleItemIndex = firstVisibleItemIndex,
                 contentPadding = PaddingValues(bottom = dimensionResource(id = R.dimen.padding_small)),
                 videoItemContentPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.padding_small)),
                 header = {
@@ -206,6 +213,7 @@ fun ContractedTagDetailCard(
                     }
                 },
                 onToggleVideoSelection = onToggleVideoSelection,
+                onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
             )
         }
     }
@@ -220,10 +228,12 @@ fun ExpandedTagDetailCard(
     onEditButtonClick: () -> Unit,
     onDeleteButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
+    firstVisibleItemIndex: Int = 0,
     shape: Shape = RectangleShape,
     isSelectMode: () -> Boolean = { false },
     isSelectedVideoItems: Map<Long, Boolean> = emptyMap(),
     onToggleVideoSelection: (VideoItem) -> Unit = {},
+    onSaveVideoListInitialItemIndex: (Int) -> Unit = {},
 ) {
     Card(
         modifier = modifier,
@@ -243,6 +253,7 @@ fun ExpandedTagDetailCard(
                     isSelectedVideoItems = isSelectedVideoItems,
                     onNavigateToPlayer = onPlayButtonClick,
                     modifier = Modifier.widthIn(max = dimensionResource(id = R.dimen.tagdetailcard_expanded_width)),
+                    firstVisibleItemIndex = firstVisibleItemIndex,
                     contentPadding = PaddingValues(bottom = dimensionResource(id = R.dimen.padding_small)),
                     videoItemContentPadding = PaddingValues(horizontal = dimensionResource(id = R.dimen.padding_small)),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -271,6 +282,7 @@ fun ExpandedTagDetailCard(
                         }
                     },
                     onToggleVideoSelection = onToggleVideoSelection,
+                    onSaveVideoListInitialItemIndex = onSaveVideoListInitialItemIndex,
                 )
             }
         }

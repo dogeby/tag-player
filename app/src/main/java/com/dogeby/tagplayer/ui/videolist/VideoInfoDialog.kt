@@ -23,7 +23,7 @@ import com.dogeby.tagplayer.data.tag.Tag
 import com.dogeby.tagplayer.domain.video.VideoDuration
 import com.dogeby.tagplayer.domain.video.VideoItem
 import com.dogeby.tagplayer.ui.component.VideoTag
-import com.dogeby.tagplayer.ui.component.formatToSimpleSize
+import com.dogeby.tagplayer.ui.component.extensions.formatToSimpleSize
 import com.dogeby.tagplayer.ui.theme.TagPlayerTheme
 
 @Composable

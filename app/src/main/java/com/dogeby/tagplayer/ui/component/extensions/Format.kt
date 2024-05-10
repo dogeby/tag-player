@@ -1,4 +1,4 @@
-package com.dogeby.tagplayer.ui.component
+package com.dogeby.tagplayer.ui.component.extensions
 
 fun Long.formatToSimpleSize(): String {
     val (div, unitName) = when {

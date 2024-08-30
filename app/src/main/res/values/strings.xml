@@ -26,6 +26,7 @@
     <string name="permission_optionalPermissions">Optional permissions</string>
     <string name="permission_read_media_video">Permission to access photos and videos on your device</string>
     <string name="permission_read_media_video_description">Permission to read videos on the device.</string>
+    <string name="permission_read_media_video_description_api34up">Please select \'Allow all\' to proceed.</string>
     <string name="permission_write_settings">Permission to modify settings</string>
     <string name="permission_write_settings_description">This is an optional permission to use the auto-rotate feature on devices where video rotation does not work properly.</string>
     <string name="permission_dialog_require_description">Permission is required to use Tag Player.</string>

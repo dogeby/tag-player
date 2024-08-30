@@ -1,6 +1,7 @@
 package com.dogeby.tagplayer.ui.permission
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.os.Build
 import android.provider.Settings
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -42,8 +43,9 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 private fun PermissionElement(
     @DrawableRes image: Int,
     @StringRes title: Int,
-    @StringRes description: Int,
+    @StringRes description1: Int,
     modifier: Modifier = Modifier,
+    @StringRes description2: Int? = null,
 ) {
     Row(
         modifier = modifier,
@@ -65,9 +67,15 @@ private fun PermissionElement(
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = stringResource(id = description),
+                text = stringResource(id = description1),
                 style = MaterialTheme.typography.bodyMedium,
             )
+            description2?.let {
+                Text(
+                    text = stringResource(id = description2),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
         }
     }
 }
@@ -123,7 +131,12 @@ fun PermissionScreen(
             PermissionElement(
                 image = R.drawable.ic_media_video_permission,
                 title = R.string.permission_read_media_video,
-                description = R.string.permission_read_media_video_description,
+                description1 = R.string.permission_read_media_video_description,
+                description2 = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    R.string.permission_read_media_video_description_api34up
+                } else {
+                    null
+                }
             )
             Text(
                 text = stringResource(id = R.string.permission_optionalPermissions),
@@ -133,7 +146,7 @@ fun PermissionScreen(
             PermissionElement(
                 image = R.drawable.ic_settings_permission,
                 title = R.string.permission_write_settings,
-                description = R.string.permission_write_settings_description,
+                description1 = R.string.permission_write_settings_description,
             )
             Spacer(modifier = Modifier.weight(1f))
             Button(
@@ -161,7 +174,7 @@ fun PermissionElementPreview() {
         PermissionElement(
             image = R.drawable.ic_media_video_permission,
             title = R.string.permission_read_media_video,
-            description = R.string.permission_read_media_video_description,
+            description1 = R.string.permission_read_media_video_description,
         )
     }
 }
